@@ -1,21 +1,29 @@
+import os
 from utils import config
 from utils import get_dataset_layout
 from utils import get_deepmreye_filename
 from utils import list_subjects
 from utils import return_deepmreye_output_filename
 from utils import return_path_rel_dataset
+from bids.tests import get_test_data_path
 
 
 def test_list_subjects():
 
     cfg = config()
-    cfg["participant"] = ["sccb01"]
 
-    layout = get_dataset_layout(cfg["input_folder"])
+    data_path = os.path.join(
+        get_test_data_path(), "synthetic", "derivatives", "fmriprep"
+    )
+
+    layout = get_dataset_layout(data_path)
 
     subjects = list_subjects(layout, cfg)
+    assert len(subjects) == 5
 
-    assert subjects == ["sccb01"]
+    cfg["participant"] = ["02"]
+    subjects = list_subjects(layout, cfg)
+    assert subjects == ["02"]
 
 
 def test_get_dataset_layout_smoke_test():
@@ -36,18 +44,28 @@ def test_return_path_rel_dataset():
 
 def test_get_deepmreye_filename():
 
-    # TODO need dummy dataset to test this
+    data_path = os.path.join(
+        get_test_data_path(), "synthetic", "derivatives", "fmriprep"
+    )
 
-    cfg = config()
-    layout = get_dataset_layout(cfg["input_folder"])
+    layout = get_dataset_layout(data_path)
 
-    output_file = "/home/remi/github/CPP_deepMReye/inputs/rest_blnd_can_fmriprep/sub-cb01/func/mask_sub-cb01_task-rest_space-MNI152NLin2009cAsym_desc-preproc_bold.p"
+    output_file = os.path.join(
+        get_test_data_path(),
+        "synthetic",
+        "derivatives",
+        "fmriprep",
+        "sub-01",
+        "ses-01",
+        "func",
+        "mask_sub-01_ses-01_task-nback_run-01_space-MNI152NLin2009cAsym_desc-preproc_bold.p",
+    )
 
     img = layout.get(
         return_type="filename",
-        subject="cb01",
+        subject="01",
         suffix="bold",
-        task="rest",
+        task="nback",
         space="MNI152NLin2009cAsym",
         extension=".nii.gz",
     )

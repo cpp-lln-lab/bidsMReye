@@ -119,6 +119,9 @@ def return_path_rel_dataset(file_path: str, dataset_path: str) -> str:
 
 def get_deepmreye_filename(layout, img: str, filetype: str) -> str:
 
+    if len(img) == 0:
+        raise Exception("No file")
+
     if isinstance(img, (list)):
         img = img[0]
 
