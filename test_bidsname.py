@@ -1,3 +1,4 @@
+import os
 import pytest
 from bidsname import create_bidsname
 from bidsname import get_bidsname_config
@@ -15,18 +16,18 @@ def test_write_dataset_description_smoke_test():
 
 def test_get_bidsname_config_smoke_test():
     bidsname_config = get_bidsname_config()
-    assert list(bidsname_config.keys()) == ["mask", "report", "no_label"]
+    assert list(bidsname_config.keys()) == ["mask", "report", "no_label", "confounds"]
 
 
 @pytest.mark.parametrize(
     "output, filetype",
     [
         (
-            "/home/remi/github/CPP_deepMReye/code/data/sub-03/func/sub-03_task-rest_space-T1w_desc-eye_mask.p",
+            "data/sub-03/func/sub-03_task-rest_space-T1w_desc-eye_mask.p",
             "mask",
         ),
         (
-            "/home/remi/github/CPP_deepMReye/code/data/sub-03/func/sub-03_task-rest_space-T1w_desc-eye_report.html",
+            "data/sub-03/func/sub-03_task-rest_space-T1w_desc-eye_report.html",
             "report",
         ),
     ],
@@ -39,7 +40,7 @@ def test_create_bidsname_from_bold_inputs(output, filetype):
 
     layout = get_dataset_layout("data")
     mask = create_bidsname(layout, filename, filetype)
-    assert mask == output
+    assert mask == os.path.join(os.path.dirname(os.path.abspath(__file__)), output)
 
 
 @pytest.mark.parametrize(
