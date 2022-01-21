@@ -40,7 +40,9 @@ def test_create_bidsname_from_bold_inputs(output, filetype):
 
     layout = get_dataset_layout("data")
     mask = create_bidsname(layout, filename, filetype)
-    assert mask == os.path.join(os.path.dirname(os.path.abspath(__file__)), output)
+
+    output_path = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    assert mask == os.path.join(output_path, output)
 
 
 @pytest.mark.parametrize(
