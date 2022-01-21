@@ -3,8 +3,9 @@ import warnings
 
 import numpy as np
 import pandas as pd
-from bidsname import create_bidsname
 from rich import print
+
+from bidsname import create_bidsname
 from utils import check_layout
 from utils import config
 from utils import get_dataset_layout

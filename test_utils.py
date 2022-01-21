@@ -1,11 +1,13 @@
 import os
+
+from bids.tests import get_test_data_path
+
 from utils import config
 from utils import get_dataset_layout
 from utils import get_deepmreye_filename
 from utils import list_subjects
 from utils import return_deepmreye_output_filename
 from utils import return_path_rel_dataset
-from bids.tests import get_test_data_path
 
 
 def test_list_subjects():

@@ -3,9 +3,10 @@ import pickle
 import warnings
 
 import numpy as np
-from bidsname import create_bidsname
 from deepmreye import preprocess
 from rich import print
+
+from bidsname import create_bidsname
 from utils import check_layout
 from utils import config
 from utils import get_dataset_layout

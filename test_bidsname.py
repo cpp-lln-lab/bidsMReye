@@ -1,5 +1,7 @@
 import os
+
 import pytest
+
 from bidsname import create_bidsname
 from bidsname import get_bidsname_config
 from bidsname import set_dataset_description

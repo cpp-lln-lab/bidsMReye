@@ -5,6 +5,7 @@ from deepmreye import train
 from deepmreye.util import data_generator
 from deepmreye.util import model_opts
 from rich import print
+
 from utils import check_layout
 from utils import config
 from utils import get_dataset_layout
