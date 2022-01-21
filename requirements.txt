@@ -1,0 +1,9 @@
+pybids==0.14.0
+jupyterlab
+black
+nb_black
+datalad
+rich
+pytest
+pre-commit
+git+https://github.com/DeepMReye/DeepMReye.git
