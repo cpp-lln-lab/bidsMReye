@@ -31,6 +31,12 @@ cd lib/deepMReye
 pip install .
 ```
 
+## dev install
+
+use poetry
+
+run poetry install
+
 ## Run
 
 At the moment several value, including the input dataset, are hard coded in

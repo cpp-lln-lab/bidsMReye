@@ -95,9 +95,7 @@ def create_bidsname(layout, filename: str, filetype: str) -> str:
     entities = layout.parse_file_entities(filename)
 
     bids_name_config = get_bidsname_config()
-    output_file = layout.build_path(
-        entities, bids_name_config[filetype], validate=False
-    )
+    output_file = layout.build_path(entities, bids_name_config[filetype], validate=False)
 
     output_file = abspath(join(layout.root, output_file))
 

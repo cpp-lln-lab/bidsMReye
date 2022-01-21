@@ -1,9 +1,8 @@
-from deepmreye import preprocess
-from rich import print
-
 from bidsname import create_bidsname
 from bidsname import set_dataset_description
 from bidsname import write_dataset_description
+from deepmreye import preprocess
+from rich import print
 from utils import check_layout
 from utils import config
 from utils import create_dir_if_absent

@@ -2,11 +2,11 @@ import os
 
 import pytest
 
-from bidsname import create_bidsname
-from bidsname import get_bidsname_config
-from bidsname import set_dataset_description
-from bidsname import write_dataset_description
-from utils import get_dataset_layout
+from bidsMReye.bidsname import create_bidsname
+from bidsMReye.bidsname import get_bidsname_config
+from bidsMReye.bidsname import set_dataset_description
+from bidsMReye.bidsname import write_dataset_description
+from bidsMReye.utils import get_dataset_layout
 
 
 def test_write_dataset_description_smoke_test():
