@@ -34,8 +34,6 @@ def test_get_bidsname_config_smoke_test():
 )
 def test_create_bidsname_from_bold_inputs(output, filetype):
 
-    # TODO make test not dependent on local absolute path
-
     filename = "/home/john/gin/dataset/sub-03/func/sub-03_task-rest_space-T1w_desc-preproc_bold.nii.gz"
 
     layout = get_dataset_layout("data")

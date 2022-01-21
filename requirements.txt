@@ -6,4 +6,4 @@ datalad
 rich
 pytest
 pre-commit
-git+https://github.com/DeepMReye/DeepMReye.git
+# git+https://github.com/DeepMReye/DeepMReye.git
