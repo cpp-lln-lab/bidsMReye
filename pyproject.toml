@@ -10,6 +10,7 @@ python = "^3.8"
 pybids = "^0.14.0"
 rich = "^11.0.0"
 # deepmreye = {git = "https://github.com/DeepMReye/DeepMReye.git"}
+click = "^8.0.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"
@@ -17,6 +18,9 @@ pytest-cov = "pre-commit"
 pre-commit = "black"
 black = "^21.12b0"
 jupyterlab = "^3.2.8"
+
+[tool.poetry.scripts]
+bidsMReye = "bidsMReye.cli:main"
 
 [tool.black]
 line-length = 90

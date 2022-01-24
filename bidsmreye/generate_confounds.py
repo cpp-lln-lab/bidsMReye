@@ -10,9 +10,13 @@ from utils import config
 from utils import get_dataset_layout
 
 
-def generate_confounds(dataset_path):
+def generate_confounds():
 
     cfg = config()
+
+    dataset_path = cfg["output_folder"]
+
+    print(f"\nindexing {dataset_path}\n")
 
     layout = get_dataset_layout(dataset_path)
     check_layout(layout)
@@ -45,16 +49,3 @@ def generate_confounds(dataset_path):
         pd.DataFrame(this_pred).to_csv(
             confound_name, sep="\t", header=["x_position", "y_position"], index=None
         )
-
-
-def main():
-
-    cfg = config()
-
-    print(f"\nindexing {cfg['output_folder']}\n")
-    generate_confounds(cfg["output_folder"])
-
-
-if __name__ == "__main__":
-
-    main()

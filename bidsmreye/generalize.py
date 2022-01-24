@@ -12,9 +12,13 @@ from utils import list_subjects
 from utils import return_regex
 
 
-def generalize(dataset_path):
+def generalize():
 
     cfg = config()
+
+    dataset_path = cfg["output_folder"]
+
+    print(f"\nindexing {dataset_path}\n")
 
     layout = get_dataset_layout(dataset_path)
     check_layout(layout)
@@ -77,16 +81,3 @@ def generalize(dataset_path):
         ylim=[-11, 11],
     )
     fig.show()
-
-
-def main():
-
-    cfg = config()
-
-    print(f"\nindexing {cfg['output_folder']}\n")
-    generalize(cfg["output_folder"])
-
-
-if __name__ == "__main__":
-
-    main()

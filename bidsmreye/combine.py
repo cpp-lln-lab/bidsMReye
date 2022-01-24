@@ -84,9 +84,14 @@ def save_participant_file(layout, img, subj):
     move_file(file_to_move, output_file)
 
 
-def add_labels_to_dataset(dataset_path):
+def combine():
+    # add labels to dataset
 
     cfg = config()
+
+    dataset_path = cfg["output_folder"]
+
+    print(f"\nindexing {dataset_path}\n")
 
     layout = get_dataset_layout(dataset_path)
     check_layout(layout)
@@ -100,16 +105,3 @@ def add_labels_to_dataset(dataset_path):
     for subject_label in subjects:
 
         process_subject(layout, subject_label)
-
-
-def main():
-
-    cfg = config()
-
-    print(f"\nindexing {cfg['output_folder']}\n")
-    add_labels_to_dataset(cfg["output_folder"])
-
-
-if __name__ == "__main__":
-
-    main()

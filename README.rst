@@ -1,3 +1,32 @@
+=========
+bidsMReye
+=========
+
+
+.. image:: https://img.shields.io/pypi/v/bidsmreye.svg
+        :target: https://pypi.python.org/pypi/bidsmreye
+
+.. image:: https://img.shields.io/travis/Remi-Gau/bidsmreye.svg
+        :target: https://travis-ci.com/Remi-Gau/bidsmreye
+
+.. image:: https://readthedocs.org/projects/bidsmreye/badge/?version=latest
+        :target: https://bidsmreye.readthedocs.io/en/latest/?version=latest
+        :alt: Documentation Status
+
+
+.. image:: https://pyup.io/repos/github/Remi-Gau/bidsmreye/shield.svg
+     :target: https://pyup.io/repos/github/Remi-Gau/bidsmreye/
+     :alt: Updates
+
+
+
+bids app using deepMReye to decode eye motion for fMRI time series data
+
+
+* Free software: GNU General Public License v3
+* Documentation: https://bidsmreye.readthedocs.io.
+
+
 # bids app version of deepMReye
 
 To be used on preprocessed BIDS derivatives (like those from fMRIprep), to
@@ -57,3 +86,17 @@ python3 generalize.py
 ```bash
 python3 generate_confounds.py
 ```
+
+
+Features
+--------
+
+* TODO
+
+Credits
+-------
+
+This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypackage`_ project template.
+
+.. _Cookiecutter: https://github.com/audreyr/cookiecutter
+.. _`audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage

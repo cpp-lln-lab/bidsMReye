@@ -91,14 +91,9 @@ def preprocess_dataset(dataset_path):
         preprocess_subject(layout, subject_label)
 
 
-def main():
+def prepare_data():
 
     cfg = config()
 
     print(f"\nindexing {cfg['input_folder']}\n")
     preprocess_dataset(cfg["input_folder"])
-
-
-if __name__ == "__main__":
-
-    main()
