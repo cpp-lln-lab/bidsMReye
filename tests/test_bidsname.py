@@ -1,7 +1,6 @@
 import os
 
 import pytest
-
 from bidsMReye.bidsname import create_bidsname
 from bidsMReye.bidsname import get_bidsname_config
 from bidsMReye.bidsname import set_dataset_description

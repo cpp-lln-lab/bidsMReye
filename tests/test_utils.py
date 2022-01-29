@@ -1,7 +1,6 @@
 import os
 
 from bids.tests import get_test_data_path
-
 from bidsMReye.utils import config
 from bidsMReye.utils import get_dataset_layout
 from bidsMReye.utils import get_deepmreye_filename
