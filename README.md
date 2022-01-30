@@ -1,8 +1,9 @@
-=========
-bidsMReye
-=========
+# bidsMReye
 
+-   Free software: GNU General Public License v3
+-   Documentation: https://bidsmreye.readthedocs.io.
 
+<!--
 .. image:: https://img.shields.io/pypi/v/bidsmreye.svg
         :target: https://pypi.python.org/pypi/bidsmreye
 
@@ -13,21 +14,12 @@ bidsMReye
         :target: https://bidsmreye.readthedocs.io/en/latest/?version=latest
         :alt: Documentation Status
 
-
 .. image:: https://pyup.io/repos/github/Remi-Gau/bidsmreye/shield.svg
      :target: https://pyup.io/repos/github/Remi-Gau/bidsmreye/
      :alt: Updates
+-->
 
-
-
-bids app using deepMReye to decode eye motion for fMRI time series data
-
-
-* Free software: GNU General Public License v3
-* Documentation: https://bidsmreye.readthedocs.io.
-
-
-# bids app version of deepMReye
+BIDS app using deepMReye to decode eye motion for fMRI time series data
 
 To be used on preprocessed BIDS derivatives (like those from fMRIprep), to
 predict eye movements from the bold data when no eye movement data are
@@ -37,8 +29,10 @@ Uses the deepMReye pre-trained "fixation" model.
 
 The first part of the pipeline can however be used to extract data, irrespective
 of the presence of eye movement labels and could thus be usefull to share
-anomysed subject data to the deepMReye dev team to allow them to improve their
+anonimysed subject data to the deepMReye dev team to allow them to improve their
 pre-trained models.
+
+-   [bidsMReye](#bidsmreye) - [Install](#install) - [DEV install](#dev-install) - [Run](#run) - [Credits](#credits)
 
 ## Install
 
@@ -60,7 +54,7 @@ cd lib/deepMReye
 pip install .
 ```
 
-## dev install
+## DEV install
 
 use poetry
 
@@ -87,16 +81,6 @@ python3 generalize.py
 python3 generate_confounds.py
 ```
 
+## Credits
 
-Features
---------
-
-* TODO
-
-Credits
--------
-
-This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypackage`_ project template.
-
-.. _Cookiecutter: https://github.com/audreyr/cookiecutter
-.. _`audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage
+This package was created with [Cookiecutter](https://github.com/audreyr/cookiecutter) and the [audreyr/cookiecutter-pypackage](https://github.com/audreyr/cookiecutter-pypackage) project template.
