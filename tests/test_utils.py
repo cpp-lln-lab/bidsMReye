@@ -2,12 +2,11 @@ import os
 
 from bids.tests import get_test_data_path
 from bidsmreye.utils import config
-from bidsmreye.utils import get_dataset_layout
 from bidsmreye.utils import get_deepmreye_filename
 from bidsmreye.utils import list_subjects
 from bidsmreye.utils import return_deepmreye_output_filename
 from bidsmreye.utils import return_path_rel_dataset
-
+from bidsmreye.bidsutils import get_dataset_layout
 
 def test_list_subjects():
 

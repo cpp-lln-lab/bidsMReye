@@ -5,7 +5,6 @@ from os.path import dirname
 from os.path import join
 from pathlib import Path
 
-from bids import BIDSLayout
 from rich import print
 
 
@@ -64,46 +63,6 @@ def list_subjects(layout, cfg={}):
         raise Exception("No subject found")
 
     return subjects
-
-
-def get_dataset_layout(dataset_path: str):
-
-    create_dir_if_absent(dataset_path)
-
-    layout = BIDSLayout(dataset_path, validate=False, derivatives=False)
-    return layout
-
-
-def check_layout(layout):
-
-    desc = layout.get_dataset_description()
-    if desc["DatasetType"] != "derivative":
-        raise Exception("Input dataset should be BIDS derivative")
-
-    cfg = config()
-
-    bf = layout.get(
-        return_type="filename",
-        task=cfg["task"],
-        space=cfg["space"],
-        suffix="^bold$",
-        extension="nii.*",
-        regex_search=True,
-    )
-
-    generated_by = desc["GeneratedBy"][0]["Name"]
-    if generated_by.lower() == "deepmreye":
-        bf = layout.get(
-            return_type="filename",
-            task=cfg["task"],
-            space=cfg["space"],
-            suffix="^mask$",
-            extension="p",
-            regex_search=True,
-        )
-
-    if bf == []:
-        raise Exception("Input dataset does not have any data to process")
 
 
 def return_path_rel_dataset(file_path: str, dataset_path: str) -> str:

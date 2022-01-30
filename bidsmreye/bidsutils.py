@@ -4,13 +4,32 @@ from os.path import dirname
 from os.path import join
 from pathlib import Path
 
+from bids import BIDSLayout
+
+from .utils import create_dir_if_absent
+
+
+
+
+
+def get_dataset_layout(dataset_path: str, config={}):
+
+    create_dir_if_absent(dataset_path)
+
+    if config == {}:
+        pybids_config = get_pybids_config()
+
+    return BIDSLayout(
+        dataset_path, validate=False, derivatives=False, config=pybids_config
+    )
+
 
 def write_dataset_description(layout):
 
     output_file = join(layout.root, "dataset_description.json")
 
     with open(output_file, "w") as ff:
-        json.dump(layout.dataset_description, ff)
+        json.dump(layout.dataset_description, ff, indent=4)
 
 
 def set_dataset_description(layout, is_derivative=True):
@@ -54,6 +73,15 @@ def set_dataset_description(layout, is_derivative=True):
     return layout
 
 
+def init_derivatives_layout(output_location):
+    layout_out = get_dataset_layout(output_location)
+    layout_out = set_dataset_description(layout_out)
+    layout_out.dataset_description["DatasetType"] = "derivative"
+    layout_out.dataset_description["GeneratedBy"][0]["Name"] = "bidsNighres"
+    write_dataset_description(layout_out)
+    return layout_out
+
+
 def get_bidsname_config(config_file="") -> dict:
     """
     See the Path construction demo in the pybids tuto
@@ -67,14 +95,13 @@ def get_pybids_config(config_file="") -> dict:
     """
     Pybids configs are stored in the layout module
     https://github.com/bids-standard/pybids/tree/master/bids/layout/config
-
-    But they don't cover the ``ephys`` so we are using modified config, that
-    should cover both ephys and microscopy.
-
-    TODO the "default_path_patterns" of that config has not been extended for
-    ephys or microscopy yet
     """
     default = "config_pybids.json"
+    return get_config(config_file, default)
+
+
+def get_bids_filter_config(config_file="") -> dict:
+    default = "default_filter_file.json"
     return get_config(config_file, default)
 
 
@@ -90,13 +117,43 @@ def get_config(config_file="", default="") -> dict:
         return json.load(ff)
 
 
-def create_bidsname(layout, filename: str, filetype: str) -> str:
+def create_bidsname(layout, filename, filetype: str) -> str:
+    """[summary]
 
-    entities = layout.parse_file_entities(filename)
+    Args:
+        layout ([type]): [description]
+        filename ([type]): [description]
+        filetype (str): [description]
+
+    Returns:
+        str: [description]
+    """
+
+    # filename is path or entities dict
+
+    if isinstance(filename, str):
+        entities = layout.parse_file_entities(filename)
+    else:
+        entities = filename
 
     bids_name_config = get_bidsname_config()
-    output_file = layout.build_path(entities, bids_name_config[filetype], validate=False)
+    output_file = layout.build_path(
+        entities, bids_name_config[filetype], validate=False
+    )
 
     output_file = abspath(join(layout.root, output_file))
 
     return output_file
+
+
+def check_layout(layout):
+
+    bf = layout.get(
+        return_type="filename",
+        suffix="^MP2RAGE$",
+        extension="nii.*",
+        regex_search=True,
+    )
+
+    if bf == []:
+        raise Exception("Input dataset does not have any data to process")

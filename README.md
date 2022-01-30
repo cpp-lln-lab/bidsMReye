@@ -62,6 +62,26 @@ run poetry install
 
 ## Run
 
+
+```bash
+
+input_dataset="/home/remi/gin/CPP/can_blind_restingState/derivatives/fmriprep"
+output_location="/home/remi/gin/CPP/can_blind_restingState/derivatives/bidsmreye"
+
+python run.py --input-datasets ${input_dataset} \
+              --output-location ${output_location} \
+              --analysis-level subject \
+              --participant-label cb01 \
+              --action prepare \
+              --dry-run true
+```
+
+
+
+python run.py
+
+
+
 At the moment several value, including the input dataset, are hard coded in
 `utils.config`.
 
