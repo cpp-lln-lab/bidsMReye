@@ -32,7 +32,11 @@ of the presence of eye movement labels and could thus be usefull to share
 anonimysed subject data to the deepMReye dev team to allow them to improve their
 pre-trained models.
 
--   [bidsMReye](#bidsmreye) - [Install](#install) - [DEV install](#dev-install) - [Run](#run) - [Credits](#credits)
+- [bidsMReye](#bidsmreye)
+        - [Install](#install)
+        - [DEV install](#dev-install)
+        - [Run](#run)
+        - [Credits](#credits)
 
 ## Install
 
