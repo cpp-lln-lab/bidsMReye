@@ -1,49 +1,20 @@
 #!/usr/bin/env python
-"""The setup script."""
-from setuptools import find_packages
+import sys
 from setuptools import setup
+# import versioneer
 
-with open("README.rst") as readme_file:
-    readme = readme_file.read()
+# Give setuptools a hint to complain if it's too old a version
+# 30.3.0 allows us to put most metadata in setup.cfg
+# Should match pyproject.toml
+SETUP_REQUIRES = ['setuptools >= 30.3.0']
+# This enables setuptools to install wheel on-the-fly
+SETUP_REQUIRES += ['wheel'] if 'bdist_wheel' in sys.argv else []
 
-with open("HISTORY.rst") as history_file:
-    history = history_file.read()
-
-requirements = [
-    "Click>=7.0",
-]
-
-test_requirements = [
-    "pytest>=3",
-]
-
-setup(
-    author="Remi Gau",
-    author_email="remi.gau@gmail.com",
-    python_requires=">=3.8",
-    classifiers=[
-        "Development Status :: 2 - Pre-Alpha",
-        "Intended Audience :: Developers",
-        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
-        "Natural Language :: English",
-        "Programming Language :: Python :: 3.8",
-    ],
-    description="bids app using deepMReye to decode eye motion for fMRI time series data",
-    entry_points={
-        "console_scripts": [
-            "bidsmreye=bidsmreye.cli:main",
-        ],
-    },
-    install_requires=requirements,
-    license="GNU General Public License v3",
-    long_description=readme + "\n\n" + history,
-    include_package_data=True,
-    keywords="bidsmreye",
-    name="bidsmreye",
-    packages=find_packages(include=["bidsmreye", "bidsmreye.*"]),
-    test_suite="tests",
-    tests_require=test_requirements,
-    url="https://github.com/Remi-Gau/bidsmreye",
-    version="0.1.0",
-    zip_safe=False,
-)
+if __name__ == '__main__':
+    # setup(name="bidsmreye",
+    #       version=versioneer.get_version(),
+    #       cmdclass=versioneer.get_cmdclass(),
+    #       setup_requires=SETUP_REQUIRES)
+    setup(name='bidsmreye',
+          setup_requires=SETUP_REQUIRES,
+          version='0.1')

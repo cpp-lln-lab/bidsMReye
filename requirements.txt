@@ -1,0 +1,3 @@
+git+https://github.com/Remi-Gau/DeepMReye@setup
+pybids
+rich
