@@ -9,9 +9,6 @@ from bids import BIDSLayout
 from .utils import create_dir_if_absent
 
 
-
-
-
 def get_dataset_layout(dataset_path: str, config={}):
 
     create_dir_if_absent(dataset_path)
@@ -137,9 +134,7 @@ def create_bidsname(layout, filename, filetype: str) -> str:
         entities = filename
 
     bids_name_config = get_bidsname_config()
-    output_file = layout.build_path(
-        entities, bids_name_config[filetype], validate=False
-    )
+    output_file = layout.build_path(entities, bids_name_config[filetype], validate=False)
 
     output_file = abspath(join(layout.root, output_file))
 

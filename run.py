@@ -86,7 +86,9 @@ def run(command, env={}):
     help="""
             What to do
             """,
-    type=click.Choice(["prepare", "combine", "generalize", "confounds"], case_sensitive=False),
+    type=click.Choice(
+        ["prepare", "combine", "generalize", "confounds"], case_sensitive=False
+    ),
     required=True,
 )
 @click.option(
@@ -146,6 +148,7 @@ def main(
         layout_out = get_dataset_layout(output_location)
 
         segment(layout_out, participant_label, bids_filter=bids_filter, dry_run=dry_run)
+
 
 # parser.add_argument('-v', '--version', action='version',
 #                     version='bidsNighRes {}'.format(__version__))
