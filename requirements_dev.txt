@@ -8,3 +8,5 @@ pre-commit
 sourcery
 pytest >=6.2.5
 pytest-cov
+-r requirements.txt
+-r requirements_doc.txt

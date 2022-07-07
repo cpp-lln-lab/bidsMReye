@@ -7,7 +7,7 @@ on:
     branches: [ "*" ]
 
 jobs:
-  build:
+  test and coverage:
 
     runs-on: ${{ matrix.os }}
     strategy:
