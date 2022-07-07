@@ -1,3 +1,4 @@
+"""foo."""
 from bidsname import create_bidsname
 from bidsname import set_dataset_description
 from bidsname import write_dataset_description
@@ -14,7 +15,11 @@ from utils import return_regex
 
 
 def coregister_and_extract_data(img: str):
+    """_summary_.
 
+    Args:
+        img (str): _description_
+    """
     (
         eyemask_small,
         eyemask_big,
@@ -33,7 +38,12 @@ def coregister_and_extract_data(img: str):
 
 
 def preprocess_subject(layout, subject_label):
+    """_summary_.
 
+    Args:
+        layout (_type_): _description_
+        subject_label (_type_): _description_
+    """
     cfg = config()
 
     # TODO performance: do not reload the input layout for every subject
@@ -67,7 +77,11 @@ def preprocess_subject(layout, subject_label):
 
 
 def preprocess_dataset(dataset_path):
+    """_summary_.
 
+    Args:
+        dataset_path (_type_): _description_
+    """
     cfg = config()
 
     layout = get_dataset_layout(dataset_path)
@@ -92,7 +106,7 @@ def preprocess_dataset(dataset_path):
 
 
 def prepare_data():
-
+    """_summary_."""
     cfg = config()
 
     print(f"\nindexing {cfg['input_folder']}\n")

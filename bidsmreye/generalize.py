@@ -1,3 +1,4 @@
+"""foo."""
 import os
 
 from deepmreye import analyse
@@ -13,7 +14,7 @@ from utils import return_regex
 
 
 def generalize():
-
+    """_summary_."""
     cfg = config()
 
     dataset_path = cfg["output_folder"]

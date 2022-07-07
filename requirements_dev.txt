@@ -1,0 +1,10 @@
+sphinx >=2.0
+sphinx-argparse
+sphinx_rtd_theme
+flake8 >=3.7
+flake8-docstrings >=1.5
+black>=21
+pre-commit
+sourcery
+pytest >=6.2.5
+pytest-cov

@@ -1,3 +1,4 @@
+"""foo."""
 import os
 import pickle
 import warnings
@@ -15,7 +16,12 @@ from utils import return_regex
 
 
 def process_subject(layout, subject_label):
+    """_summary_.
 
+    Args:
+        layout (_type_): _description_
+        subject_label (_type_): _description_
+    """
     cfg = config()
 
     # TODO performance: do not reload the input layout for every subject
@@ -49,7 +55,10 @@ def process_subject(layout, subject_label):
         # Note that mask has time as third dimension
         if this_mask.shape[3] != this_label.shape[0]:
             warnings.warns(
-                f"Skipping file {img} from subject {subject_label} --- Wrong alignment (Mask {this_mask.shape} - Label {this_label.shape}"
+                f"""
+                Skipping file {img} from subject {subject_label}\n
+                Wrong alignment (Mask {this_mask.shape} - Label {this_label.shape}
+                """
             )
             continue
 
@@ -65,7 +74,13 @@ def process_subject(layout, subject_label):
 
 
 def save_participant_file(layout, img, subj):
+    """_summary_.
 
+    Args:
+        layout (_type_): _description_
+        img (_type_): _description_
+        subj (_type_): _description_
+    """
     output_file = create_bidsname(layout, img, "no_label")
 
     preprocess.save_data(
@@ -78,15 +93,15 @@ def save_participant_file(layout, img, subj):
     )
 
     file_to_move = os.path.join(
-        layout.root, "..", "deepMReye" + os.path.basename(output_file)
+        layout.root, "..", f"deepMReye{os.path.basename(output_file)}"
     )
 
     move_file(file_to_move, output_file)
 
 
 def combine():
+    """_summary_."""
     # add labels to dataset
-
     cfg = config()
 
     dataset_path = cfg["output_folder"]

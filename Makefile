@@ -57,9 +57,6 @@ lint: lint/flake8 lint/black ## check style
 test: ## run tests quickly with the default Python
 	pytest
 
-test-all: ## run tests on every Python version with tox
-	tox
-
 coverage: ## check code coverage quickly with the default Python
 	coverage run --source bidsmreye -m pytest
 	coverage report -m

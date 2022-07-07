@@ -14,7 +14,9 @@ def test_list_subjects():
 
     cfg = config()
 
-    data_path = os.path.join(get_test_data_path(), "synthetic", "derivatives", "fmriprep")
+    data_path = os.path.join(
+        get_test_data_path(), "synthetic", "derivatives", "fmriprep"
+    )
 
     layout = get_dataset_layout(data_path)
 
@@ -37,13 +39,16 @@ def test_return_path_rel_dataset():
     rel_file_path = return_path_rel_dataset(file_path, dataset_path)
 
     assert (
-        rel_file_path == "sub-03/func/sub-03_task-rest_space-T1w_desc-preproc_bold.nii.gz"
+        rel_file_path
+        == "sub-03/func/sub-03_task-rest_space-T1w_desc-preproc_bold.nii.gz"
     )
 
 
 def test_get_deepmreye_filename():
 
-    data_path = os.path.join(get_test_data_path(), "synthetic", "derivatives", "fmriprep")
+    data_path = os.path.join(
+        get_test_data_path(), "synthetic", "derivatives", "fmriprep"
+    )
 
     layout = get_dataset_layout(data_path)
 

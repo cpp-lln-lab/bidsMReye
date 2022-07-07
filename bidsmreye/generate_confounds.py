@@ -1,3 +1,4 @@
+"""foo."""
 import os
 import warnings
 
@@ -11,7 +12,7 @@ from utils import get_dataset_layout
 
 
 def generate_confounds():
-
+    """_summary_."""
     cfg = config()
 
     dataset_path = cfg["output_folder"]
@@ -28,7 +29,7 @@ def generate_confounds():
 
     evaluation = content.item(0)
 
-    all_data = []
+    # all_data = []
 
     subTR = False
 
