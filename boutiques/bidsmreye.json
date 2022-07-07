@@ -1,5 +1,5 @@
 {
-    "name": "bidsNighres",
+    "name": "bidsmreye",
     "command-line": "run.py [InputDataset] [OutputLocation] [AnalysisLevel] [ParticipantLabel] [Action]",
     "container-image": {
         "image": "bids/example",
