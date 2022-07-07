@@ -1,6 +1,6 @@
 {
-    "mask": "sub-{subject}/[ses-{session}]/func/sub-{subject}[_ses-{session}]_task-{task}[_acq-{acq}][_ce-{ce}][_rec-{rec}][_dir-{dir}][_run-{run}][_echo-{echo}][_part-{part}][_space-{space}][_res-{res}][_den-{den}][_label-{label}]_desc-eye_mask.p",
-    "report": "sub-{subject}/[ses-{session}]/func/sub-{subject}[_ses-{session}]_task-{task}[_acq-{acq}][_ce-{ce}][_rec-{rec}][_dir-{dir}][_run-{run}][_echo-{echo}][_part-{part}][_space-{space}][_res-{res}][_den-{den}][_label-{label}]_desc-eye_report.html",
-    "no_label": "sub-{subject}/[ses-{session}]/func/sub-{subject}[_ses-{session}]_task-{task}[_acq-{acq}][_ce-{ce}][_rec-{rec}][_dir-{dir}][_run-{run}][_echo-{echo}][_part-{part}][_space-{space}][_res-{res}][_den-{den}][_label-{label}]_desc-nolabel_deepmreye.npz",
-    "confounds": "sub-{subject}/[ses-{session}]/func/sub-{subject}[_ses-{session}]_task-{task}[_acq-{acq}][_ce-{ce}][_rec-{rec}][_dir-{dir}][_run-{run}][_echo-{echo}][_part-{part}][_space-{space}][_res-{res}][_den-{den}][_label-{label}]_desc-deepmreye_timeseries.tsv"
+    "mask": "sub-{subject}/[ses-{session}]/func/sub-{subject}[_ses-{session}]_task-{task}[_acq-{acquisition}][_ce-{ce}][_rec-{rec}][_dir-{dir}][_run-{run}][_echo-{echo}][_part-{part}][_space-{space}][_res-{res}][_den-{den}][_label-{label}]_desc-eye_mask.p",
+    "report": "sub-{subject}/[ses-{session}]/func/sub-{subject}[_ses-{session}]_task-{task}[_acq-{acquisition}][_ce-{ce}][_rec-{rec}][_dir-{dir}][_run-{run}][_echo-{echo}][_part-{part}][_space-{space}][_res-{res}][_den-{den}][_label-{label}]_desc-eye_report.html",
+    "no_label": "sub-{subject}/[ses-{session}]/func/sub-{subject}[_ses-{session}]_task-{task}[_acq-{acquisition}][_ce-{ce}][_rec-{rec}][_dir-{dir}][_run-{run}][_echo-{echo}][_part-{part}][_space-{space}][_res-{res}][_den-{den}][_label-{label}]_desc-nolabel_deepmreye.npz",
+    "confounds": "sub-{subject}/[ses-{session}]/func/sub-{subject}[_ses-{session}]_task-{task}[_acq-{acquisition}][_ce-{ce}][_rec-{rec}][_dir-{dir}][_run-{run}][_echo-{echo}][_part-{part}][_space-{space}][_res-{res}][_den-{den}][_label-{label}]_desc-deepmreye_timeseries.tsv"
 }

@@ -103,14 +103,14 @@ def init_derivatives_layout(output_location):
     layout_out = get_dataset_layout(output_location)
     layout_out = set_dataset_description(layout_out)
     layout_out.dataset_description["DatasetType"] = "derivative"
-    layout_out.dataset_description["GeneratedBy"][0]["Name"] = "bidsNighres"
+    layout_out.dataset_description["GeneratedBy"][0]["Name"] = "bidsmreye"
     write_dataset_description(layout_out)
     return layout_out
 
 
 def get_bidsname_config(config_file="") -> dict:
     """
-    See the Path construction demo in the pybids tuto.
+    See the Path construction demo in the pybids tutorial.
 
     https://github.com/bids-standard/pybids/blob/master/examples/pybids_tutorial.ipynb
     """
