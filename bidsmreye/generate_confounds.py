@@ -4,7 +4,7 @@ import warnings
 
 import numpy as np
 import pandas as pd
-from bidsname import create_bidsname
+from bidsutils import create_bidsname
 from rich import print
 from utils import check_layout
 from utils import config

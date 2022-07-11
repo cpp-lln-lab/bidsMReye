@@ -1,21 +1,15 @@
 #!/usr/bin/env python3
-import json
+import argparse
 import os
 import subprocess
-from os.path import abspath
-from os.path import dirname
-from os.path import join
-from os.path import realpath
+from glob import glob
 
-import click
-from rich import print
+import nibabel
+import numpy
 
-from bidsmreye.bidsutils import check_layout
-from bidsmreye.bidsutils import get_bids_filter_config
-from bidsmreye.bidsutils import get_dataset_layout
-from bidsmreye.bidsutils import init_derivatives_layout
-
-__version__ = open(join(dirname(realpath(__file__)), "version")).read()
+__version__ = open(
+    os.path.join(os.path.dirname(os.path.realpath(__file__)), "version")
+).read()
 
 
 def run(command, env={}):
@@ -38,120 +32,89 @@ def run(command, env={}):
         raise Exception("Non zero return code: %d" % process.returncode)
 
 
-@click.command()
-@click.option(
-    "--input-datasets",
-    help="""
-            The directory with the input dataset formatted according to the BIDS standard.
-            """,
-    type=click.Path(exists=True, dir_okay=True),
-    required=True,
+parser = argparse.ArgumentParser(description="Example BIDS App entrypoint script.")
+parser.add_argument(
+    "bids_dir",
+    help="The directory with the input dataset "
+    "formatted according to the BIDS standard.",
 )
-@click.option(
-    "--output-location",
-    help="""
-            The directory where the output files should be stored.
-            If you are running group level analysis this folder should be prepopulated
-            with the results of the participant level analysis.
-            """,
-    type=click.Path(exists=False, dir_okay=True),
-    required=True,
+parser.add_argument(
+    "output_dir",
+    help="The directory where the output files "
+    "should be stored. If you are running group level analysis "
+    "this folder should be prepopulated with the results of the"
+    "participant level analysis.",
 )
-@click.option(
-    "--analysis-level",
-    help="""
-            Level of the analysis that will be performed.
-            Multiple participant level analyses can be run independently
-            (in parallel) using the same output-location.
-            """,
-    default="subject",
-    type=click.Choice(["subject", "group"], case_sensitive=True),
-    required=True,
+parser.add_argument(
+    "analysis_level",
+    help="Level of the analysis that will be performed. "
+    "Multiple participant level analyses can be run independently "
+    "(in parallel) using the same output_dir.",
+    choices=["participant", "group"],
 )
-@click.option(
-    "--participant-label",
-    help="""
-            The label(s) of the participant(s) that should be analyzed. The label
-            corresponds to sub-<participant_label> from the BIDS spec
-            (so it does not include "sub-"). If this parameter is not
-            provided all subjects should be analyzed. Multiple
-            participants can be specified with a space separated list.
-            """,  # nargs ?
-    required=True,
+parser.add_argument(
+    "--participant_label",
+    help="The label(s) of the participant(s) that should be analyzed. The label "
+    "corresponds to sub-<participant_label> from the BIDS spec "
+    '(so it does not include "sub-"). If this parameter is not '
+    "provided all subjects should be analyzed. Multiple "
+    "participants can be specified with a space separated list.",
+    nargs="+",
 )
-# TODO: implement having a list of participants
-# https://stackoverflow.com/questions/48391777/nargs-equivalent-for-options-in-click
-@click.option(
-    "--action",
-    help="""
-            What to do
-            """,
-    type=click.Choice(
-        ["prepare", "combine", "generalize", "confounds"], case_sensitive=False
-    ),
-    required=True,
+parser.add_argument(
+    "--skip_bids_validator",
+    help="Whether or not to perform BIDS dataset validation",
+    action="store_true",
 )
-@click.option(
-    "--bids-filter-file",
-    help="""
-            Path to a JSON file to filter input file
-            """,
-    default="",
-    show_default=True,
+parser.add_argument(
+    "-v",
+    "--version",
+    action="version",
+    version=f"BIDS-App example version {__version__}",
 )
-@click.option(
-    "--dry-run",
-    help="""
-
-            """,
-    default=False,
-    show_default=True,
-)
-def main(
-    input_datasets,
-    output_location,
-    analysis_level,
-    participant_label,
-    action,
-    bids_filter_file,
-    dry_run,
-):
-
-    input_datasets = abspath(input_datasets)
-    print(f"Input dataset: {input_datasets}")
-
-    output_location = abspath(output_location)
-    print(f"Output location: {output_location}")
-
-    if bids_filter_file == "":
-        bids_filter = get_bids_filter_config()
-    else:
-        bids_filter = get_bids_filter_config(bids_filter_file)
-
-    if action == "prepare":
-
-        layout_in = get_dataset_layout(input_datasets)
-        check_layout(layout_in)
-
-        layout_out = init_derivatives_layout(output_location)
-
-        # print(layout.get_subjects())
-
-        # print(layout.get_sessions())
-
-        # TODO add loop for subjects
-
-        skullstrip(layout_in, layout_out, participant_label, bids_filter=bids_filter)
-
-    elif action == "combine":
-
-        layout_out = get_dataset_layout(output_location)
-
-        segment(layout_out, participant_label, bids_filter=bids_filter, dry_run=dry_run)
 
 
-# parser.add_argument('-v', '--version', action='version',
-#                     version='bidsNighRes {}'.format(__version__))
+args = parser.parse_args()
 
-if __name__ == "__main__":
-    main()
+if not args.skip_bids_validator:
+    run(f"bids-validator {args.bids_dir}")
+
+subjects_to_analyze = []
+# only for a subset of subjects
+if args.participant_label:
+    subjects_to_analyze = args.participant_label
+# for all subjects
+else:
+    subject_dirs = glob(os.path.join(args.bids_dir, "sub-*"))
+    subjects_to_analyze = [subject_dir.split("-")[-1] for subject_dir in subject_dirs]
+
+# running participant level
+if args.analysis_level == "participant":
+
+    # find all T1s and skullstrip them
+    for subject_label in subjects_to_analyze:
+        for T1_file in glob(
+            os.path.join(args.bids_dir, f"sub-{subject_label}", "anat", "*_T1w.nii*")
+        ) + glob(
+            os.path.join(
+                args.bids_dir, f"sub-{subject_label}", "ses-*", "anat", "*_T1w.nii*"
+            )
+        ):
+            out_file = os.path.split(T1_file)[-1].replace("_T1w.", "_brain.")
+            cmd = f"bet {T1_file} {os.path.join(args.output_dir, out_file)}"
+            print(cmd)
+            run(cmd)
+
+# running group level
+elif args.analysis_level == "group":
+    brain_sizes = []
+    for subject_label in subjects_to_analyze:
+        for brain_file in glob(
+            os.path.join(args.output_dir, f"sub-{subject_label}*.nii*")
+        ):
+            data = nibabel.load(brain_file).get_data()
+            # calcualte average mask size in voxels
+            brain_sizes.append((data != 0).sum())
+
+    with open(os.path.join(args.output_dir, "avg_brain_size.txt"), "w") as fp:
+        fp.write(f"Average brain size is {numpy.array(brain_sizes).mean():g} voxels")

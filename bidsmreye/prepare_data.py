@@ -1,7 +1,7 @@
 """foo."""
-from bidsname import create_bidsname
-from bidsname import set_dataset_description
-from bidsname import write_dataset_description
+from bidsutils import create_bidsname
+from bidsutils import set_dataset_description
+from bidsutils import write_dataset_description
 from deepmreye import preprocess
 from rich import print
 from utils import check_layout
