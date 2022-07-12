@@ -90,8 +90,11 @@ At the moment several value, including the input dataset, are hard coded in
 `utils.config`.
 
 ```bash
-python3 prepare_data.py
+bids_dir="$PWD/tests/data/moae_fmriprep"
+output_dir="$PWD/outputs"
+python3 bidsmreye.py $bids_dir $output_dir participant --action prepare
 ```
+
 
 ```bash
 python3 combine.py
@@ -108,3 +111,10 @@ python3 generate_confounds.py
 ## Credits
 
 This package was created with [Cookiecutter](https://github.com/audreyr/cookiecutter) and the [audreyr/cookiecutter-pypackage](https://github.com/audreyr/cookiecutter-pypackage) project template.
+
+```
+git clone https://github.com/cpp-lln-lab/bidsMReye.git
+cd bidsMReye
+pip install .
+make demo
+```

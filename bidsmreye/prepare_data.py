@@ -1,17 +1,17 @@
 """foo."""
-from bidsutils import check_layout
-from bidsutils import create_bidsname
-from bidsutils import get_dataset_layout
-from bidsutils import set_dataset_description
-from bidsutils import write_dataset_description
 from deepmreye import preprocess
 from rich import print
-from utils import config
-from utils import create_dir_if_absent
-from utils import get_deepmreye_filename
-from utils import list_subjects
-from utils import move_file
-from utils import return_regex
+
+from bidsmreye.bidsutils import check_layout
+from bidsmreye.bidsutils import create_bidsname
+from bidsmreye.bidsutils import get_dataset_layout
+from bidsmreye.bidsutils import set_dataset_description
+from bidsmreye.bidsutils import write_dataset_description
+from bidsmreye.utils import create_dir_if_absent
+from bidsmreye.utils import get_deepmreye_filename
+from bidsmreye.utils import list_subjects
+from bidsmreye.utils import move_file
+from bidsmreye.utils import return_regex
 
 
 def coregister_and_extract_data(img: str):
@@ -37,15 +37,13 @@ def coregister_and_extract_data(img: str):
     )
 
 
-def preprocess_subject(layout, subject_label):
+def preprocess_subject(cfg, layout, subject_label):
     """_summary_.
 
     Args:
         layout (_type_): _description_
         subject_label (_type_): _description_
     """
-    cfg = config()
-
     # TODO performance: do not reload the input layout for every subject
     layout = get_dataset_layout(cfg["input_folder"])
 
@@ -76,13 +74,14 @@ def preprocess_subject(layout, subject_label):
         move_file(deepmreye_mask_report, report_name)
 
 
-def preprocess_dataset(dataset_path):
+def prepare_data(cfg):
     """_summary_.
 
     Args:
         dataset_path (_type_): _description_
     """
-    cfg = config()
+    dataset_path = cfg["input_folder"]
+    print(f"\nindexing {dataset_path}\n")
 
     layout = get_dataset_layout(dataset_path)
     check_layout(layout)
@@ -102,17 +101,4 @@ def preprocess_dataset(dataset_path):
 
     for subject_label in subjects:
 
-        preprocess_subject(layout, subject_label)
-
-
-def main():
-    """_summary_."""
-    cfg = config()
-
-    print(f"\nindexing {cfg['input_folder']}\n")
-    preprocess_dataset(cfg["input_folder"])
-
-
-if __name__ == "__main__":
-
-    main()
+        preprocess_subject(cfg, layout, subject_label)
