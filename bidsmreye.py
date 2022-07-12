@@ -7,6 +7,7 @@ from glob import glob
 from rich import print
 
 from bidsmreye.combine import combine
+from bidsmreye.generalize import generalize
 from bidsmreye.prepare_data import prepare_data
 from bidsmreye.utils import config
 
@@ -90,3 +91,6 @@ if args.analysis_level == "participant":
 
     elif args.action == "combine":
         combine(cfg)
+
+    elif args.action == "generalize":
+        generalize(cfg)

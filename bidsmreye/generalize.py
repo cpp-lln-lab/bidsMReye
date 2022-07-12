@@ -1,22 +1,20 @@
 """foo."""
 import os
 
-from bidsutils import check_layout
-from bidsutils import get_dataset_layout
 from deepmreye import analyse
 from deepmreye import train
 from deepmreye.util import data_generator
 from deepmreye.util import model_opts
 from rich import print
-from utils import config
-from utils import list_subjects
-from utils import return_regex
+
+from bidsmreye.bidsutils import check_layout
+from bidsmreye.bidsutils import get_dataset_layout
+from bidsmreye.utils import list_subjects
+from bidsmreye.utils import return_regex
 
 
-def main():
+def generalize(cfg):
     """_summary_."""
-    cfg = config()
-
     dataset_path = cfg["output_folder"]
 
     print(f"\nindexing {dataset_path}\n")
@@ -82,8 +80,3 @@ def main():
         ylim=[-11, 11],
     )
     fig.show()
-
-
-if __name__ == "__main__":
-
-    main()
