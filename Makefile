@@ -46,6 +46,10 @@ clean-test: ## remove test and coverage artifacts
 	rm -f .coverage
 	rm -fr htmlcov/
 	rm -fr .pytest_cache
+	rm -fr tests/data
+
+clean-models:
+	rm -fr models/
 
 lint/flake8: ## check style with flake8
 	flake8 bidsmreye tests
@@ -53,9 +57,6 @@ lint/black: ## check style with black
 	black bidsmreye tests
 
 lint: lint/flake8 lint/black ## check style
-
-test: ## run tests quickly with the default Python
-	pytest
 
 coverage: ## check code coverage quickly with the default Python
 	coverage run --source bidsmreye -m pytest
@@ -84,3 +85,24 @@ dist: clean ## builds source and wheel package
 
 install: clean ## install the package to the active Python's site-packages
 	python setup.py install
+
+## run the tests
+test: models test_data ## run tests quickly with the default Python
+	pytest
+
+tests/data/moae_fmriprep:
+	mkdir -p tests/data
+	wget https://osf.io/vufjs/download
+	unzip download
+	mv moae_fmriprep tests/data/moae_fmriprep
+
+## PRE-TRAINED MODELS
+models: models/dataset1_guided_fixations.h5 models/dataset5_free_viewing.h5
+
+models/dataset1_guided_fixations.h5:
+	mkdir -p models
+	wget https://osf.io/download/cqf74/ -O models/dataset1_guided_fixations.h5
+
+models/dataset5_free_viewing.h5:
+	mkdir -p models
+	wget https://osf.io/download/89nky/ -O models/dataset5_free_viewing.h5
