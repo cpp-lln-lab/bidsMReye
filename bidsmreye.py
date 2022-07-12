@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """foo."""
 import argparse
 import os

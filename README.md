@@ -1,24 +1,12 @@
+[![Test demo](https://github.com/cpp-lln-lab/bidsMReye/actions/workflows/test_demo.yml/badge.svg)](https://github.com/cpp-lln-lab/bidsMReye/actions/workflows/test_demo.yml)
+[![Test and coverage](https://github.com/cpp-lln-lab/bidsMReye/actions/workflows/test_and_coverage.yml/badge.svg)](https://github.com/cpp-lln-lab/bidsMReye/actions/workflows/test_and_coverage.yml)
+[![Documentation Status](https://readthedocs.org/projects/bidsmreye/badge/?version=latest)](https://bidsmreye.readthedocs.io/en/latest/?badge=latest)
+![https://github.com/psf/black](https://img.shields.io/badge/code%20style-black-000000.svg)
+
 # bidsMReye
 
-- [bidsMReye](#bidsmreye)
-        - [Install](#install)
-        - [dev install](#dev-install)
-        - [Demo](#demo)
-        - [Example](#example)
-        - [Credits](#credits)
-
-- Free software: GNU General Public License v3
-- Documentation: https://bidsmreye.readthedocs.io.
-
-<!--
-.. image:: https://img.shields.io/pypi/v/bidsmreye.svg
-        :target: https://pypi.python.org/pypi/bidsmreye
-
-.. image:: https://readthedocs.org/projects/bidsmreye/badge/?version=latest
-        :target: https://bidsmreye.readthedocs.io/en/latest/?version=latest
-        :alt: Documentation Status
-
--->
+- [bidsMReye](#bidsmreye) - [Install](#install) - [dev install](#dev-install) -
+  [Demo](#demo) - [Example](#example) - [Credits](#credits)
 
 BIDS app using deepMReye to decode eye motion for fMRI time series data.
 
@@ -33,6 +21,8 @@ of the presence of eye movement labels and could thus be usefull to share
 anonimysed subject data to the deepMReye dev team to allow them to improve their
 pre-trained models.
 
+- Free software: GNU General Public License v3
+- Documentation: https://bidsmreye.readthedocs.io.
 
 ## Install
 
@@ -51,7 +41,7 @@ pip install .
 ## dev install
 
 ```bash
-pip install -r requirements.txt
+pip install -r requirements_dev.txt
 ```
 
 ## Demo
@@ -68,38 +58,37 @@ make demo
 ## Example
 
 ```bash
+bids_dir="$PWD/tests/data/moae_fmriprep "
+output_dir="$PWD/outputs "
 
-input_dataset="/home/remi/gin/CPP/can_blind_restingState/derivatives/fmriprep"
-output_location="/home/remi/gin/CPP/can_blind_restingState/derivatives/bidsmreye"
+python3 bidsmreye.py \
+        --space MNI152NLin6Asym \
+        --task auditory \
+        --action prepare \
+        $bids_dir \
+        $output_dir
 
-python bidsmreye.py
-              --participant-label cb01 \
-              --action prepare \
-              --dry-run true
-              ${input_dataset} \
-              ${output_location} \
-              participant
-```
+python3 bidsmreye.py \
+        --space MNI152NLin6Asym \
+        --task auditory \
+        --action combine \
+        $bids_dir \
+        $output_dir
 
-At the moment several value, including the input dataset, are hard coded in
-`utils.config`.
+python3 bidsmreye.py \
+        --space MNI152NLin6Asym \
+        --task auditory \
+        --action generalize \
+        --model guided_fixations \
+        $bids_dir \
+        $output_dir
 
-```bash
-bids_dir="$PWD/tests/data/moae_fmriprep"
-output_dir="$PWD/outputs"
-python3 bidsmreye.py $bids_dir $output_dir participant --action prepare
-```
-
-```bash
-python3 combine.py
-```
-
-```bash
-python3 generalize.py
-```
-
-```bash
-python3 generate_confounds.py
+python3 bidsmreye.py \
+        --space MNI152NLin6Asym \
+        --task auditory \
+        --action confounds \
+        $bids_dir \
+        $output_dir
 ```
 
 ## Credits
