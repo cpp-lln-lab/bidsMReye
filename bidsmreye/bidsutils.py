@@ -216,7 +216,7 @@ def check_layout(layout):
     )
 
     generated_by = desc["GeneratedBy"][0]["Name"]
-    if generated_by.lower() == "deepmreye":
+    if generated_by.lower() == "bidsmreye":
         bf = layout.get(
             return_type="filename",
             task=cfg["task"],

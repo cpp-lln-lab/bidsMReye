@@ -1,7 +1,7 @@
 # bidsMReye
 
--   Free software: GNU General Public License v3
--   Documentation: https://bidsmreye.readthedocs.io.
+- Free software: GNU General Public License v3
+- Documentation: https://bidsmreye.readthedocs.io.
 
 <!--
 .. image:: https://img.shields.io/pypi/v/bidsmreye.svg
@@ -32,59 +32,55 @@ of the presence of eye movement labels and could thus be usefull to share
 anonimysed subject data to the deepMReye dev team to allow them to improve their
 pre-trained models.
 
-- [bidsMReye](#bidsmreye)
-        - [Install](#install)
-        - [DEV install](#dev-install)
-        - [Run](#run)
-        - [Credits](#credits)
+- [bidsMReye](#bidsmreye) - [Install](#install) - [dev install](#dev-install) -
+  [Demo](#demo) - [Run](#run) - [Credits](#credits)
 
 ## Install
 
 Inside a virtual environment (`conda` or `virtualenv` or whatever floats your
 boat ⛵)
 
-```
+```bash
 virtualenv -p /usr/bin/python3.8 env
 source env/bin/activate
 ```
 
-From the `code` directory
-
-<!-- TODO fix bug in deepMReye that makes it impossible to find the masks -->
-
-```
-pip install -r requirements.txt
-cd lib/deepMReye
+```bash
 pip install .
 ```
 
-## DEV install
+## dev install
 
-use poetry
+```bash
+pip install -r requirements.txt
+```
 
-run poetry install
+## Demo
 
-## Run
+Requires make
 
+```
+git clone https://github.com/cpp-lln-lab/bidsMReye.git
+cd bidsMReye
+pip install .
+make demo
+```
+
+## Example
 
 ```bash
 
 input_dataset="/home/remi/gin/CPP/can_blind_restingState/derivatives/fmriprep"
 output_location="/home/remi/gin/CPP/can_blind_restingState/derivatives/bidsmreye"
 
-python run.py --input-datasets ${input_dataset} \
-              --output-location ${output_location} \
-              --analysis-level subject \
+python bidsmreye.py
               --participant-label cb01 \
               --action prepare \
               --dry-run true
+              ${input_dataset} \
+              ${output_location} \
+              participant
 ```
-
-
-
-python run.py
-
-
 
 At the moment several value, including the input dataset, are hard coded in
 `utils.config`.
@@ -94,7 +90,6 @@ bids_dir="$PWD/tests/data/moae_fmriprep"
 output_dir="$PWD/outputs"
 python3 bidsmreye.py $bids_dir $output_dir participant --action prepare
 ```
-
 
 ```bash
 python3 combine.py
@@ -110,11 +105,7 @@ python3 generate_confounds.py
 
 ## Credits
 
-This package was created with [Cookiecutter](https://github.com/audreyr/cookiecutter) and the [audreyr/cookiecutter-pypackage](https://github.com/audreyr/cookiecutter-pypackage) project template.
-
-```
-git clone https://github.com/cpp-lln-lab/bidsMReye.git
-cd bidsMReye
-pip install .
-make demo
-```
+This package was created with
+[Cookiecutter](https://github.com/audreyr/cookiecutter) and the
+[audreyr/cookiecutter-pypackage](https://github.com/audreyr/cookiecutter-pypackage)
+project template.

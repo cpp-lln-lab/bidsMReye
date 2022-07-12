@@ -6,6 +6,7 @@ from glob import glob
 
 from rich import print
 
+from bidsmreye.combine import combine
 from bidsmreye.prepare_data import prepare_data
 from bidsmreye.utils import config
 
@@ -74,15 +75,18 @@ else:
 
 cfg = config()
 
+if args.task:
+    cfg["task"] = args.task
+if args.task:
+    cfg["space"] = args.space
+
+cfg["input_folder"] = args.bids_dir
+cfg["output_folder"] = os.path.join(args.output_dir, "bidsmreye")
+
 if args.analysis_level == "participant":
-
-    cfg["input_folder"] = args.bids_dir
-    cfg["output_folder"] = args.output_dir
-
-    if args.task:
-        cfg["task"] = args.task
-    if args.task:
-        cfg["space"] = args.space
 
     if args.action == "prepare":
         prepare_data(cfg)
+
+    elif args.action == "combine":
+        combine(cfg)

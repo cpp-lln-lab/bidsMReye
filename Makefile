@@ -110,11 +110,17 @@ models/dataset5_free_viewing.h5:
 
 ## DEMO
 
-demo: tests/data/moae_fmriprep models/dataset1_guided_fixations.h5
+demo: clean-demo tests/data/moae_fmriprep models/dataset1_guided_fixations.h5
 	python3 bidsmreye.py --space MNI152NLin6Asym --task auditory --action prepare $$PWD/tests/data/moae_fmriprep $$PWD/outputs participant
-	python3 bidsmreye/combine.py
+	python3 bidsmreye.py --space MNI152NLin6Asym --task auditory --action combine $$PWD/tests/data/moae_fmriprep $$PWD/outputs participant
 	python3 bidsmreye/generalize.py
 	python3 bidsmreye/generate_confounds.py
+
+prepare_data: clean-demo tests/data/moae_fmriprep models/dataset1_guided_fixations.h5
+	python3 bidsmreye.py --space MNI152NLin6Asym --task auditory --action prepare $$PWD/tests/data/moae_fmriprep $$PWD/outputs participant
+
+combine:
+	python3 bidsmreye.py --space MNI152NLin6Asym --task auditory --action combine $$PWD/tests/data/moae_fmriprep $$PWD/outputs participant
 
 clean-demo:
 	rm -fr outputs

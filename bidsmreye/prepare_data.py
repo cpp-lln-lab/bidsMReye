@@ -90,7 +90,7 @@ def prepare_data(cfg):
     output = get_dataset_layout(cfg["output_folder"])
     output = set_dataset_description(output)
     output.dataset_description["DatasetType"] = "derivative"
-    output.dataset_description["GeneratedBy"][0]["Name"] = "deepMReye"
+    output.dataset_description["GeneratedBy"][0]["Name"] = "bidsmreye"
     write_dataset_description(output)
 
     subjects = list_subjects(layout, cfg)

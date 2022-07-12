@@ -4,26 +4,24 @@ import pickle
 import warnings
 
 import numpy as np
-from bidsutils import check_layout
-from bidsutils import create_bidsname
-from bidsutils import get_dataset_layout
 from deepmreye import preprocess
 from rich import print
-from utils import config
-from utils import list_subjects
-from utils import move_file
-from utils import return_regex
+
+from bidsmreye.bidsutils import check_layout
+from bidsmreye.bidsutils import create_bidsname
+from bidsmreye.bidsutils import get_dataset_layout
+from bidsmreye.utils import list_subjects
+from bidsmreye.utils import move_file
+from bidsmreye.utils import return_regex
 
 
-def process_subject(layout, subject_label):
+def process_subject(cfg, layout, subject_label):
     """_summary_.
 
     Args:
         layout (_type_): _description_
         subject_label (_type_): _description_
     """
-    cfg = config()
-
     # TODO performance: do not reload the input layout for every subject
     layout = get_dataset_layout(cfg["output_folder"])
 
@@ -93,16 +91,15 @@ def save_participant_file(layout, img, subj):
     )
 
     file_to_move = os.path.join(
-        layout.root, "..", f"bidsMReye{os.path.basename(output_file)}"
+        layout.root, "..", f"bidsmreye{os.path.basename(output_file)}"
     )
 
     move_file(file_to_move, output_file)
 
 
-def main():
+def combine(cfg):
     """_summary_."""
     # add labels to dataset
-    cfg = config()
 
     dataset_path = cfg["output_folder"]
 
@@ -119,9 +116,4 @@ def main():
 
     for subject_label in subjects:
 
-        process_subject(layout, subject_label)
-
-
-if __name__ == "__main__":
-
-    main()
+        process_subject(cfg, layout, subject_label)
