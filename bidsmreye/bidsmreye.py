@@ -49,12 +49,14 @@ parser.add_argument(
     help="Whether or not to perform BIDS dataset validation",
     action="store_true",
 )
-parser.add_argument(
-    "-v",
-    "--version",
-    action="version",
-    version=f"BIDS-App example version {__version__}",
-)
+
+# TODO
+# parser.add_argument(
+#     "-v",
+#     "--version",
+#     action="version",
+#     version=f"BIDS-App example version {__version__}",
+# )
 
 
 # @click.option(
