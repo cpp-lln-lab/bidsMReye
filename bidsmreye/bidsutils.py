@@ -6,8 +6,9 @@ from os.path import join
 from pathlib import Path
 
 from bids import BIDSLayout
-from utils import config
-from utils import create_dir_if_absent
+
+from bidsmreye.utils import config
+from bidsmreye.utils import create_dir_if_absent
 
 
 def get_dataset_layout(dataset_path: str, config={}):

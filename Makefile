@@ -114,6 +114,7 @@ demo: tests/data/moae_fmriprep models/dataset1_guided_fixations.h5
 	python3 bidsmreye/prepare_data.py
 	python3 bidsmreye/combine.py
 	python3 bidsmreye/generalize.py
+	python3 bidsmreye/generate_confounds.py
 
 clean-demo:
 	rm -fr outputs

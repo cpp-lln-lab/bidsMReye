@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+"""foo."""
 import argparse
 import os
 import subprocess
@@ -13,6 +14,18 @@ __version__ = open(
 
 
 def run(command, env={}):
+    """_summary_.
+
+    Args:
+        command (_type_): _description_
+        env (dict, optional): _description_. Defaults to {}.
+
+    Raises:
+        Exception: _description_
+
+    Returns:
+        _type_: _description_
+    """
     merged_env = os.environ
     merged_env.update(env)
     process = subprocess.Popen(
@@ -26,7 +39,7 @@ def run(command, env={}):
         line = process.stdout.readline()
         line = str(line, "utf-8")[:-1]
         print(line)
-        if line == "" and process.poll() != None:
+        if line == "" and process.poll() is not None:
             break
     if process.returncode != 0:
         raise Exception("Non zero return code: %d" % process.returncode)
