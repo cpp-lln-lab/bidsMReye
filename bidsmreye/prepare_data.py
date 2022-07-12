@@ -1,13 +1,13 @@
 """foo."""
+from bidsutils import check_layout
 from bidsutils import create_bidsname
+from bidsutils import get_dataset_layout
 from bidsutils import set_dataset_description
 from bidsutils import write_dataset_description
 from deepmreye import preprocess
 from rich import print
-from utils import check_layout
 from utils import config
 from utils import create_dir_if_absent
-from utils import get_dataset_layout
 from utils import get_deepmreye_filename
 from utils import list_subjects
 from utils import move_file
@@ -105,9 +105,14 @@ def preprocess_dataset(dataset_path):
         preprocess_subject(layout, subject_label)
 
 
-def prepare_data():
+def main():
     """_summary_."""
     cfg = config()
 
     print(f"\nindexing {cfg['input_folder']}\n")
     preprocess_dataset(cfg["input_folder"])
+
+
+if __name__ == "__main__":
+
+    main()

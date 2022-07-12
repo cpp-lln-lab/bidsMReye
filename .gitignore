@@ -3,7 +3,7 @@ Pipfile
 data
 derivatives
 models
-
+outputs
 download*
 
 # Byte-compiled / optimized / DLL files

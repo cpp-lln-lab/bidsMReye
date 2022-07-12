@@ -16,13 +16,13 @@ def config() -> dict:
         dict: _description_
     """
     cfg = {
-        "output_folder": "../outputs/deepMReye/",
-        "input_folder": "../inputs/rest_blnd_can_fmriprep/",
-        "model_weights_file": "../inputs/models/dataset1_guided_fixations.h5",
+        "output_folder": "/home/remi/github/bidsMReye/outputs/bidsMReye/",
+        "input_folder": "/home/remi/github/bidsMReye/tests/data/moae_fmriprep/",
+        "model_weights_file": "/home/remi/github/bidsMReye/models/dataset1_guided_fixations.h5",
         "participant": [],
-        "space": "MNI152NLin2009cAsym",
+        "space": "MNI152NLin6Asym",
         "suffix": "bold",
-        "task": "rest",
+        "task": "auditory",
         "debug": False,
     }
 
