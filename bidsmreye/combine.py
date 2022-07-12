@@ -4,12 +4,12 @@ import pickle
 import warnings
 
 import numpy as np
-from bidsname import create_bidsname
+from bidsutils import check_layout
+from bidsutils import create_bidsname
+from bidsutils import get_dataset_layout
 from deepmreye import preprocess
 from rich import print
-from utils import check_layout
 from utils import config
-from utils import get_dataset_layout
 from utils import list_subjects
 from utils import move_file
 from utils import return_regex
@@ -93,13 +93,13 @@ def save_participant_file(layout, img, subj):
     )
 
     file_to_move = os.path.join(
-        layout.root, "..", f"deepMReye{os.path.basename(output_file)}"
+        layout.root, "..", f"bidsMReye{os.path.basename(output_file)}"
     )
 
     move_file(file_to_move, output_file)
 
 
-def combine():
+def main():
     """_summary_."""
     # add labels to dataset
     cfg = config()
@@ -120,3 +120,8 @@ def combine():
     for subject_label in subjects:
 
         process_subject(layout, subject_label)
+
+
+if __name__ == "__main__":
+
+    main()

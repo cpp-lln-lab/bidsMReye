@@ -26,7 +26,7 @@ BROWSER := python -c "$$BROWSER_PYSCRIPT"
 help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
-clean: clean-build clean-pyc clean-test ## remove all build, test, coverage and Python artifacts
+clean: clean-build clean-pyc clean-test clean-models clean-demo ## remove all build, test, coverage and Python artifacts
 
 clean-build: ## remove build artifacts
 	rm -fr build/
@@ -106,3 +106,14 @@ models/dataset1_guided_fixations.h5:
 models/dataset5_free_viewing.h5:
 	mkdir -p models
 	wget https://osf.io/download/89nky/ -O models/dataset5_free_viewing.h5
+
+
+## DEMO
+
+demo: tests/data/moae_fmriprep models/dataset1_guided_fixations.h5
+	python3 bidsmreye/prepare_data.py
+	python3 bidsmreye/combine.py
+	python3 bidsmreye/generalize.py
+
+clean-demo:
+	rm -fr outputs

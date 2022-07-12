@@ -1,19 +1,19 @@
 """foo."""
 import os
 
+from bidsutils import check_layout
+from bidsutils import get_dataset_layout
 from deepmreye import analyse
 from deepmreye import train
 from deepmreye.util import data_generator
 from deepmreye.util import model_opts
 from rich import print
-from utils import check_layout
 from utils import config
-from utils import get_dataset_layout
 from utils import list_subjects
 from utils import return_regex
 
 
-def generalize():
+def main():
     """_summary_."""
     cfg = config()
 
@@ -82,3 +82,8 @@ def generalize():
         ylim=[-11, 11],
     )
     fig.show()
+
+
+if __name__ == "__main__":
+
+    main()
