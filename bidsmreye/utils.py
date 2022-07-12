@@ -18,10 +18,9 @@ def config() -> dict:
     cfg = {
         "output_folder": "",
         "input_folder": "",
-        "model_weights_file": "/home/remi/github/bidsMReye/models/dataset1_guided_fixations.h5",
+        "model_weights_file": "",
         "participant": [],
         "space": "",
-        "suffix": "bold",
         "task": "",
         "debug": False,
     }
@@ -78,7 +77,7 @@ def return_regex(string):
     return f"^{string}$"
 
 
-def list_subjects(layout, cfg={}):
+def list_subjects(layout, cfg=None):
     """_summary_.
 
     Args:
@@ -91,7 +90,7 @@ def list_subjects(layout, cfg={}):
     Returns:
         _type_: _description_
     """
-    if cfg == {} or cfg["participant"] == []:
+    if cfg is None or cfg["participant"] == []:
         subjects = layout.get_subjects()
     else:
         subjects = layout.get(
@@ -127,7 +126,7 @@ def get_deepmreye_filename(layout, img: str, filetype: str) -> str:
     Returns:
         str: _description_
     """
-    if len(img) == 0:
+    if not img:
         raise Exception("No file")
 
     if isinstance(img, (list)):

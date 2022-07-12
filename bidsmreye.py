@@ -58,6 +58,7 @@ parser.add_argument(
 parser.add_argument(
     "--model",
     help="model to use",
+    choices=["guided_fixations"],
 )
 parser.add_argument(
     "--debug",
@@ -84,6 +85,15 @@ if args.task:
 
 cfg["input_folder"] = args.bids_dir
 cfg["output_folder"] = os.path.join(args.output_dir, "bidsmreye")
+
+if args.model == "guided_fixations":
+    cfg["model_weights_file"] = os.path.join(
+        os.path.dirname(os.path.realpath(__file__)),
+        "models",
+        "dataset1_guided_fixations.h5",
+    )
+
+print(cfg["model_weights_file"])
 
 if args.analysis_level == "participant":
 

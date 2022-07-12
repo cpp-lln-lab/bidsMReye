@@ -123,7 +123,7 @@ combine:
 	python3 bidsmreye.py --space MNI152NLin6Asym --task auditory --action combine $$PWD/tests/data/moae_fmriprep $$PWD/outputs participant
 
 generalize:
-	python3 bidsmreye.py --space MNI152NLin6Asym --task auditory --action generalize $$PWD/tests/data/moae_fmriprep $$PWD/outputs participant
+	python3 bidsmreye.py --space MNI152NLin6Asym --task auditory --model guided_fixations --action generalize $$PWD/tests/data/moae_fmriprep $$PWD/outputs participant
 
 confounds:
 	python3 bidsmreye.py --space MNI152NLin6Asym --task auditory --action confounds $$PWD/tests/data/moae_fmriprep $$PWD/outputs participant
