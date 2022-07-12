@@ -16,13 +16,13 @@ def config() -> dict:
         dict: _description_
     """
     cfg = {
-        "output_folder": "/home/remi/github/bidsMReye/outputs/bidsMReye/",
-        "input_folder": "/home/remi/github/bidsMReye/tests/data/moae_fmriprep/",
+        "output_folder": "",
+        "input_folder": "",
         "model_weights_file": "/home/remi/github/bidsMReye/models/dataset1_guided_fixations.h5",
         "participant": [],
-        "space": "MNI152NLin6Asym",
+        "space": "",
         "suffix": "bold",
-        "task": "auditory",
+        "task": "",
         "debug": False,
     }
 
@@ -34,7 +34,7 @@ def config() -> dict:
 
 
 def move_file(input: str, output: str):
-    """_summary_.
+    """Move or rename a file and create target directory if it does not exist.
 
     Args:
         input (str): _description_

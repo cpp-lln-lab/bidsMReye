@@ -4,17 +4,15 @@ import warnings
 
 import numpy as np
 import pandas as pd
-from bidsutils import check_layout
-from bidsutils import create_bidsname
-from bidsutils import get_dataset_layout
 from rich import print
-from utils import config
+
+from bidsmreye.bidsutils import check_layout
+from bidsmreye.bidsutils import create_bidsname
+from bidsmreye.bidsutils import get_dataset_layout
 
 
-def main():
+def generate_confounds(cfg):
     """_summary_."""
-    cfg = config()
-
     dataset_path = cfg["output_folder"]
 
     print(f"\nindexing {dataset_path}\n")
@@ -50,8 +48,3 @@ def main():
         pd.DataFrame(this_pred).to_csv(
             confound_name, sep="\t", header=["x_position", "y_position"], index=None
         )
-
-
-if __name__ == "__main__":
-
-    main()
