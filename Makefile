@@ -58,12 +58,6 @@ lint/black: ## check style with black
 
 lint: lint/flake8 lint/black ## check style
 
-coverage: ## check code coverage quickly with the default Python
-	coverage run --source bidsmreye -m pytest
-	coverage report -m
-	coverage html
-	$(BROWSER) htmlcov/index.html
-
 docs: ## generate Sphinx HTML documentation, including API docs
 	rm -f docs/source/bidsmreye.rst
 	rm -f docs/source/modules.rst
@@ -88,7 +82,8 @@ install: clean ## install the package to the active Python's site-packages
 
 ## run the tests
 test: models tests/data/moae_fmriprep ## run tests quickly with the default Python
-	pytest -vv --cov bidsmreye --cov-report html:htmlcov  tests
+	pytest --cov bidsmreye --cov-report html:htmlcov
+	$(BROWSER) htmlcov/index.html
 
 tests/data/moae_fmriprep:
 	mkdir -p tests/data
