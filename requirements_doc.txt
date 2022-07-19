@@ -1,6 +1,0 @@
-sphinx >=2.0
-sphinx-argparse
-sphinx_rtd_theme
-myst-parser
-sphinx-copybutton
-rstcheck
