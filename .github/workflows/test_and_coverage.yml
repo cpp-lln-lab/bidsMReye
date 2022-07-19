@@ -12,8 +12,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-20.04]
-        python-version: ['3.8', '3.9']
+        os: [macos-latest, ubuntu-latest]
+        python-version: ['3.8', '3.9', '3.10']
 
     steps:
 
@@ -31,7 +31,7 @@ jobs:
         pip install .[test]
 
     - name: Run tests and generate coverage report
-      run: pytest --cov=./ --cov-report=xml
+      run: pytest -vv --cov bidsmreye --cov-report=xml tests
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
