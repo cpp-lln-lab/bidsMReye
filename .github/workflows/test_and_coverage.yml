@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         os: [macos-latest, ubuntu-latest]
-        python-version: ['3.8', '3.9', '3.10']
+        python-version: ['3.8', '3.9']
 
     steps:
 
@@ -40,4 +40,3 @@ jobs:
         flags: tests
         name: codecov-umbrella
         fail_ci_if_error: true
-        verbose: true
