@@ -1,5 +1,6 @@
 [![Test demo](https://github.com/cpp-lln-lab/bidsMReye/actions/workflows/test_demo.yml/badge.svg)](https://github.com/cpp-lln-lab/bidsMReye/actions/workflows/test_demo.yml)
 [![Test and coverage](https://github.com/cpp-lln-lab/bidsMReye/actions/workflows/test_and_coverage.yml/badge.svg)](https://github.com/cpp-lln-lab/bidsMReye/actions/workflows/test_and_coverage.yml)
+[![codecov](https://codecov.io/gh/cpp-lln-lab/bidsMReye/branch/main/graph/badge.svg?token=G5fm2kaloM)](https://codecov.io/gh/cpp-lln-lab/bidsMReye)
 [![Documentation Status](https://readthedocs.org/projects/bidsmreye/badge/?version=latest)](https://bidsmreye.readthedocs.io/en/latest/?badge=latest)
 ![https://github.com/psf/black](https://img.shields.io/badge/code%20style-black-000000.svg)
 
@@ -12,18 +13,14 @@ To be used on preprocessed BIDS derivatives (like those from fMRIprep), to
 predict eye movements from the bold data when no eye movement data are
 available.
 
-UBy default it uses the [deepMReye](https://github.com/DeepMReye/DeepMReye)
-pre-trained "fixation" model.
+By default it uses the [deepMReye](https://github.com/DeepMReye/DeepMReye)
+[pre-trained "fixation" model](https://osf.io/cqf74).
 
 The first part of the pipeline can however be used to extract data, irrespective
 of the presence of eye movement labels and could thus be usefull to share
 anonimysed subject data to the
 [deepMReye](https://github.com/DeepMReye/DeepMReye) dev team to allow them to
 improve their pre-trained models.
-
-- Free software: GNU General Public License v3
-- Documentation: https://bidsmreye.readthedocs.io.
-
 ## Install
 
 Inside a virtual environment (`conda` or `virtualenv` or whatever floats your
