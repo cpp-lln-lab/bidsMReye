@@ -19,9 +19,10 @@
 import os
 import sys
 
+import bidsmreye
+
 sys.path.insert(0, os.path.abspath("../.."))
 
-import bidsmreye
 
 # -- General configuration ---------------------------------------------
 
