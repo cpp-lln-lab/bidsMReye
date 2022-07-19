@@ -87,8 +87,8 @@ install: clean ## install the package to the active Python's site-packages
 	python setup.py install
 
 ## run the tests
-test: models test_data ## run tests quickly with the default Python
-	pytest
+test: models tests/data/moae_fmriprep ## run tests quickly with the default Python
+	pytest -vv --cov bidsmreye --cov-report html:htmlcov  tests
 
 tests/data/moae_fmriprep:
 	mkdir -p tests/data
