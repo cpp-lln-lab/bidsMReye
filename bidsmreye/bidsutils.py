@@ -6,7 +6,6 @@ from os.path import join
 from pathlib import Path
 
 from bids import BIDSLayout
-from rich import print
 
 from bidsmreye.utils import config
 from bidsmreye.utils import create_dir_if_absent
@@ -183,9 +182,6 @@ def create_bidsname(layout, filename, filetype: str) -> str:
         entities = filename
 
     bids_name_config = get_bidsname_config()
-
-    print(bids_name_config)
-    print(entities)
 
     output_file = layout.build_path(entities, bids_name_config[filetype], validate=False)
 

@@ -1,6 +1,7 @@
 {
-    "mask": "sub-{subject}/[ses-{session}]/func/sub-{subject}[_ses-{session}]_task-{task}[_acq-{acquisition}][_ce-{ce}][_rec-{rec}][_dir-{dir}][_run-{run}][_echo-{echo}][_part-{part}][_space-{space}][_res-{res}][_den-{den}][_label-{label}]_desc-eye_mask.p",
-    "report": "sub-{subject}/[ses-{session}]/func/sub-{subject}[_ses-{session}]_task-{task}[_acq-{acquisition}][_ce-{ce}][_rec-{rec}][_dir-{dir}][_run-{run}][_echo-{echo}][_part-{part}][_space-{space}][_res-{res}][_den-{den}][_label-{label}]_desc-eye_report.html",
-    "no_label": "sub-{subject}/[ses-{session}]/func/sub-{subject}[_ses-{session}]_task-{task}[_acq-{acquisition}][_ce-{ce}][_rec-{rec}][_dir-{dir}][_run-{run}][_echo-{echo}][_part-{part}][_space-{space}][_res-{res}][_den-{den}][_label-{label}]_desc-nolabel_bidsmreye.npz",
-    "confounds": "sub-{subject}/[ses-{session}]/func/sub-{subject}[_ses-{session}]_task-{task}[_acq-{acquisition}][_ce-{ce}][_rec-{rec}][_dir-{dir}][_run-{run}][_echo-{echo}][_part-{part}][_space-{space}][_res-{res}][_den-{den}][_label-{label}]_desc-bidsmreye_timeseries.tsv"
+    "mask": "sub-{subject}/[ses-{session}]/func/sub-{subject}[_ses-{session}]_task-{task}[_acq-{acquisition}][_ce-{ce}][_rec-{rec}][_dir-{dir}][_run-{run}][_space-{space}][_res-{res}][_den-{den}]_desc-eye_mask.p",
+    "report": "sub-{subject}/[ses-{session}]/func/sub-{subject}[_ses-{session}]_task-{task}[_acq-{acquisition}][_ce-{ce}][_rec-{rec}][_dir-{dir}][_run-{run}][_space-{space}][_res-{res}][_den-{den}]_desc-eye_report.html",
+    "no_label": "sub-{subject}/[ses-{session}]/func/sub-{subject}[_ses-{session}]_task-{task}[_acq-{acquisition}][_ce-{ce}][_rec-{rec}][_dir-{dir}][_run-{run}][_space-{space}][_res-{res}][_den-{den}]_desc-nolabel_bidsmreye.npz",
+    "confounds_tsv": "sub-{subject}/[ses-{session}]/func/sub-{subject}[_ses-{session}]_task-{task}[_acq-{acquisition}][_ce-{ce}][_rec-{rec}][_dir-{dir}][_run-{run}][_space-{space}]_desc-bidsmreye_timeseries.tsv",
+    "confounds_numpy": "sub-{subject}/[ses-{session}]/func/sub-{subject}[_ses-{session}]_task-{task}_space-{space}_desc-bidsmreye_confounds.npy"
 }
