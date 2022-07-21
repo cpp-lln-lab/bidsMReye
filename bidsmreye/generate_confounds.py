@@ -12,36 +12,28 @@ from bidsmreye.bidsutils import get_dataset_layout
 
 
 def generate_confounds(cfg):
-    """_summary_."""
-    dataset_path = cfg["output_folder"]
+    """Convert results saved as numpy array to a one TSV per subject."""
+    output_dataset_path = cfg["output_folder"]
 
-    print(f"\nindexing {dataset_path}\n")
+    print(f"\nindexing {output_dataset_path}\n")
 
-    layout = get_dataset_layout(dataset_path)
-    check_layout(layout)
+    layout_out = get_dataset_layout(output_dataset_path)
+    check_layout(layout_out)
 
     content = np.load(
-        file=os.path.join(dataset_path, "deepMReyeresults_group_output.npy"),
+        file=os.path.join(output_dataset_path, "results_group.npy"),
         allow_pickle=True,
     )
 
     evaluation = content.item(0)
 
-    # all_data = []
-
-    subTR = False
-
     for key, item in evaluation.items():
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            if subTR:
-                this_pred = np.reshape(
-                    item["pred_y"],
-                    (item["pred_y"].shape[0] * item["pred_y"].shape[1], -1),
-                )
-            else:
-                this_pred = np.nanmedian(item["pred_y"], axis=1)
-        confound_name = create_bidsname(layout, key + "p", "confounds")
+
+            this_pred = np.nanmedian(item["pred_y"], axis=1)
+
+        confound_name = create_bidsname(layout_out, key + "p", "confounds")
 
         print(f"Saving to {confound_name} \n")
 

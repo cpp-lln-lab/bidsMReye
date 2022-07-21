@@ -1,7 +1,5 @@
 Pipfile
 
-data
-derivatives
 models
 outputs
 download*
@@ -110,5 +108,4 @@ ENV/
 .mypy_cache/
 
 # IDE settings
-.vscode/
 .idea/
