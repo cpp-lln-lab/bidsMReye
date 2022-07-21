@@ -1,3 +1,3 @@
-deepmreye @ git+https://github.com/Remi-Gau/DeepMReye@setup
+deepmreye @ git+https://github.com/DeepMReye/DeepMReye.git
 pybids
 rich
