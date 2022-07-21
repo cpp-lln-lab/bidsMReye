@@ -1,4 +1,4 @@
-.PHONY: clean clean-build clean-pyc clean-test coverage dist docs help install lint lint/flake8 lint/black
+.PHONY: clean clean-build clean-pyc clean-test coverage dist docs help install lint lint/flake8 lint/black dockerfile dockerimage dockerrun
 .DEFAULT_GOAL := help
 
 define BROWSER_PYSCRIPT
@@ -130,3 +130,25 @@ confounds:
 
 clean-demo:
 	rm -fr outputs
+
+dockerfile:
+	docker run --rm repronim/neurodocker:0.7.0 generate docker \
+	--base debian:bullseye-slim \
+	--pkg-manager apt \
+	--install "git wget" \
+	--miniconda \
+		version="latest" \
+		create_env="bidsmreye" \
+		conda_install="python=3.9 pip" \
+		pip_install="git+https://github.com/cpp-lln-lab/bidsMReye.git" \
+		activate="true" \
+	--run "mkdir -p /inputs/models" \
+	--run "wget https://osf.io/cqf74/download -O /inputs/models/dataset1_guided_fixations.h5" \
+	--output Dockerfile
+
+
+dockerimage: Dockerfile
+	docker build --tag bidsmereye:0.1.0 --file Dockerfile .
+
+dockerrun: Dockerfile
+	docker run -it --rm bidsmreye:0.1.0

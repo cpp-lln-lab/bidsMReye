@@ -150,9 +150,9 @@ docker run --rm repronim/neurodocker:0.7.0 generate docker \
     --install "git wget" \
     --miniconda \
         version="latest" \
-        create_env="deepmreye" \
-        conda_install="python=3.7 pip" \
-        pip_install="git+https://github.com/DeepMReye/DeepMReye.git" \
+        create_env="bidsmreye" \
+        conda_install="python=3.9 pip" \
+        pip_install="git+https://github.com/cpp-lln-lab/bidsMReye.git" \
         activate="true" \
     --run "mkdir -p /inputs/models" \
     --run "wget https://osf.io/cqf74/download -O /inputs/models/dataset1_guided_fixations.h5" \
