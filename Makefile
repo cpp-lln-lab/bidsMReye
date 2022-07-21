@@ -110,7 +110,6 @@ demo: clean-demo
 	make prepare_data
 	make combine
 	make generalize
-	make confounds
 
 prepare_data: tests/data/moae_fmriprep models/dataset1_guided_fixations.h5
 	python3 bidsmreye/run.py --space MNI152NLin6Asym --task auditory --action prepare $$PWD/tests/data/moae_fmriprep $$PWD/outputs participant
@@ -120,9 +119,6 @@ combine:
 
 generalize:
 	python3 bidsmreye/run.py --space MNI152NLin6Asym --task auditory --model guided_fixations --action generalize $$PWD/tests/data/moae_fmriprep $$PWD/outputs participant
-
-confounds:
-	python3 bidsmreye/run.py --space MNI152NLin6Asym --task auditory --action confounds $$PWD/tests/data/moae_fmriprep $$PWD/outputs participant
 
 clean-demo:
 	rm -fr outputs

@@ -7,7 +7,6 @@ from rich import print
 
 from bidsmreye.combine import combine
 from bidsmreye.generalize import generalize
-from bidsmreye.generate_confounds import generate_confounds
 from bidsmreye.prepare_data import prepare_data
 from bidsmreye.utils import config
 
@@ -105,6 +104,3 @@ if args.analysis_level == "participant":
 
     elif args.action == "generalize":
         generalize(cfg)
-
-    elif args.action == "confounds":
-        generate_confounds(cfg)

@@ -1,4 +1,4 @@
-"""foo."""
+"""Run coregistration and extract data."""
 from deepmreye import preprocess
 from rich import print
 
@@ -75,8 +75,6 @@ def prepare_data(cfg):
         dataset_path (_type_): _description_
     """
     input_dataset_path = cfg["input_folder"]
-    print(f"\nindexing {input_dataset_path}\n")
-
     layout_in = get_dataset_layout(input_dataset_path)
     check_layout(layout_in)
 
@@ -88,10 +86,6 @@ def prepare_data(cfg):
     write_dataset_description(layout_out)
 
     subjects = list_subjects(layout_in, cfg)
-    if cfg["debug"]:
-        subjects = [subjects[0]]
-
-    print(f"processing subjects: {subjects}\n")
 
     for subject_label in subjects:
 

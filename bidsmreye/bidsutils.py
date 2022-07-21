@@ -27,6 +27,8 @@ def get_dataset_layout(dataset_path: str, config={}):
     if config == {}:
         pybids_config = get_pybids_config()
 
+    print(f"\nindexing {dataset_path}\n")
+
     return BIDSLayout(
         dataset_path, validate=False, derivatives=False, config=pybids_config
     )
@@ -183,9 +185,6 @@ def create_bidsname(layout, filename, filetype: str) -> str:
         entities = filename
 
     bids_name_config = get_bidsname_config()
-
-    print(bids_name_config)
-    print(entities)
 
     output_file = layout.build_path(entities, bids_name_config[filetype], validate=False)
 

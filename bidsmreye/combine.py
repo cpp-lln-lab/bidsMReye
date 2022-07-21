@@ -97,17 +97,10 @@ def save_participant_file(layout_out, img, subj: dict):
 def combine(cfg):
     """Add labels to dataset."""
     output_dataset_path = cfg["output_folder"]
-
-    print(f"\nindexing {output_dataset_path}\n")
-
     layout_out = get_dataset_layout(output_dataset_path)
     check_layout(layout_out)
 
     subjects = list_subjects(layout_out, cfg)
-    if cfg["debug"]:
-        subjects = [subjects[0]]
-
-    print(f"processing subjects: {subjects}\n")
 
     for subject_label in subjects:
 
