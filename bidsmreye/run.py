@@ -3,6 +3,7 @@ import argparse
 import os
 import sys
 from glob import glob
+from pathlib import Path
 
 from rich import print
 
@@ -91,11 +92,13 @@ def main(argv=sys.argv):
 
     if args.model == "guided_fixations":
         cfg["model_weights_file"] = os.path.join(
-            os.path.dirname(os.path.realpath(__file__)),
-            "..",
+            os.getcwd(),
             "models",
             "dataset1_guided_fixations.h5",
         )
+
+    if cfg["model_weights_file"] != "":
+        assert Path(cfg["model_weights_file"]).is_file()
 
     print(f"\nUsing model: {cfg['model_weights_file']}")
 
