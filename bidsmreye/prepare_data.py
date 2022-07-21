@@ -38,7 +38,7 @@ def coregister_and_extract_data(img: str):
 
 
 def preprocess_subject(cfg, layout_in, layout_out, subject_label: str):
-    """_summary_.
+    """Run coregistration and extract data for one subject.
 
     Args:
         layout_in (_type_): _description_
@@ -69,7 +69,7 @@ def preprocess_subject(cfg, layout_in, layout_out, subject_label: str):
 
 
 def prepare_data(cfg):
-    """_summary_.
+    """Run coregistration and extract data for all subjects.
 
     Args:
         dataset_path (_type_): _description_

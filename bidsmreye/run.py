@@ -93,7 +93,7 @@ if args.model == "guided_fixations":
         "dataset1_guided_fixations.h5",
     )
 
-print(cfg["model_weights_file"])
+print(f"\nUsing model: {cfg['model_weights_file']}")
 
 if args.analysis_level == "participant":
 

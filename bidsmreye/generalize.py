@@ -15,14 +15,14 @@ from bidsmreye.utils import return_regex
 
 def generalize(cfg):
     """_summary_."""
-    dataset_path = cfg["output_folder"]
+    output_dataset_path = cfg["output_folder"]
 
-    print(f"\nindexing {dataset_path}\n")
+    print(f"\nindexing {output_dataset_path}\n")
 
-    layout = get_dataset_layout(dataset_path)
-    check_layout(layout)
+    layout_out = get_dataset_layout(output_dataset_path)
+    check_layout(layout_out)
 
-    subjects = list_subjects(layout, cfg)
+    subjects = list_subjects(layout_out, cfg)
     if cfg["debug"]:
         subjects = [subjects[0]]
 
@@ -32,7 +32,7 @@ def generalize(cfg):
 
     for subject_label in subjects:
 
-        data = layout.get(
+        data = layout_out.get(
             return_type="filename",
             subject=return_regex(subject_label),
             suffix="^bidsmreye$",
@@ -62,11 +62,11 @@ def generalize(cfg):
     model_inference.load_weights(model_weights)
 
     (evaluation, scores) = train.evaluate_model(
-        dataset="group_output",
+        dataset="group",
         model=model_inference,
         generators=generators,
         save=True,
-        model_path=os.path.join(layout.root, "bidsmreye"),
+        model_path=f"{layout_out.root}/",
         model_description="",
         verbose=3,
         percentile_cut=80,
