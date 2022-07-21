@@ -1,0 +1,44 @@
+{
+    "Name": "dataset name",
+    "BIDSVersion": "1.6.0",
+    "DatasetType": "derivative",
+    "License": "",
+    "Authors": [
+        "",
+        ""
+    ],
+    "Acknowledgements": "Special thanks to ",
+    "HowToAcknowledge": "Please cite this paper: ",
+    "Funding": [
+        "",
+        ""
+    ],
+    "EthicsApprovals": [
+        ""
+    ],
+    "ReferencesAndLinks": [
+        "",
+        ""
+    ],
+    "DatasetDOI": "doi:",
+    "HEDVersion": "",
+    "GeneratedBy": [
+        {
+            "Name": "bidsmreye",
+            "Version": "",
+            "Container": {
+                "Type": "",
+                "Tag": ""
+            },
+            "Description": "",
+            "CodeURL": ""
+        }
+    ],
+    "SourceDatasets": [
+        {
+            "DOI": "doi:",
+            "URL": "",
+            "Version": ""
+        }
+    ]
+}

@@ -6,6 +6,7 @@ from os.path import join
 from pathlib import Path
 
 from bids import BIDSLayout
+from rich import print
 
 from bidsmreye.utils import config
 from bidsmreye.utils import create_dir_if_absent
@@ -25,6 +26,8 @@ def get_dataset_layout(dataset_path: str, config={}):
 
     if config == {}:
         pybids_config = get_pybids_config()
+
+    print(f"\nindexing {dataset_path}\n")
 
     return BIDSLayout(
         dataset_path, validate=False, derivatives=False, config=pybids_config
@@ -157,7 +160,8 @@ def get_config(config_file="", default="") -> dict:
         config_file = join(my_path, default)
 
     if config_file == "" or not Path(config_file).exists():
-        return
+        raise FileNotFoundError(f"Config file {config_file} not found")
+
     with open(config_file, "r") as ff:
         return json.load(ff)
 
@@ -181,9 +185,8 @@ def create_bidsname(layout, filename, filetype: str) -> str:
         entities = filename
 
     bids_name_config = get_bidsname_config()
-    output_file = layout.build_path(
-        entities, bids_name_config[filetype], validate=False
-    )
+
+    output_file = layout.build_path(entities, bids_name_config[filetype], validate=False)
 
     output_file = abspath(join(layout.root, output_file))
 

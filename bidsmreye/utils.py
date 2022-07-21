@@ -15,7 +15,11 @@ def config() -> dict:
     Returns:
         dict: _description_
     """
-    cfg = {
+    has_GPU = False
+
+    os.environ["CUDA_VISIBLE_DEVICES"] = "0" if has_GPU else ""
+
+    return {
         "output_folder": "",
         "input_folder": "",
         "model_weights_file": "",
@@ -24,12 +28,6 @@ def config() -> dict:
         "task": "",
         "debug": False,
     }
-
-    has_GPU = False
-
-    os.environ["CUDA_VISIBLE_DEVICES"] = "0" if has_GPU else ""
-
-    return cfg
 
 
 def move_file(input: str, output: str):
@@ -100,6 +98,11 @@ def list_subjects(layout, cfg=None):
     if subjects == [] or subjects is None:
         raise Exception("No subject found")
 
+    if cfg["debug"]:
+        subjects = [subjects[0]]
+
+    print(f"processing subjects: {subjects}\n")
+
     return subjects
 
 
@@ -139,9 +142,7 @@ def get_deepmreye_filename(layout, img: str, filetype: str) -> str:
 
     filefolder = dirname(abspath(img))
 
-    deepmreye_filename = join(filefolder, filename)
-
-    return deepmreye_filename
+    return join(filefolder, filename)
 
 
 def return_deepmreye_output_filename(filename: str, filetype: str) -> str:

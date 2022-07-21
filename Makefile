@@ -56,13 +56,7 @@ lint/flake8: ## check style with flake8
 lint/black: ## check style with black
 	black bidsmreye tests
 
-lint: lint/flake8 lint/black ## check style
-
-coverage: ## check code coverage quickly with the default Python
-	coverage run --source bidsmreye -m pytest
-	coverage report -m
-	coverage html
-	$(BROWSER) htmlcov/index.html
+lint: lint/black lint/flake8  ## check style
 
 docs: ## generate Sphinx HTML documentation, including API docs
 	rm -f docs/source/bidsmreye.rst
@@ -87,13 +81,15 @@ install: clean ## install the package to the active Python's site-packages
 	python setup.py install
 
 ## run the tests
-test: models test_data ## run tests quickly with the default Python
-	pytest
+test: models tests/data/moae_fmriprep ## run tests quickly with the default Python
+	python -m pytest --cov bidsmreye --cov-report html:htmlcov
+	$(BROWSER) htmlcov/index.html
 
 tests/data/moae_fmriprep:
 	mkdir -p tests/data
 	wget https://osf.io/vufjs/download
 	unzip download
+	rm download
 	mv moae_fmriprep tests/data/moae_fmriprep
 
 ## PRE-TRAINED MODELS
@@ -114,19 +110,15 @@ demo: clean-demo
 	make prepare_data
 	make combine
 	make generalize
-	make confounds
 
 prepare_data: tests/data/moae_fmriprep models/dataset1_guided_fixations.h5
-	python3 bidsmreye.py --space MNI152NLin6Asym --task auditory --action prepare $$PWD/tests/data/moae_fmriprep $$PWD/outputs participant
+	python3 bidsmreye/run.py --space MNI152NLin6Asym --task auditory --action prepare $$PWD/tests/data/moae_fmriprep $$PWD/outputs participant
 
 combine:
-	python3 bidsmreye.py --space MNI152NLin6Asym --task auditory --action combine $$PWD/tests/data/moae_fmriprep $$PWD/outputs participant
+	python3 bidsmreye/run.py --space MNI152NLin6Asym --task auditory --action combine $$PWD/tests/data/moae_fmriprep $$PWD/outputs participant
 
 generalize:
-	python3 bidsmreye.py --space MNI152NLin6Asym --task auditory --model guided_fixations --action generalize $$PWD/tests/data/moae_fmriprep $$PWD/outputs participant
-
-confounds:
-	python3 bidsmreye.py --space MNI152NLin6Asym --task auditory --action confounds $$PWD/tests/data/moae_fmriprep $$PWD/outputs participant
+	python3 bidsmreye/run.py --space MNI152NLin6Asym --task auditory --model guided_fixations --action generalize $$PWD/tests/data/moae_fmriprep $$PWD/outputs participant
 
 clean-demo:
 	rm -fr outputs
