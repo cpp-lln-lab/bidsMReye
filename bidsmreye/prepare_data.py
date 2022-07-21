@@ -37,19 +37,16 @@ def coregister_and_extract_data(img: str):
     )
 
 
-def preprocess_subject(cfg, layout, subject_label):
+def preprocess_subject(cfg, layout_in, layout_out, subject_label: str):
     """_summary_.
 
     Args:
-        layout (_type_): _description_
-        subject_label (_type_): _description_
+        layout_in (_type_): _description_
+        subject_label (str): Can be a regular expression.
     """
-    # TODO performance: do not reload the input layout for every subject
-    layout = get_dataset_layout(cfg["input_folder"])
-
     print(f"Running subject: {subject_label}")
 
-    bf = layout.get(
+    bf = layout_in.get(
         return_type="filename",
         subject=return_regex(subject_label),
         suffix="^bold$",
@@ -59,18 +56,15 @@ def preprocess_subject(cfg, layout, subject_label):
         regex_search=True,
     )
 
-    # TODO performance: do not reload the output layout for every subject
-    output = get_dataset_layout(cfg["output_folder"])
-
     for img in bf:
         coregister_and_extract_data(img)
 
-        mask_name = create_bidsname(output, img, "mask")
-        deepmreye_mask_name = get_deepmreye_filename(layout, img, "mask")
+        mask_name = create_bidsname(layout_out, img, "mask")
+        deepmreye_mask_name = get_deepmreye_filename(layout_in, img, "mask")
         move_file(deepmreye_mask_name, mask_name)
 
-        report_name = create_bidsname(output, img, "report")
-        deepmreye_mask_report = get_deepmreye_filename(layout, img, "report")
+        report_name = create_bidsname(layout_out, img, "report")
+        deepmreye_mask_report = get_deepmreye_filename(layout_in, img, "report")
         move_file(deepmreye_mask_report, report_name)
 
 
@@ -83,17 +77,17 @@ def prepare_data(cfg):
     dataset_path = cfg["input_folder"]
     print(f"\nindexing {dataset_path}\n")
 
-    layout = get_dataset_layout(dataset_path)
-    check_layout(layout)
+    layout_in = get_dataset_layout(dataset_path)
+    check_layout(layout_in)
 
     create_dir_if_absent(cfg["output_folder"])
-    output = get_dataset_layout(cfg["output_folder"])
-    output = set_dataset_description(output)
-    output.dataset_description["DatasetType"] = "derivative"
-    output.dataset_description["GeneratedBy"][0]["Name"] = "bidsmreye"
-    write_dataset_description(output)
+    layout_out = get_dataset_layout(cfg["output_folder"])
+    layout_out = set_dataset_description(layout_out)
+    layout_out.dataset_description["DatasetType"] = "derivative"
+    layout_out.dataset_description["GeneratedBy"][0]["Name"] = "bidsmreye"
+    write_dataset_description(layout_out)
 
-    subjects = list_subjects(layout, cfg)
+    subjects = list_subjects(layout_in, cfg)
     if cfg["debug"]:
         subjects = [subjects[0]]
 
@@ -101,4 +95,4 @@ def prepare_data(cfg):
 
     for subject_label in subjects:
 
-        preprocess_subject(cfg, layout, subject_label)
+        preprocess_subject(cfg, layout_in, layout_out, subject_label)
