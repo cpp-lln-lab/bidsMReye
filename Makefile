@@ -152,4 +152,3 @@ Dockerimage: Dockerfile
 
 Dockerrun: Dockerfile
 	docker run -p 8080:80 bidsmereye:0.1.0
-	 
