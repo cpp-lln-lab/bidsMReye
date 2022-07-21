@@ -15,16 +15,16 @@ from bidsmreye.utils import move_file
 from bidsmreye.utils import return_regex
 
 
-def process_subject(cfg, layout, subject_label):
+def process_subject(cfg, layout_out, subject_label: str):
     """_summary_.
 
     Args:
-        layout (_type_): _description_
-        subject_label (_type_): _description_
+        layout_out (_type_): _description_
+        subject_label (str): Can be a regular expression.
     """
     print(f"Running subject: {subject_label}")
 
-    masks = layout.get(
+    masks = layout_out.get(
         return_type="filename",
         subject=return_regex(subject_label),
         suffix="^mask$",
@@ -65,30 +65,30 @@ def process_subject(cfg, layout, subject_label):
             ([subject_label] * this_label.shape[0], [i] * this_label.shape[0])
         )
 
-        save_participant_file(layout, img, subj)
+        save_participant_file(layout_out, img, subj)
 
 
-def save_participant_file(layout, img, subj: dict):
+def save_participant_file(layout_out, img, subj: dict):
     """_summary_.
 
     Args:
-        layout (_type_): _description_
+        layout_out (_type_): _description_
         img (_type_): _description_
         subj (dict): _description_
     """
-    output_file = create_bidsname(layout, img, "no_label")
+    output_file = create_bidsname(layout_out, img, "no_label")
 
     preprocess.save_data(
         os.path.basename(output_file),
         subj["data"],
         subj["labels"],
         subj["ids"],
-        layout.root,
+        layout_out.root,
         center_labels=False,
     )
 
     file_to_move = os.path.join(
-        layout.root, "..", "bidsmreye", os.path.basename(output_file)
+        layout_out.root, "..", "bidsmreye", os.path.basename(output_file)
     )
 
     move_file(file_to_move, output_file)
@@ -96,14 +96,14 @@ def save_participant_file(layout, img, subj: dict):
 
 def combine(cfg):
     """Add labels to dataset."""
-    dataset_path = cfg["output_folder"]
+    output_dataset_path = cfg["output_folder"]
 
-    print(f"\nindexing {dataset_path}\n")
+    print(f"\nindexing {output_dataset_path}\n")
 
-    layout = get_dataset_layout(dataset_path)
-    check_layout(layout)
+    layout_out = get_dataset_layout(output_dataset_path)
+    check_layout(layout_out)
 
-    subjects = list_subjects(layout, cfg)
+    subjects = list_subjects(layout_out, cfg)
     if cfg["debug"]:
         subjects = [subjects[0]]
 
@@ -111,4 +111,4 @@ def combine(cfg):
 
     for subject_label in subjects:
 
-        process_subject(cfg, layout, subject_label)
+        process_subject(cfg, layout_out, subject_label)

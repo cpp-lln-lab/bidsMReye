@@ -74,10 +74,10 @@ def prepare_data(cfg):
     Args:
         dataset_path (_type_): _description_
     """
-    dataset_path = cfg["input_folder"]
-    print(f"\nindexing {dataset_path}\n")
+    input_dataset_path = cfg["input_folder"]
+    print(f"\nindexing {input_dataset_path}\n")
 
-    layout_in = get_dataset_layout(dataset_path)
+    layout_in = get_dataset_layout(input_dataset_path)
     check_layout(layout_in)
 
     create_dir_if_absent(cfg["output_folder"])
