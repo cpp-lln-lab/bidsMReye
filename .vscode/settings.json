@@ -2,6 +2,10 @@
     "makefile.extensionOutputFolder": "./.vscode",
     "cSpell.words": [
         "bidsmreye",
-        "bidsutils"
+        "bidsname",
+        "bidsutils",
+        "coregister",
+        "coregistration",
+        "eyemask"
     ]
 }
