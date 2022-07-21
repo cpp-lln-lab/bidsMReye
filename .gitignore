@@ -1,7 +1,5 @@
 Pipfile
 
-data
-derivatives
 models
 outputs
 download*
