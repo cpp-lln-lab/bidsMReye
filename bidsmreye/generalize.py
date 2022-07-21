@@ -83,6 +83,7 @@ def generalize(cfg: dict):
         # Get untrained model and load with trained weights
         opts = model_opts.get_opts()
         model_weights = cfg["model_weights_file"]
+
         (model, model_inference) = train.train_model(
             dataset="example_data",
             generators=generators,

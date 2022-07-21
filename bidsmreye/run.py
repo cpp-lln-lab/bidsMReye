@@ -99,8 +99,7 @@ def main(argv=sys.argv):
 
     if cfg["model_weights_file"] != "":
         assert Path(cfg["model_weights_file"]).is_file()
-
-    print(f"\nUsing model: {cfg['model_weights_file']}")
+        print(f"\nUsing model: {cfg['model_weights_file']}")
 
     if args.analysis_level == "participant":
 
