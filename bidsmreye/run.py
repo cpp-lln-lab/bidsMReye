@@ -1,4 +1,4 @@
-"""foo."""
+"""Main script."""
 import argparse
 import os
 from glob import glob
@@ -88,6 +88,7 @@ cfg["output_folder"] = os.path.join(args.output_dir, "bidsmreye")
 if args.model == "guided_fixations":
     cfg["model_weights_file"] = os.path.join(
         os.path.dirname(os.path.realpath(__file__)),
+        "..",
         "models",
         "dataset1_guided_fixations.h5",
     )
