@@ -35,7 +35,7 @@ def generalize(cfg):
         data = layout.get(
             return_type="filename",
             subject=return_regex(subject_label),
-            suffix="^deepmreye$",
+            suffix="^bidsmreye$",
             task=return_regex(cfg["task"]),
             space=return_regex(cfg["space"]),
             extension=".npz",
@@ -66,7 +66,7 @@ def generalize(cfg):
         model=model_inference,
         generators=generators,
         save=True,
-        model_path=os.path.join(layout.root, "deepMReye"),
+        model_path=os.path.join(layout.root, "bidsmreye"),
         model_description="",
         verbose=3,
         percentile_cut=80,
