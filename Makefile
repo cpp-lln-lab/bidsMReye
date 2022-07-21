@@ -82,7 +82,7 @@ install: clean ## install the package to the active Python's site-packages
 
 ## run the tests
 test: models tests/data/moae_fmriprep ## run tests quickly with the default Python
-	pytest --cov bidsmreye --cov-report html:htmlcov
+	python -m pytest --cov bidsmreye --cov-report html:htmlcov
 	$(BROWSER) htmlcov/index.html
 
 tests/data/moae_fmriprep:
