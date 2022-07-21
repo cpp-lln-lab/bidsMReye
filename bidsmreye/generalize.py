@@ -1,6 +1,9 @@
 """foo."""
 import os
+import warnings
 
+import numpy as np
+import pandas as pd
 from deepmreye import analyse
 from deepmreye import train
 from deepmreye.util import data_generator
@@ -15,7 +18,35 @@ from bidsmreye.utils import move_file
 from bidsmreye.utils import return_regex
 
 
-def generalize(cfg):
+def convert_confounds(cfg: dict, layout_out, subject_label: str):
+    """_summary_."""
+    entities = {"subject": subject_label, "task": cfg["task"], "space": cfg["space"]}
+    confound_numpy = create_bidsname(layout_out, entities, "confounds_numpy")
+
+    # there should be only one file
+    content = np.load(
+        file=confound_numpy,
+        allow_pickle=True,
+    )
+
+    evaluation = content.item(0)
+
+    for key, item in evaluation.items():
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+
+            this_pred = np.nanmedian(item["pred_y"], axis=1)
+
+        confound_name = create_bidsname(layout_out, key + "p", "confounds_tsv")
+
+        print(f"Saving to {confound_name} \n")
+
+        pd.DataFrame(this_pred).to_csv(
+            confound_name, sep="\t", header=["x_position", "y_position"], index=None
+        )
+
+
+def generalize(cfg: dict):
     """_summary_."""
     output_dataset_path = cfg["output_folder"]
 
