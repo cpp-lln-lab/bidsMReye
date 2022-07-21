@@ -110,5 +110,4 @@ ENV/
 .mypy_cache/
 
 # IDE settings
-.vscode/
 .idea/
