@@ -6,6 +6,7 @@ from os.path import join
 from pathlib import Path
 
 from bids import BIDSLayout
+from rich import print
 
 from bidsmreye.utils import config
 from bidsmreye.utils import create_dir_if_absent
@@ -25,6 +26,8 @@ def get_dataset_layout(dataset_path: str, config={}):
 
     if config == {}:
         pybids_config = get_pybids_config()
+
+    print(f"\nindexing {dataset_path}\n")
 
     return BIDSLayout(
         dataset_path, validate=False, derivatives=False, config=pybids_config

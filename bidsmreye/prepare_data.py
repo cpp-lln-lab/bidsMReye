@@ -75,8 +75,6 @@ def prepare_data(cfg):
         dataset_path (_type_): _description_
     """
     input_dataset_path = cfg["input_folder"]
-    print(f"\nindexing {input_dataset_path}\n")
-
     layout_in = get_dataset_layout(input_dataset_path)
     check_layout(layout_in)
 
