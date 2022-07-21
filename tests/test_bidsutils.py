@@ -23,7 +23,8 @@ def test_get_bidsname_config_smoke():
 
 
 def test_get_pybids_config_smoke():
-    get_pybids_config()
+    cfg = get_pybids_config()
+    assert cfg is not None
 
 
 def test_write_dataset_description():
