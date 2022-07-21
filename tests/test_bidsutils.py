@@ -1,10 +1,28 @@
 import shutil
 from pathlib import Path
 
+import pytest
+
 from bidsmreye.bidsutils import create_bidsname
+from bidsmreye.bidsutils import get_bidsname_config
+from bidsmreye.bidsutils import get_config
 from bidsmreye.bidsutils import get_dataset_layout
+from bidsmreye.bidsutils import get_pybids_config
 from bidsmreye.bidsutils import init_derivatives_layout
 from bidsmreye.utils import return_path_rel_dataset
+
+
+def test_get_config_error():
+    with pytest.raises(FileNotFoundError):
+        get_config("", "foo.json")
+
+
+def test_get_bidsname_config_smoke():
+    get_bidsname_config()
+
+
+def test_get_pybids_config_smoke():
+    get_pybids_config()
 
 
 def test_write_dataset_description():

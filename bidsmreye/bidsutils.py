@@ -158,7 +158,8 @@ def get_config(config_file="", default="") -> dict:
         config_file = join(my_path, default)
 
     if config_file == "" or not Path(config_file).exists():
-        return
+        raise FileNotFoundError(f"Config file {config_file} not found")
+
     with open(config_file, "r") as ff:
         return json.load(ff)
 
