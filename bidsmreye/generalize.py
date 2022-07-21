@@ -54,10 +54,6 @@ def generalize(cfg: dict):
     check_layout(layout_out)
 
     subjects = list_subjects(layout_out, cfg)
-    if cfg["debug"]:
-        subjects = [subjects[0]]
-
-    print(f"processing subjects: {subjects}\n")
 
     all_data = []
 

@@ -101,10 +101,6 @@ def combine(cfg):
     check_layout(layout_out)
 
     subjects = list_subjects(layout_out, cfg)
-    if cfg["debug"]:
-        subjects = [subjects[0]]
-
-    print(f"processing subjects: {subjects}\n")
 
     for subject_label in subjects:
 

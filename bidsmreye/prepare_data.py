@@ -86,10 +86,6 @@ def prepare_data(cfg):
     write_dataset_description(layout_out)
 
     subjects = list_subjects(layout_in, cfg)
-    if cfg["debug"]:
-        subjects = [subjects[0]]
-
-    print(f"processing subjects: {subjects}\n")
 
     for subject_label in subjects:
 

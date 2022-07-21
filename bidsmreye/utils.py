@@ -100,6 +100,11 @@ def list_subjects(layout, cfg=None):
     if subjects == [] or subjects is None:
         raise Exception("No subject found")
 
+    if cfg["debug"]:
+        subjects = [subjects[0]]
+
+    print(f"processing subjects: {subjects}\n")
+
     return subjects
 
 
