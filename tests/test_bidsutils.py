@@ -18,7 +18,8 @@ def test_get_config_error():
 
 
 def test_get_bidsname_config_smoke():
-    get_bidsname_config()
+    cfg = get_bidsname_config()
+    assert cfg is not None
 
 
 def test_get_pybids_config_smoke():
