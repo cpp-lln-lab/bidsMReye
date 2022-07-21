@@ -96,11 +96,4 @@ python3 bidsmreye.py \
         --model guided_fixations \
         $bids_dir \
         $output_dir
-
-python3 bidsmreye.py \
-        --space MNI152NLin6Asym \
-        --task auditory \
-        --action confounds \
-        $bids_dir \
-        $output_dir
 ```

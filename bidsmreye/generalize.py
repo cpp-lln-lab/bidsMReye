@@ -125,3 +125,5 @@ def generalize(cfg: dict):
             ),
             confound_numpy,
         )
+
+        convert_confounds(cfg, layout_out, subject_label)

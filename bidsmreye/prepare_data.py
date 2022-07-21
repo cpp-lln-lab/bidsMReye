@@ -1,4 +1,4 @@
-"""foo."""
+"""Run coregistration and extract data."""
 from deepmreye import preprocess
 from rich import print
 
