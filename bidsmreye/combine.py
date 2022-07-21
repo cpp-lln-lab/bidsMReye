@@ -22,9 +22,6 @@ def process_subject(cfg, layout, subject_label):
         layout (_type_): _description_
         subject_label (_type_): _description_
     """
-    # TODO performance: do not reload the input layout for every subject
-    layout = get_dataset_layout(cfg["output_folder"])
-
     print(f"Running subject: {subject_label}")
 
     masks = layout.get(
@@ -71,13 +68,13 @@ def process_subject(cfg, layout, subject_label):
         save_participant_file(layout, img, subj)
 
 
-def save_participant_file(layout, img, subj):
+def save_participant_file(layout, img, subj: dict):
     """_summary_.
 
     Args:
         layout (_type_): _description_
         img (_type_): _description_
-        subj (_type_): _description_
+        subj (dict): _description_
     """
     output_file = create_bidsname(layout, img, "no_label")
 
@@ -91,16 +88,14 @@ def save_participant_file(layout, img, subj):
     )
 
     file_to_move = os.path.join(
-        layout.root, "..", f"bidsmreye{os.path.basename(output_file)}"
+        layout.root, "..", "bidsmreye", os.path.basename(output_file)
     )
 
     move_file(file_to_move, output_file)
 
 
 def combine(cfg):
-    """_summary_."""
-    # add labels to dataset
-
+    """Add labels to dataset."""
     dataset_path = cfg["output_folder"]
 
     print(f"\nindexing {dataset_path}\n")
