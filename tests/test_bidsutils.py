@@ -1,3 +1,4 @@
+import shutil
 from pathlib import Path
 
 from bidsmreye.bidsutils import create_bidsname
@@ -12,6 +13,8 @@ def test_write_dataset_description():
     output_location = Path.joinpath(output_location, "derivatives")
 
     init_derivatives_layout(output_location)
+
+    shutil.rmtree(output_location)
 
 
 def test_create_bidsname():
@@ -28,3 +31,5 @@ def test_create_bidsname():
     assert (
         rel_path == "sub-01/ses-01/func/sub-01_ses-01_task-motion_run-1_desc-eye_mask.p"
     )
+
+    shutil.rmtree(output_location)

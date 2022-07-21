@@ -1,4 +1,5 @@
 import os
+import shutil
 
 from bids.tests import get_test_data_path
 
@@ -28,6 +29,8 @@ def test_list_subjects():
 
 def test_get_dataset_layout_smoke_test():
     get_dataset_layout("data")
+
+    shutil.rmtree("data")
 
 
 def test_return_path_rel_dataset():
