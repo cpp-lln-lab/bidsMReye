@@ -3,8 +3,8 @@ import os
 import pickle
 import warnings
 
-import numpy as np
-from deepmreye import preprocess
+import numpy as np  # type: ignore
+from deepmreye import preprocess  # type: ignore
 from rich import print
 
 from bidsmreye.bidsutils import check_layout
@@ -49,7 +49,7 @@ def process_subject(cfg, layout_out, subject_label: str):
         # Check if each functional image has a corresponding label.
         # Note that mask has time as third dimension
         if this_mask.shape[3] != this_label.shape[0]:
-            warnings.warns(
+            warnings.warn(
                 f"""
                 Skipping file {img} from subject {subject_label}\n
                 Wrong alignment (Mask {this_mask.shape} - Label {this_label.shape}
@@ -58,7 +58,7 @@ def process_subject(cfg, layout_out, subject_label: str):
             continue
 
         # Store for each runs
-        subj = {"data": [], "labels": [], "ids": []}
+        subj = {"data": [], "labels": [], "ids": []}  # type: dict
         subj["data"].append(this_mask)
         subj["labels"].append(this_label)
         subj["ids"].append(

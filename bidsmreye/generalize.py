@@ -2,11 +2,11 @@
 import os
 import warnings
 
-import numpy as np
-import pandas as pd
-from deepmreye import analyse
+import numpy as np  # type: ignore
+import pandas as pd  # type: ignore
+from deepmreye import analyse  # type: ignore
 from deepmreye import train
-from deepmreye.util import data_generator
+from deepmreye.util import data_generator  # type: ignore
 from deepmreye.util import model_opts
 from rich import print
 
@@ -19,11 +19,16 @@ from bidsmreye.utils import return_regex
 
 
 def convert_confounds(cfg: dict, layout_out, subject_label: str):
-    """_summary_."""
+    """Convert numpy output to TSV.
+
+    Args:
+        cfg (dict): configuration dictionary
+        layout_out (_type_): pybids layout to of the dataset to act on.
+        subject_label (str): The label(s) of the participant(s) that should be analyzed.
+    """
     entities = {"subject": subject_label, "task": cfg["task"], "space": cfg["space"]}
     confound_numpy = create_bidsname(layout_out, entities, "confounds_numpy")
 
-    # there should be only one file
     content = np.load(
         file=confound_numpy,
         allow_pickle=True,
@@ -46,8 +51,12 @@ def convert_confounds(cfg: dict, layout_out, subject_label: str):
         )
 
 
-def generalize(cfg: dict):
-    """_summary_."""
+def generalize(cfg: dict) -> None:
+    """Apply model weights to new data.
+
+    Args:
+        cfg (dict): configuration dictionary
+    """
     output_dataset_path = cfg["output_folder"]
 
     layout_out = get_dataset_layout(output_dataset_path)

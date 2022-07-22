@@ -5,12 +5,14 @@ from os.path import abspath
 from os.path import dirname
 from os.path import join
 from pathlib import Path
+from typing import Optional
 
+from bids import BIDSLayout  # type: ignore
 from rich import print
 
 
 def config() -> dict:
-    """_summary_.
+    """Return default configuration.
 
     Returns:
         dict: _description_
@@ -30,11 +32,11 @@ def config() -> dict:
     }
 
 
-def move_file(input: str, output: str):
+def move_file(input: str, output: str) -> None:
     """Move or rename a file and create target directory if it does not exist.
 
     Args:
-        input (str): _description_
+        input (str): File to move.
         output (str): _description_
     """
     print(f"{abspath(input)} --> {abspath(output)}")
@@ -42,7 +44,7 @@ def move_file(input: str, output: str):
     os.rename(input, output)
 
 
-def create_dir_if_absent(output_path: str):
+def create_dir_if_absent(output_path: str) -> None:
     """_summary_.
 
     Args:
@@ -53,7 +55,7 @@ def create_dir_if_absent(output_path: str):
         os.makedirs(output_path)
 
 
-def create_dir_for_file(file: str):
+def create_dir_for_file(file: str) -> None:
     """_summary_.
 
     Args:
@@ -63,7 +65,7 @@ def create_dir_for_file(file: str):
     create_dir_if_absent(output_path)
 
 
-def return_regex(string):
+def return_regex(string: str) -> str:
     """_summary_.
 
     Args:
@@ -75,12 +77,12 @@ def return_regex(string):
     return f"^{string}$"
 
 
-def list_subjects(layout, cfg=None):
+def list_subjects(layout, cfg: Optional[dict] = None) -> list:
     """_summary_.
 
     Args:
         layout (_type_): _description_
-        cfg (dict, optional): _description_. Defaults to {}.
+        cfg (dict or None, optional): _description_. Defaults to Nonz.
 
     Raises:
         Exception: _description_
@@ -90,15 +92,17 @@ def list_subjects(layout, cfg=None):
     """
     if cfg is None or cfg["participant"] == []:
         subjects = layout.get_subjects()
+        debug = False
     else:
         subjects = layout.get(
             return_type="id", target="subject", subject=cfg["participant"]
         )
+        debug = cfg["debug"]
 
     if subjects == [] or subjects is None:
         raise Exception("No subject found")
 
-    if cfg["debug"]:
+    if debug:
         subjects = [subjects[0]]
 
     print(f"processing subjects: {subjects}\n")
@@ -115,7 +119,7 @@ def return_path_rel_dataset(file_path: str, dataset_path: str) -> str:
     return rel_path
 
 
-def get_deepmreye_filename(layout, img: str, filetype: str) -> str:
+def get_deepmreye_filename(layout: BIDSLayout, img: str, filetype: str) -> str:
     """_summary_.
 
     Args:

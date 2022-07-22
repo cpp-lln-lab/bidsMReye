@@ -1,5 +1,5 @@
 """Run coregistration and extract data."""
-from deepmreye import preprocess
+from deepmreye import preprocess  # type: ignore
 from rich import print
 
 from bidsmreye.bidsutils import check_layout
@@ -14,7 +14,7 @@ from bidsmreye.utils import move_file
 from bidsmreye.utils import return_regex
 
 
-def coregister_and_extract_data(img: str):
+def coregister_and_extract_data(img: str) -> None:
     """_summary_.
 
     Args:
@@ -37,7 +37,7 @@ def coregister_and_extract_data(img: str):
     )
 
 
-def preprocess_subject(cfg, layout_in, layout_out, subject_label: str):
+def preprocess_subject(cfg, layout_in, layout_out, subject_label: str) -> None:
     """Run coregistration and extract data for one subject.
 
     Args:
@@ -68,11 +68,11 @@ def preprocess_subject(cfg, layout_in, layout_out, subject_label: str):
         move_file(deepmreye_mask_report, report_name)
 
 
-def prepare_data(cfg):
+def prepare_data(cfg) -> None:
     """Run coregistration and extract data for all subjects.
 
     Args:
-        dataset_path (_type_): _description_
+        cfg (dict): configuration dictionary
     """
     input_dataset_path = cfg["input_folder"]
     layout_in = get_dataset_layout(input_dataset_path)

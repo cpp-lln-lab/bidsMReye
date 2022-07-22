@@ -4,27 +4,29 @@ from os.path import abspath
 from os.path import dirname
 from os.path import join
 from pathlib import Path
+from typing import Optional
+from typing import Union
 
-from bids import BIDSLayout
+from bids import BIDSLayout  # type: ignore
 from rich import print
 
 from bidsmreye.utils import config
 from bidsmreye.utils import create_dir_if_absent
 
 
-def get_dataset_layout(dataset_path: str, config={}):
-    """_summary_.
+def get_dataset_layout(dataset_path: str, config: Optional[dict] = None) -> BIDSLayout:
+    """Return a BIDSLayout object for the dataset at the given path.
 
     Args:
         dataset_path (str): _description_
-        config (dict, optional): _description_. Defaults to {}.
+        config (dict, None): _description_. Defaults to None.
 
     Returns:
-        _type_: _description_
+        BIDSLayout: _description_
     """
     create_dir_if_absent(dataset_path)
 
-    if config == {}:
+    if config is None:
         pybids_config = get_pybids_config()
 
     print(f"\nindexing {dataset_path}\n")
@@ -34,7 +36,7 @@ def get_dataset_layout(dataset_path: str, config={}):
     )
 
 
-def write_dataset_description(layout):
+def write_dataset_description(layout: BIDSLayout) -> None:
     """_summary_.
 
     Args:
@@ -46,7 +48,7 @@ def write_dataset_description(layout):
         json.dump(layout.dataset_description, ff, indent=4)
 
 
-def set_dataset_description(layout, is_derivative=True):
+def set_dataset_description(layout: BIDSLayout, is_derivative: bool = True) -> BIDSLayout:
     """_summary_.
 
     Args:
@@ -69,7 +71,7 @@ def set_dataset_description(layout, is_derivative=True):
         "ReferencesAndLinks": ["", ""],
         "DatasetDOI": "doi:",
         "HEDVersion": "",
-    }
+    }  # type: dict
 
     if is_derivative:
         data["GeneratedBy"] = [
@@ -145,7 +147,7 @@ def get_bids_filter_config(config_file="") -> dict:
     return get_config(config_file, default)
 
 
-def get_config(config_file="", default="") -> dict:
+def get_config(config_file="", default: str = "") -> dict:
     """_summary_.
 
     Args:
@@ -166,7 +168,7 @@ def get_config(config_file="", default="") -> dict:
         return json.load(ff)
 
 
-def create_bidsname(layout, filename, filetype: str) -> str:
+def create_bidsname(layout: BIDSLayout, filename: Union[dict, str], filetype: str) -> str:
     """[summary].
 
     Args:
@@ -177,8 +179,6 @@ def create_bidsname(layout, filename, filetype: str) -> str:
     Returns:
         str: [description]
     """
-    # filename is path or entities dict
-
     if isinstance(filename, str):
         entities = layout.parse_file_entities(filename)
     else:
@@ -193,7 +193,7 @@ def create_bidsname(layout, filename, filetype: str) -> str:
     return output_file
 
 
-def check_layout(layout):
+def check_layout(layout: BIDSLayout) -> None:
     """_summary_.
 
     Args:
