@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """Main script."""
 import argparse
 import os
