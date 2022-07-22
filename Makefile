@@ -112,13 +112,13 @@ demo: clean-demo
 	make generalize
 
 prepare_data: tests/data/moae_fmriprep models/dataset1_guided_fixations.h5
-	python3 bidsmreye/run.py --space MNI152NLin6Asym --task auditory --action prepare $$PWD/tests/data/moae_fmriprep $$PWD/outputs participant
+	bidsmreye --space MNI152NLin6Asym --task auditory --action prepare $$PWD/tests/data/moae_fmriprep $$PWD/outputs participant
 
 combine:
-	python3 bidsmreye/run.py --space MNI152NLin6Asym --task auditory --action combine $$PWD/tests/data/moae_fmriprep $$PWD/outputs participant
+	bidsmreye --space MNI152NLin6Asym --task auditory --action combine $$PWD/tests/data/moae_fmriprep $$PWD/outputs participant
 
 generalize:
-	python3 bidsmreye/run.py --space MNI152NLin6Asym --task auditory --model guided_fixations --action generalize $$PWD/tests/data/moae_fmriprep $$PWD/outputs participant
+	bidsmreye --space MNI152NLin6Asym --task auditory --model guided_fixations --action generalize $$PWD/tests/data/moae_fmriprep $$PWD/outputs participant
 
 clean-demo:
 	rm -fr outputs

@@ -75,25 +75,22 @@ Running the different steps of the demo:
 bids_dir="$PWD/tests/data/moae_fmriprep "
 output_dir="$PWD/outputs "
 
-python3 bidsmreye.py \
-        --space MNI152NLin6Asym \
-        --task auditory \
-        --action prepare \
-        $bids_dir \
-        $output_dir
+bidsmreye --space MNI152NLin6Asym \
+                --task auditory \
+                --action prepare \
+                $bids_dir \
+                $output_dir
 
-python3 bidsmreye.py \
-        --space MNI152NLin6Asym \
-        --task auditory \
-        --action combine \
-        $bids_dir \
-        $output_dir
+bidsmreye --space MNI152NLin6Asym \
+                --task auditory \
+                --action combine \
+                $bids_dir \
+                $output_dir
 
-python3 bidsmreye.py \
-        --space MNI152NLin6Asym \
-        --task auditory \
-        --action generalize \
-        --model guided_fixations \
-        $bids_dir \
-        $output_dir
+bidsmreye --space MNI152NLin6Asym \
+                --task auditory \
+                --action generalize \
+                --model guided_fixations \
+                $bids_dir \
+                $output_dir
 ```
