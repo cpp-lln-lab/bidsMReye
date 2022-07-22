@@ -4,6 +4,7 @@ import os
 import sys
 from glob import glob
 from pathlib import Path
+from pathlib import PurePath
 
 from rich import print
 
@@ -108,8 +109,8 @@ def main(argv=sys.argv):
     if args.task:
         cfg["space"] = args.space
 
-    cfg["input_folder"] = args.bids_dir
-    cfg["output_folder"] = os.path.join(args.output_dir, "bidsmreye")
+    cfg["input_folder"] = Path(args.bids_dir)
+    cfg["output_folder"] = Path(PurePath(args.output_dir).joinpath("bidsmreye"))
 
     if args.model == "guided_fixations":
         cfg["model_weights_file"] = os.path.join(

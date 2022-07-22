@@ -6,6 +6,7 @@
         "bidsutils",
         "coregister",
         "coregistration",
-        "eyemask"
+        "eyemask",
+        "filefolder"
     ]
 }

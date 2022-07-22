@@ -55,8 +55,10 @@ lint/flake8: ## check style with flake8
 	flake8 bidsmreye tests
 lint/black: ## check style with black
 	black bidsmreye tests
+lint/mypy: ## check style with mypy
+	mypy bidsmreye
 
-lint: lint/black lint/flake8  ## check style
+lint: lint/black lint/flake8 lint/mypy ## check style
 
 docs: ## generate Sphinx HTML documentation, including API docs
 	rm -f docs/source/bidsmreye.rst

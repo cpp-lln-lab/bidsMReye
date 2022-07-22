@@ -2,6 +2,8 @@
 import os
 import pickle
 import warnings
+from pathlib import Path
+from pathlib import PurePath
 
 import numpy as np  # type: ignore
 from deepmreye import preprocess  # type: ignore
@@ -87,11 +89,11 @@ def save_participant_file(layout_out, img, subj: dict):
         center_labels=False,
     )
 
-    file_to_move = os.path.join(
-        layout_out.root, "..", "bidsmreye", os.path.basename(output_file)
+    file_to_move = PurePath(layout_out.root).joinpath(
+        "..", "bidsmreye", PurePath(output_file).name
     )
 
-    move_file(file_to_move, output_file)
+    move_file(Path(file_to_move), output_file)
 
 
 def combine(cfg):

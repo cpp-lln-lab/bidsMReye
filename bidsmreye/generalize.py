@@ -1,6 +1,8 @@
 """foo."""
 import os
 import warnings
+from pathlib import Path
+from pathlib import PurePath
 
 import numpy as np  # type: ignore
 import pandas as pd  # type: ignore
@@ -123,10 +125,11 @@ def generalize(cfg: dict) -> None:
 
         entities = {"subject": subject_label, "task": cfg["task"], "space": cfg["space"]}
         confound_numpy = create_bidsname(layout_out, entities, "confounds_numpy")
+        source_file = PurePath(layout_out.root).joinpath(
+            f"sub-{subject_label}", "func", "results_tmp.npy"
+        )
         move_file(
-            os.path.join(
-                layout_out.root, f"sub-{subject_label}", "func", "results_tmp.npy"
-            ),
+            Path(source_file),
             confound_numpy,
         )
 

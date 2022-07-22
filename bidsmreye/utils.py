@@ -2,9 +2,8 @@
 import os
 import re
 from os.path import abspath
-from os.path import dirname
-from os.path import join
 from pathlib import Path
+from pathlib import PurePath
 from typing import Optional
 
 from bids import BIDSLayout  # type: ignore
@@ -32,37 +31,37 @@ def config() -> dict:
     }
 
 
-def move_file(input: str, output: str) -> None:
+def move_file(input: Path, output: Path) -> None:
     """Move or rename a file and create target directory if it does not exist.
 
     Args:
-        input (str): File to move.
+        input (PurePath): File to move.
         output (str): _description_
     """
-    print(f"{abspath(input)} --> {abspath(output)}")
+    print(f"{input.resolve()} --> {output.resolve()}")
     create_dir_for_file(output)
-    os.rename(input, output)
+    input.rename(output)
 
 
-def create_dir_if_absent(output_path: str) -> None:
+def create_dir_if_absent(output_path: Path) -> None:
     """_summary_.
 
     Args:
-        output_path (str): _description_
+        output_path (Path): _description_
     """
-    if not Path(output_path).exists():
+    if not output_path.is_dir():
         print(f"Creating dir: {output_path}")
-        os.makedirs(output_path)
+    output_path.mkdir(parents=True, exist_ok=True)
 
 
-def create_dir_for_file(file: str) -> None:
+def create_dir_for_file(file: Path) -> None:
     """_summary_.
 
     Args:
-        file (str): _description_
+        file (Path): _description_
     """
-    output_path = dirname(abspath(file))
-    create_dir_if_absent(output_path)
+    output_path = PurePath(file.resolve()).parent
+    create_dir_if_absent(Path(output_path))
 
 
 def return_regex(string: str) -> str:
@@ -119,7 +118,7 @@ def return_path_rel_dataset(file_path: str, dataset_path: str) -> str:
     return rel_path
 
 
-def get_deepmreye_filename(layout: BIDSLayout, img: str, filetype: str) -> str:
+def get_deepmreye_filename(layout: BIDSLayout, img: str, filetype: str) -> Path:
     """_summary_.
 
     Args:
@@ -144,9 +143,10 @@ def get_deepmreye_filename(layout: BIDSLayout, img: str, filetype: str) -> str:
 
     filename = return_deepmreye_output_filename(filename, filetype)
 
-    filefolder = dirname(abspath(img))
+    filefolder = PurePath(img).parent
+    filefolder = filefolder.joinpath(filename)
 
-    return join(filefolder, filename)
+    return Path(filefolder).resolve()
 
 
 def return_deepmreye_output_filename(filename: str, filetype: str) -> str:

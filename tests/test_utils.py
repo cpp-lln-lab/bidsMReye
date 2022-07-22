@@ -1,5 +1,7 @@
 import os
 import shutil
+from pathlib import Path
+from pathlib import PurePath
 
 from bids.tests import get_test_data_path
 
@@ -50,8 +52,7 @@ def test_get_deepmreye_filename():
 
     layout = get_dataset_layout(data_path)
 
-    output_file = os.path.join(
-        get_test_data_path(),
+    output_file = PurePath(get_test_data_path()).joinpath(
         "synthetic",
         "derivatives",
         "fmriprep",
@@ -71,7 +72,7 @@ def test_get_deepmreye_filename():
     )
     deepmreye_mask_name = get_deepmreye_filename(layout, img, "mask")
 
-    assert deepmreye_mask_name == output_file
+    assert deepmreye_mask_name == Path(output_file)
 
 
 def test_return_deepmreye_output_filename():

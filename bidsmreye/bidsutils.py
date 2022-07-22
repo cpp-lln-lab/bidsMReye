@@ -4,6 +4,7 @@ from os.path import abspath
 from os.path import dirname
 from os.path import join
 from pathlib import Path
+from pathlib import PurePath
 from typing import Optional
 from typing import Union
 
@@ -24,7 +25,7 @@ def get_dataset_layout(dataset_path: str, config: Optional[dict] = None) -> BIDS
     Returns:
         BIDSLayout: _description_
     """
-    create_dir_if_absent(dataset_path)
+    create_dir_if_absent(Path(dataset_path))
 
     if config is None:
         pybids_config = get_pybids_config()
@@ -168,7 +169,9 @@ def get_config(config_file="", default: str = "") -> dict:
         return json.load(ff)
 
 
-def create_bidsname(layout: BIDSLayout, filename: Union[dict, str], filetype: str) -> str:
+def create_bidsname(
+    layout: BIDSLayout, filename: Union[dict, str], filetype: str
+) -> Path:
     """[summary].
 
     Args:
@@ -188,9 +191,9 @@ def create_bidsname(layout: BIDSLayout, filename: Union[dict, str], filetype: st
 
     output_file = layout.build_path(entities, bids_name_config[filetype], validate=False)
 
-    output_file = abspath(join(layout.root, output_file))
+    output_file = PurePath(layout.root).joinpath(output_file)
 
-    return output_file
+    return Path(output_file).resolve()
 
 
 def check_layout(layout: BIDSLayout) -> None:
