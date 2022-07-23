@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """Main script."""
 import argparse
 import os
@@ -13,7 +14,7 @@ from bidsmreye.prepare_data import prepare_data
 from bidsmreye.utils import config
 
 
-def main(argv=sys.argv):
+def main(argv=sys.argv) -> None:
     """Execute the main script."""
     parser = argparse.ArgumentParser(
         description="BIDS app using deepMReye to decode eye motion for fMRI time series data."
@@ -108,12 +109,11 @@ def main(argv=sys.argv):
     if args.task:
         cfg["space"] = args.space
 
-    cfg["input_folder"] = args.bids_dir
-    cfg["output_folder"] = os.path.join(args.output_dir, "bidsmreye")
+    cfg["input_folder"] = Path(args.bids_dir)
+    cfg["output_folder"] = Path(args.output_dir).joinpath("bidsmreye")
 
     if args.model == "guided_fixations":
-        cfg["model_weights_file"] = os.path.join(
-            os.getcwd(),
+        cfg["model_weights_file"] = Path.cwd().joinpath(
             "models",
             "dataset1_guided_fixations.h5",
         )

@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 
 from bidsmreye.combine import combine
@@ -7,7 +6,7 @@ from bidsmreye.combine import combine
 def test_combine_smoke():
 
     output_location = Path().resolve()
-    output_location = Path.joinpath(output_location, "tests", "data", "bidsmreye")
+    output_location = output_location.joinpath("tests", "data", "bidsmreye")
 
     cfg = {
         "output_folder": output_location,
@@ -19,11 +18,8 @@ def test_combine_smoke():
 
     combine(cfg)
 
-    os.remove(
-        Path.joinpath(
-            output_location,
-            "sub-01",
-            "func",
-            "sub-01_task-auditory_space-MNI152NLin6Asym_desc-nolabel_bidsmreye.npz",
-        )
-    )
+    output_location.joinpath(
+        "sub-01",
+        "func",
+        "sub-01_task-auditory_space-MNI152NLin6Asym_desc-nolabel_bidsmreye.npz",
+    ).unlink

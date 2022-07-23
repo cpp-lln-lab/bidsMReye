@@ -1,8 +1,5 @@
-"""foo."""
+"""TODO."""
 import json
-from os.path import abspath
-from os.path import dirname
-from os.path import join
 from pathlib import Path
 from typing import Optional
 from typing import Union
@@ -14,12 +11,13 @@ from bidsmreye.utils import config
 from bidsmreye.utils import create_dir_if_absent
 
 
-def get_dataset_layout(dataset_path: str, config: Optional[dict] = None) -> BIDSLayout:
+def get_dataset_layout(dataset_path: Path, config: Optional[dict] = None) -> BIDSLayout:
     """Return a BIDSLayout object for the dataset at the given path.
 
     Args:
-        dataset_path (str): _description_
-        config (dict, None): _description_. Defaults to None.
+        dataset_path (Path): Path to the dataset.
+
+        config (dict, None): Pybids config to use. Defaults to None.
 
     Returns:
         BIDSLayout: _description_
@@ -37,26 +35,27 @@ def get_dataset_layout(dataset_path: str, config: Optional[dict] = None) -> BIDS
 
 
 def write_dataset_description(layout: BIDSLayout) -> None:
-    """_summary_.
+    """Add a dataset_description.json to a BIDS dataset.
 
     Args:
-        layout (_type_): _description_
+        layout (BIDSLayout): BIDSLayout of the dataset to update.
     """
-    output_file = join(layout.root, "dataset_description.json")
+    output_file = Path(layout.root).joinpath("dataset_description.json")
 
     with open(output_file, "w") as ff:
         json.dump(layout.dataset_description, ff, indent=4)
 
 
 def set_dataset_description(layout: BIDSLayout, is_derivative: bool = True) -> BIDSLayout:
-    """_summary_.
+    """Add dataset description to a layout.
 
     Args:
-        layout (_type_): _description_
-        is_derivative (bool, optional): _description_. Defaults to True.
+        layout (BIDSLayout): _description_
+
+        is_derivative (bool, optional): Defaults to True.
 
     Returns:
-        _type_: _description_
+        BIDSLayout: Updated BIDSLayout of the dataset
     """
     data = {
         "Name": "dataset name",
@@ -97,14 +96,14 @@ def set_dataset_description(layout: BIDSLayout, is_derivative: bool = True) -> B
     return layout
 
 
-def init_derivatives_layout(output_location):
-    """_summary_.
+def init_derivatives_layout(output_location: Path) -> BIDSLayout:
+    """Initialize a derivatives dataset and returns its layout.
 
     Args:
         output_location (_type_): _description_
 
     Returns:
-        _type_: _description_
+        BIDSLayout:
     """
     layout_out = get_dataset_layout(output_location)
     layout_out = set_dataset_description(layout_out)
@@ -114,8 +113,15 @@ def init_derivatives_layout(output_location):
     return layout_out
 
 
-def get_bidsname_config(config_file="") -> dict:
-    """
+def get_bidsname_config(config_file: Path = None) -> dict:
+    """Load configuration for naming output BIDS files.
+
+    Args:
+        config_file (Path, optional): Defaults to None.
+
+    Returns:
+        dict: Config as a dictionary.
+
     See the Path construction demo in the pybids tutorial.
 
     https://github.com/bids-standard/pybids/blob/master/examples/pybids_tutorial.ipynb
@@ -124,8 +130,15 @@ def get_bidsname_config(config_file="") -> dict:
     return get_config(config_file, default)
 
 
-def get_pybids_config(config_file="") -> dict:
-    """
+def get_pybids_config(config_file: Path = None) -> dict:
+    """Load pybids coniguration.
+
+    Args:
+        config_file (Path, optional): Defaults to None.
+
+    Returns:
+        dict: pybids config.
+
     Pybids configs are stored in the layout module.
 
     https://github.com/bids-standard/pybids/tree/master/bids/layout/config
@@ -134,11 +147,11 @@ def get_pybids_config(config_file="") -> dict:
     return get_config(config_file, default)
 
 
-def get_bids_filter_config(config_file="") -> dict:
-    """_summary_.
+def get_bids_filter_config(config_file: Path = None) -> dict:
+    """Load the bids filter file config.
 
     Args:
-        config_file (str, optional): _description_. Defaults to "".
+        config_file (Path, optional): Config to load. Defaults to None.
 
     Returns:
         dict: _description_
@@ -147,60 +160,68 @@ def get_bids_filter_config(config_file="") -> dict:
     return get_config(config_file, default)
 
 
-def get_config(config_file="", default: str = "") -> dict:
-    """_summary_.
+def get_config(config_file: Path = None, default: str = "") -> dict:
+    """Load a config stored in a JSON.
 
     Args:
-        config_file (str, optional): _description_. Defaults to "".
-        default (str, optional): _description_. Defaults to "".
+        config_file (str, optional): File to load. Defaults to None.
+        Will look into the config directory if None.
+
+        default (str, optional): Default file to load. Defaults to "".
 
     Returns:
-        dict: _description_
-    """
-    if config_file == "" or not Path(config_file).exists():
-        my_path = dirname(abspath(__file__))
-        config_file = join(my_path, default)
+        dict: Config as a dictionary.
 
-    if config_file == "" or not Path(config_file).exists():
+    """
+    if config_file is None or not Path(config_file).exists():
+        my_path = Path(__file__).resolve().parent
+        config_file = my_path.joinpath(default)
+
+    if config_file is None or not Path(config_file).exists():
         raise FileNotFoundError(f"Config file {config_file} not found")
 
     with open(config_file, "r") as ff:
         return json.load(ff)
 
 
-def create_bidsname(layout: BIDSLayout, filename: Union[dict, str], filetype: str) -> str:
-    """[summary].
+def create_bidsname(
+    layout: BIDSLayout, filename: Union[dict, Path], filetype: str
+) -> Path:
+    """Return a BIDS valid filename for layout and a filename or a dict of BIDS entities.
 
     Args:
-        layout ([type]): [description]
-        filename ([type]): [description]
-        filetype (str): [description]
+        layout (BIDSLayout): BIDSLayout of the dataset.
+
+        filename (Union[dict, Path]): Dictonary of BIDS entities or a Path to a file.
+
+        filetype (str): One of the file type available in the BIDS name config.
 
     Returns:
-        str: [description]
+        Path: _description_
     """
-    if isinstance(filename, str):
-        entities = layout.parse_file_entities(filename)
-    else:
+    if isinstance(filename, dict):
         entities = filename
+    else:
+        entities = layout.parse_file_entities(filename)
 
     bids_name_config = get_bidsname_config()
 
     output_file = layout.build_path(entities, bids_name_config[filetype], validate=False)
 
-    output_file = abspath(join(layout.root, output_file))
+    output_file = Path(layout.root).joinpath(output_file)
 
-    return output_file
+    return output_file.resolve()
 
 
 def check_layout(layout: BIDSLayout) -> None:
     """_summary_.
 
     Args:
-        layout (_type_): _description_
+        layout (BIDSLayout): BIDSLayout of the dataset.
 
     Raises:
         Exception: _description_
+
         Exception: _description_
     """
     desc = layout.get_dataset_description()

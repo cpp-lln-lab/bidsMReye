@@ -1,9 +1,6 @@
-"""foo."""
+"""TODO."""
 import os
 import re
-from os.path import abspath
-from os.path import dirname
-from os.path import join
 from pathlib import Path
 from typing import Optional
 
@@ -32,36 +29,37 @@ def config() -> dict:
     }
 
 
-def move_file(input: str, output: str) -> None:
+def move_file(input: Path, output: Path) -> None:
     """Move or rename a file and create target directory if it does not exist.
 
     Args:
-        input (str): File to move.
+        input (Path): File to move.
+
         output (str): _description_
     """
-    print(f"{abspath(input)} --> {abspath(output)}")
+    print(f"{input.resolve()} --> {output.resolve()}")
     create_dir_for_file(output)
-    os.rename(input, output)
+    input.rename(output)
 
 
-def create_dir_if_absent(output_path: str) -> None:
+def create_dir_if_absent(output_path: Path) -> None:
     """_summary_.
 
     Args:
-        output_path (str): _description_
+        output_path (Path): _description_
     """
-    if not Path(output_path).exists():
+    if not output_path.is_dir():
         print(f"Creating dir: {output_path}")
-        os.makedirs(output_path)
+    output_path.mkdir(parents=True, exist_ok=True)
 
 
-def create_dir_for_file(file: str) -> None:
+def create_dir_for_file(file: Path) -> None:
     """_summary_.
 
     Args:
-        file (str): _description_
+        file (Path): _description_
     """
-    output_path = dirname(abspath(file))
+    output_path = file.resolve().parent
     create_dir_if_absent(output_path)
 
 
@@ -77,12 +75,13 @@ def return_regex(string: str) -> str:
     return f"^{string}$"
 
 
-def list_subjects(layout, cfg: Optional[dict] = None) -> list:
+def list_subjects(layout: BIDSLayout, cfg: Optional[dict] = None) -> list:
     """_summary_.
 
     Args:
-        layout (_type_): _description_
-        cfg (dict or None, optional): _description_. Defaults to Nonz.
+        layout (BIDSLayout): BIDSLayout of the dataset
+
+        cfg (dict or None, optional): Defaults to None.
 
     Raises:
         Exception: _description_
@@ -110,22 +109,15 @@ def list_subjects(layout, cfg: Optional[dict] = None) -> list:
     return subjects
 
 
-def return_path_rel_dataset(file_path: str, dataset_path: str) -> str:
-    """Create file path relative to the root of a dataset."""
-    file_path = abspath(file_path)
-    dataset_path = abspath(dataset_path)
-    rel_path = file_path.replace(dataset_path, "")
-    rel_path = rel_path[1:]
-    return rel_path
-
-
-def get_deepmreye_filename(layout: BIDSLayout, img: str, filetype: str) -> str:
+def get_deepmreye_filename(layout: BIDSLayout, img: str, filetype: str = None) -> Path:
     """_summary_.
 
     Args:
-        layout (_type_): _description_
+        layout (BIDSLayout): BIDSLayout of the dataset.
+
         img (str): _description_
-        filetype (str): _description_
+
+        filetype (str): Any of the following: None, "mask", "report". Defautls to None.
 
     Raises:
         Exception: _description_
@@ -144,22 +136,26 @@ def get_deepmreye_filename(layout: BIDSLayout, img: str, filetype: str) -> str:
 
     filename = return_deepmreye_output_filename(filename, filetype)
 
-    filefolder = dirname(abspath(img))
+    filefolder = Path(img).parent
+    filefolder = filefolder.joinpath(filename)
 
-    return join(filefolder, filename)
+    return Path(filefolder).resolve()
 
 
-def return_deepmreye_output_filename(filename: str, filetype: str) -> str:
+def return_deepmreye_output_filename(filename: str, filetype: str = None) -> str:
     """_summary_.
 
     Args:
         filename (str): _description_
-        filetype (str): _description_
+
+        filetype (str): Any of the following: None, "mask", "report". Defautls to None.
 
     Returns:
         str: _description_
     """
-    if filetype == "mask":
+    if filetype is None:
+        pass
+    elif filetype == "mask":
         filename = "mask_" + re.sub(r"\.nii.*", ".p", filename)
     elif filetype == "report":
         filename = "report_" + re.sub(r"\.nii.*", ".html", filename)

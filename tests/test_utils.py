@@ -1,5 +1,5 @@
-import os
 import shutil
+from pathlib import Path
 
 from bids.tests import get_test_data_path
 
@@ -8,14 +8,15 @@ from bidsmreye.utils import config
 from bidsmreye.utils import get_deepmreye_filename
 from bidsmreye.utils import list_subjects
 from bidsmreye.utils import return_deepmreye_output_filename
-from bidsmreye.utils import return_path_rel_dataset
 
 
 def test_list_subjects():
 
     cfg = config()
 
-    data_path = os.path.join(get_test_data_path(), "synthetic", "derivatives", "fmriprep")
+    data_path = Path(get_test_data_path()).joinpath(
+        "synthetic", "derivatives", "fmriprep"
+    )
 
     layout = get_dataset_layout(data_path)
 
@@ -28,30 +29,20 @@ def test_list_subjects():
 
 
 def test_get_dataset_layout_smoke_test():
-    get_dataset_layout("data")
+    get_dataset_layout(Path("data"))
 
     shutil.rmtree("data")
 
 
-def test_return_path_rel_dataset():
-
-    file_path = "/home/john/gin/datset/sub-03/func/sub-03_task-rest_space-T1w_desc-preproc_bold.nii.gz"
-    dataset_path = "/home/john/gin/datset"
-    rel_file_path = return_path_rel_dataset(file_path, dataset_path)
-
-    assert (
-        rel_file_path == "sub-03/func/sub-03_task-rest_space-T1w_desc-preproc_bold.nii.gz"
-    )
-
-
 def test_get_deepmreye_filename():
 
-    data_path = os.path.join(get_test_data_path(), "synthetic", "derivatives", "fmriprep")
+    data_path = Path(get_test_data_path()).joinpath(
+        "synthetic", "derivatives", "fmriprep"
+    )
 
     layout = get_dataset_layout(data_path)
 
-    output_file = os.path.join(
-        get_test_data_path(),
+    output_file = Path(get_test_data_path()).joinpath(
         "synthetic",
         "derivatives",
         "fmriprep",
