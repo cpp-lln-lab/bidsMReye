@@ -1,11 +1,10 @@
 """foo."""
-import os
 import pickle
 import warnings
 from pathlib import Path
-from pathlib import PurePath
 
 import numpy as np  # type: ignore
+from bids import BIDSLayout  # type: ignore
 from deepmreye import preprocess  # type: ignore
 from rich import print
 
@@ -17,7 +16,7 @@ from bidsmreye.utils import move_file
 from bidsmreye.utils import return_regex
 
 
-def process_subject(cfg, layout_out, subject_label: str):
+def process_subject(cfg: dict, layout_out: BIDSLayout, subject_label: str):
     """_summary_.
 
     Args:
@@ -70,7 +69,7 @@ def process_subject(cfg, layout_out, subject_label: str):
         save_participant_file(layout_out, img, subj)
 
 
-def save_participant_file(layout_out, img, subj: dict):
+def save_participant_file(layout_out: BIDSLayout, img, subj: dict):
     """_summary_.
 
     Args:
@@ -81,7 +80,7 @@ def save_participant_file(layout_out, img, subj: dict):
     output_file = create_bidsname(layout_out, img, "no_label")
 
     preprocess.save_data(
-        os.path.basename(output_file),
+        output_file.name,
         subj["data"],
         subj["labels"],
         subj["ids"],
@@ -89,14 +88,12 @@ def save_participant_file(layout_out, img, subj: dict):
         center_labels=False,
     )
 
-    file_to_move = PurePath(layout_out.root).joinpath(
-        "..", "bidsmreye", PurePath(output_file).name
-    )
+    file_to_move = Path(layout_out.root).joinpath("..", "bidsmreye", output_file.name)
 
-    move_file(Path(file_to_move), output_file)
+    move_file(file_to_move, output_file)
 
 
-def combine(cfg):
+def combine(cfg: dict):
     """Add labels to dataset."""
     output_dataset_path = cfg["output_folder"]
     layout_out = get_dataset_layout(output_dataset_path)

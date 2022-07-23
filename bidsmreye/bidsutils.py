@@ -1,10 +1,6 @@
 """foo."""
 import json
-from os.path import abspath
-from os.path import dirname
-from os.path import join
 from pathlib import Path
-from pathlib import PurePath
 from typing import Optional
 from typing import Union
 
@@ -43,7 +39,7 @@ def write_dataset_description(layout: BIDSLayout) -> None:
     Args:
         layout (_type_): _description_
     """
-    output_file = join(layout.root, "dataset_description.json")
+    output_file = Path(layout.root).joinpath("dataset_description.json")
 
     with open(output_file, "w") as ff:
         json.dump(layout.dataset_description, ff, indent=4)
@@ -159,8 +155,8 @@ def get_config(config_file="", default: str = "") -> dict:
         dict: _description_
     """
     if config_file == "" or not Path(config_file).exists():
-        my_path = dirname(abspath(__file__))
-        config_file = join(my_path, default)
+        my_path = Path(__file__).resolve().parent
+        config_file = my_path.joinpath(default)
 
     if config_file == "" or not Path(config_file).exists():
         raise FileNotFoundError(f"Config file {config_file} not found")
@@ -170,7 +166,7 @@ def get_config(config_file="", default: str = "") -> dict:
 
 
 def create_bidsname(
-    layout: BIDSLayout, filename: Union[dict, str], filetype: str
+    layout: BIDSLayout, filename: Union[dict, Path], filetype: str
 ) -> Path:
     """[summary].
 
@@ -182,18 +178,18 @@ def create_bidsname(
     Returns:
         str: [description]
     """
-    if isinstance(filename, str):
-        entities = layout.parse_file_entities(filename)
-    else:
+    if isinstance(filename, dict):
         entities = filename
+    else:
+        entities = layout.parse_file_entities(filename)
 
     bids_name_config = get_bidsname_config()
 
     output_file = layout.build_path(entities, bids_name_config[filetype], validate=False)
 
-    output_file = PurePath(layout.root).joinpath(output_file)
+    output_file = Path(layout.root).joinpath(output_file)
 
-    return Path(output_file).resolve()
+    return output_file.resolve()
 
 
 def check_layout(layout: BIDSLayout) -> None:

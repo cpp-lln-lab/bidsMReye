@@ -1,4 +1,5 @@
 """Run coregistration and extract data."""
+from bids import BIDSLayout  # type: ignore
 from deepmreye import preprocess  # type: ignore
 from rich import print
 
@@ -37,7 +38,9 @@ def coregister_and_extract_data(img: str) -> None:
     )
 
 
-def preprocess_subject(cfg, layout_in, layout_out, subject_label: str) -> None:
+def preprocess_subject(
+    cfg, layout_in: BIDSLayout, layout_out: BIDSLayout, subject_label: str
+) -> None:
     """Run coregistration and extract data for one subject.
 
     Args:

@@ -1,9 +1,7 @@
 """foo."""
 import os
 import re
-from os.path import abspath
 from pathlib import Path
-from pathlib import PurePath
 from typing import Optional
 
 from bids import BIDSLayout  # type: ignore
@@ -35,7 +33,7 @@ def move_file(input: Path, output: Path) -> None:
     """Move or rename a file and create target directory if it does not exist.
 
     Args:
-        input (PurePath): File to move.
+        input (Path): File to move.
         output (str): _description_
     """
     print(f"{input.resolve()} --> {output.resolve()}")
@@ -60,8 +58,8 @@ def create_dir_for_file(file: Path) -> None:
     Args:
         file (Path): _description_
     """
-    output_path = PurePath(file.resolve()).parent
-    create_dir_if_absent(Path(output_path))
+    output_path = file.resolve().parent
+    create_dir_if_absent(output_path)
 
 
 def return_regex(string: str) -> str:
@@ -76,7 +74,7 @@ def return_regex(string: str) -> str:
     return f"^{string}$"
 
 
-def list_subjects(layout, cfg: Optional[dict] = None) -> list:
+def list_subjects(layout: BIDSLayout, cfg: Optional[dict] = None) -> list:
     """_summary_.
 
     Args:
@@ -109,13 +107,14 @@ def list_subjects(layout, cfg: Optional[dict] = None) -> list:
     return subjects
 
 
-def return_path_rel_dataset(file_path: str, dataset_path: str) -> str:
+def return_path_rel_dataset(file_path: Path, dataset_path: Path) -> Path:
     """Create file path relative to the root of a dataset."""
-    file_path = abspath(file_path)
-    dataset_path = abspath(dataset_path)
-    rel_path = file_path.replace(dataset_path, "")
-    rel_path = rel_path[1:]
-    return rel_path
+    # Path(file_path).relative_to(dataset_path)
+    # file_path = abspath(file_path)
+    # dataset_path = abspath(dataset_path)
+    # rel_path = file_path.replace(dataset_path, "")
+    # rel_path = rel_path[1:]
+    return file_path.relative_to(dataset_path)
 
 
 def get_deepmreye_filename(layout: BIDSLayout, img: str, filetype: str) -> Path:
@@ -143,7 +142,7 @@ def get_deepmreye_filename(layout: BIDSLayout, img: str, filetype: str) -> Path:
 
     filename = return_deepmreye_output_filename(filename, filetype)
 
-    filefolder = PurePath(img).parent
+    filefolder = Path(img).parent
     filefolder = filefolder.joinpath(filename)
 
     return Path(filefolder).resolve()

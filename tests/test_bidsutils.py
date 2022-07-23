@@ -43,13 +43,21 @@ def test_create_bidsname():
     output_location = Path.joinpath(output_location, "derivatives")
 
     layout = get_dataset_layout(output_location)
-    filename = "inputs/raw/sub-01/ses-01/func/sub-01_ses-01_task-motion_run-1_bold.nii"
+    filename = Path("inputs").joinpath(
+        "raw",
+        "sub-01",
+        "ses-01",
+        "func",
+        "sub-01_ses-01_task-motion_run-1_bold.nii",
+    )
 
     output_file = create_bidsname(layout, filename=filename, filetype="mask")
 
-    rel_path = return_path_rel_dataset(file_path=output_file, dataset_path=layout.root)
-    assert (
-        rel_path == "sub-01/ses-01/func/sub-01_ses-01_task-motion_run-1_desc-eye_mask.p"
+    rel_path = return_path_rel_dataset(
+        file_path=output_file, dataset_path=Path(layout.root)
+    )
+    assert rel_path == Path("sub-01").joinpath(
+        "ses-01", "func", "sub-01_ses-01_task-motion_run-1_desc-eye_mask.p"
     )
 
     shutil.rmtree(output_location)
