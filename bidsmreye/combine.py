@@ -1,4 +1,4 @@
-"""foo."""
+"""TODO."""
 import pickle
 import warnings
 from pathlib import Path
@@ -20,7 +20,8 @@ def process_subject(cfg: dict, layout_out: BIDSLayout, subject_label: str):
     """_summary_.
 
     Args:
-        layout_out (_type_): _description_
+        layout_out (BIDSLayout): _description_
+
         subject_label (str): Can be a regular expression.
     """
     print(f"Running subject: {subject_label}")
@@ -73,8 +74,10 @@ def save_participant_file(layout_out: BIDSLayout, img, subj: dict):
     """_summary_.
 
     Args:
-        layout_out (_type_): _description_
+        layout_out (BIDSLayout): _description_
+
         img (_type_): _description_
+
         subj (dict): _description_
     """
     output_file = create_bidsname(layout_out, img, "no_label")

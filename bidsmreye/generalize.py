@@ -1,4 +1,4 @@
-"""foo."""
+"""TODO."""
 import warnings
 from pathlib import Path
 
@@ -24,7 +24,9 @@ def convert_confounds(cfg: dict, layout_out: BIDSLayout, subject_label: str):
 
     Args:
         cfg (dict): configuration dictionary
+
         layout_out (_type_): pybids layout to of the dataset to act on.
+
         subject_label (str): The label(s) of the participant(s) that should be analyzed.
     """
     entities = {"subject": subject_label, "task": cfg["task"], "space": cfg["space"]}

@@ -1,4 +1,4 @@
-"""foo."""
+"""TODO."""
 import os
 import re
 from pathlib import Path
@@ -34,6 +34,7 @@ def move_file(input: Path, output: Path) -> None:
 
     Args:
         input (Path): File to move.
+
         output (str): _description_
     """
     print(f"{input.resolve()} --> {output.resolve()}")
@@ -78,8 +79,9 @@ def list_subjects(layout: BIDSLayout, cfg: Optional[dict] = None) -> list:
     """_summary_.
 
     Args:
-        layout (_type_): _description_
-        cfg (dict or None, optional): _description_. Defaults to Nonz.
+        layout (BIDSLayout): BIDSLayout of the dataset
+
+        cfg (dict or None, optional): Defaults to None.
 
     Raises:
         Exception: _description_
@@ -107,23 +109,15 @@ def list_subjects(layout: BIDSLayout, cfg: Optional[dict] = None) -> list:
     return subjects
 
 
-def return_path_rel_dataset(file_path: Path, dataset_path: Path) -> Path:
-    """Create file path relative to the root of a dataset."""
-    # Path(file_path).relative_to(dataset_path)
-    # file_path = abspath(file_path)
-    # dataset_path = abspath(dataset_path)
-    # rel_path = file_path.replace(dataset_path, "")
-    # rel_path = rel_path[1:]
-    return file_path.relative_to(dataset_path)
-
-
-def get_deepmreye_filename(layout: BIDSLayout, img: str, filetype: str) -> Path:
+def get_deepmreye_filename(layout: BIDSLayout, img: str, filetype: str = None) -> Path:
     """_summary_.
 
     Args:
-        layout (_type_): _description_
+        layout (BIDSLayout): BIDSLayout of the dataset.
+
         img (str): _description_
-        filetype (str): _description_
+
+        filetype (str): Any of the following: None, "mask", "report". Defautls to None.
 
     Raises:
         Exception: _description_
@@ -148,17 +142,20 @@ def get_deepmreye_filename(layout: BIDSLayout, img: str, filetype: str) -> Path:
     return Path(filefolder).resolve()
 
 
-def return_deepmreye_output_filename(filename: str, filetype: str) -> str:
+def return_deepmreye_output_filename(filename: str, filetype: str = None) -> str:
     """_summary_.
 
     Args:
         filename (str): _description_
-        filetype (str): _description_
+
+        filetype (str): Any of the following: None, "mask", "report". Defautls to None.
 
     Returns:
         str: _description_
     """
-    if filetype == "mask":
+    if filetype is None:
+        pass
+    elif filetype == "mask":
         filename = "mask_" + re.sub(r"\.nii.*", ".p", filename)
     elif filetype == "report":
         filename = "report_" + re.sub(r"\.nii.*", ".html", filename)

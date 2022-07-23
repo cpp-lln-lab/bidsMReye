@@ -8,7 +8,6 @@ from bidsmreye.utils import config
 from bidsmreye.utils import get_deepmreye_filename
 from bidsmreye.utils import list_subjects
 from bidsmreye.utils import return_deepmreye_output_filename
-from bidsmreye.utils import return_path_rel_dataset
 
 
 def test_list_subjects():
@@ -30,23 +29,9 @@ def test_list_subjects():
 
 
 def test_get_dataset_layout_smoke_test():
-    get_dataset_layout("data")
+    get_dataset_layout(Path("data"))
 
     shutil.rmtree("data")
-
-
-def test_return_path_rel_dataset():
-
-    dataset_path = Path("/home").joinpath("john", "gin", "datset")
-    file_path = dataset_path.joinpath(
-        "sub-03", "func", "sub-03_task-rest_space-T1w_desc-preproc_bold.nii.gz"
-    )
-
-    rel_file_path = return_path_rel_dataset(file_path, dataset_path)
-
-    assert rel_file_path == Path("sub-03").joinpath(
-        "func", "sub-03_task-rest_space-T1w_desc-preproc_bold.nii.gz"
-    )
 
 
 def test_get_deepmreye_filename():

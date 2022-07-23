@@ -16,10 +16,10 @@ from bidsmreye.utils import return_regex
 
 
 def coregister_and_extract_data(img: str) -> None:
-    """_summary_.
+    """Coregister image to eye template and extract data from eye mask for one image.
 
     Args:
-        img (str): _description_
+        img (str): Image to coregister
     """
     (
         eyemask_small,
@@ -44,7 +44,8 @@ def preprocess_subject(
     """Run coregistration and extract data for one subject.
 
     Args:
-        layout_in (_type_): _description_
+        layout_in (BIDSLayout): Layout input dataset.
+        layout_out (BIDSLayout): Layout output dataset.
         subject_label (str): Can be a regular expression.
     """
     print(f"Running subject: {subject_label}")
