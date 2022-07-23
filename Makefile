@@ -1,4 +1,4 @@
-.PHONY: clean clean-build clean-pyc clean-test coverage dist docs help install lint lint/flake8 lint/black
+.PHONY: clean clean-build clean-pyc clean-test coverage dist docs help install lint lint/flake8 lint/black Dockerfile_dev
 .DEFAULT_GOAL := help
 
 define BROWSER_PYSCRIPT
@@ -82,14 +82,15 @@ dist: clean ## builds source and wheel package
 install: clean ## install the package to the active Python's site-packages
 	python setup.py install
 
-## run the tests
+## TESTS
+
 test: models tests/data/moae_fmriprep ## run tests quickly with the default Python
 	python -m pytest --cov bidsmreye --cov-report html:htmlcov
 	$(BROWSER) htmlcov/index.html
 
 tests/data/moae_fmriprep:
 	mkdir -p tests/data
-	wget https://osf.io/vufjs/download
+	wget -q https://osf.io/vufjs/download
 	unzip download
 	rm download
 	mv moae_fmriprep tests/data/moae_fmriprep
@@ -99,11 +100,11 @@ models: models/dataset1_guided_fixations.h5 models/dataset5_free_viewing.h5
 
 models/dataset1_guided_fixations.h5:
 	mkdir -p models
-	wget https://osf.io/download/cqf74/ -O models/dataset1_guided_fixations.h5
+	wget -q https://osf.io/download/cqf74/ -O models/dataset1_guided_fixations.h5
 
 models/dataset5_free_viewing.h5:
 	mkdir -p models
-	wget https://osf.io/download/89nky/ -O models/dataset5_free_viewing.h5
+	wget -q https://osf.io/download/89nky/ -O models/dataset5_free_viewing.h5
 
 
 ## DEMO
@@ -124,3 +125,34 @@ generalize:
 
 clean-demo:
 	rm -fr outputs
+
+## DOCKER
+
+Dockerfile_dev:
+	docker run --rm repronim/neurodocker:0.7.0 generate docker \
+	--base debian:stretch-slim \
+	--pkg-manager apt \
+	--install "git wget make" \
+	--miniconda \
+		create_env="bidsmreye" \
+		conda_install="python=3.9 pip" \
+		activate="true" \
+	--user neuro \
+	--run "mkdir -p /home/neuro/bidsMReye" \
+	--copy . /home/neuro/bidsMReye \
+	--workdir /home/neuro/bidsMReye \
+	--run "make models" \
+	--miniconda \
+		use_env="bidsmreye" \
+		pip_install="-r requirements.txt" \
+	--miniconda \
+		use_env="bidsmreye" \
+		pip_install="." \
+	--entrypoint build/lib/bidsmreye/run.py \
+	> Dockerfile_dev
+
+Docker_dev_build: Dockerfile_dev
+	docker build --tag bidsmereye:dev --file Dockerfile_dev .
+
+Docker_dev_build_no_cache: Dockerfile_dev
+	docker build --tag bidsmereye:dev --no-cache --file Dockerfile_dev .
