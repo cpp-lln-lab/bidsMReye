@@ -1,5 +1,6 @@
 """Run coregistration and extract data."""
-from deepmreye import preprocess
+from bids import BIDSLayout  # type: ignore
+from deepmreye import preprocess  # type: ignore
 from rich import print
 
 from bidsmreye.bidsutils import check_layout
@@ -14,11 +15,11 @@ from bidsmreye.utils import move_file
 from bidsmreye.utils import return_regex
 
 
-def coregister_and_extract_data(img: str):
-    """_summary_.
+def coregister_and_extract_data(img: str) -> None:
+    """Coregister image to eye template and extract data from eye mask for one image.
 
     Args:
-        img (str): _description_
+        img (str): Image to coregister
     """
     (
         eyemask_small,
@@ -37,11 +38,14 @@ def coregister_and_extract_data(img: str):
     )
 
 
-def preprocess_subject(cfg, layout_in, layout_out, subject_label: str):
+def preprocess_subject(
+    cfg, layout_in: BIDSLayout, layout_out: BIDSLayout, subject_label: str
+) -> None:
     """Run coregistration and extract data for one subject.
 
     Args:
-        layout_in (_type_): _description_
+        layout_in (BIDSLayout): Layout input dataset.
+        layout_out (BIDSLayout): Layout output dataset.
         subject_label (str): Can be a regular expression.
     """
     print(f"Running subject: {subject_label}")
@@ -68,11 +72,11 @@ def preprocess_subject(cfg, layout_in, layout_out, subject_label: str):
         move_file(deepmreye_mask_report, report_name)
 
 
-def prepare_data(cfg):
+def prepare_data(cfg) -> None:
     """Run coregistration and extract data for all subjects.
 
     Args:
-        dataset_path (_type_): _description_
+        cfg (dict): configuration dictionary
     """
     input_dataset_path = cfg["input_folder"]
     layout_in = get_dataset_layout(input_dataset_path)

@@ -13,49 +13,68 @@ from bidsmreye.prepare_data import prepare_data
 from bidsmreye.utils import config
 
 
-def main(argv=sys.argv):
+def main(argv=sys.argv) -> None:
     """Execute the main script."""
-    parser = argparse.ArgumentParser(description="Example BIDS App entrypoint script.")
+    parser = argparse.ArgumentParser(
+        description="BIDS app using deepMReye to decode eye motion for fMRI time series data."
+    )
     parser.add_argument(
         "bids_dir",
-        help="The directory with the input dataset "
-        "formatted according to the BIDS standard.",
+        help="""
+        The directory with the input dataset formatted according to the BIDS standard.
+        """,
     )
     parser.add_argument(
         "output_dir",
-        help="The directory where the output files "
-        "should be stored. If you are running group level analysis "
-        "this folder should be prepopulated with the results of the"
-        "participant level analysis.",
+        help="""
+        The directory where the output files will be stored.
+        """,
     )
     parser.add_argument(
         "analysis_level",
-        help="Level of the analysis that will be performed. "
-        "Multiple participant level analyses can be run independently "
-        "(in parallel) using the same output_dir.",
+        help="""Level of the analysis that will be performed.
+        Multiple participant level analyses can be run independently (in parallel)
+        using the same output_dir.
+        """,
         choices=["participant"],
     )
     parser.add_argument(
         "--participant_label",
-        help="The label(s) of the participant(s) that should be analyzed. The label "
-        "corresponds to sub-<participant_label> from the BIDS spec "
-        '(so it does not include "sub-"). If this parameter is not '
-        "provided all subjects should be analyzed. Multiple "
-        "participants can be specified with a space separated list.",
+        help="""
+        The label(s) of the participant(s) that should be analyzed.
+        The label corresponds to sub-<participant_label> from the BIDS spec
+        (so it does not include "sub-").
+        If this parameter is not provided, all subjects will be analyzed.
+        Multiple participants can be specified with a space separated list.
+        """,
         nargs="+",
     )
     parser.add_argument(
         "--action",
-        help="what to do",
-        choices=["prepare", "combine", "generalize", "confounds"],
+        help="""
+        What action to perform:
+        - prepare: prepare data for analysis coregister to template,
+                   normalize and extract data
+        - combine: combine data labels and data from different runs into a single file
+        - generalize: generalize from data to give predicted labels
+        """,
+        choices=["prepare", "combine", "generalize"],
     )
     parser.add_argument(
         "--task",
-        help="task to process",
+        help="""
+        The label of the task that will be analyzed.
+        The label corresponds to task-<task_label> from the BIDS spec
+        so it does not include "task-").
+        """,
     )
     parser.add_argument(
         "--space",
-        help="space to process",
+        help="""
+        The label of the space that will be analyzed.
+        The label corresponds to space-<space_label> from the BIDS spec
+        (so it does not include "space-").
+        """,
     )
     parser.add_argument(
         "--model",
@@ -69,6 +88,7 @@ def main(argv=sys.argv):
 
     args = parser.parse_args(argv[1:])
 
+    # TODO extract function
     subjects_to_analyze = []
     # only for a subset of subjects
     if args.participant_label:
@@ -78,6 +98,7 @@ def main(argv=sys.argv):
         subject_dirs = glob(os.path.join(args.bids_dir, "sub-*"))
         subjects_to_analyze = [subject_dir.split("-")[-1] for subject_dir in subject_dirs]
 
+    # TODO extract function
     cfg = config()
 
     cfg["participant"] = subjects_to_analyze
@@ -87,12 +108,11 @@ def main(argv=sys.argv):
     if args.task:
         cfg["space"] = args.space
 
-    cfg["input_folder"] = args.bids_dir
-    cfg["output_folder"] = os.path.join(args.output_dir, "bidsmreye")
+    cfg["input_folder"] = Path(args.bids_dir)
+    cfg["output_folder"] = Path(args.output_dir).joinpath("bidsmreye")
 
     if args.model == "guided_fixations":
-        cfg["model_weights_file"] = os.path.join(
-            os.getcwd(),
+        cfg["model_weights_file"] = Path.cwd().joinpath(
             "models",
             "dataset1_guided_fixations.h5",
         )
