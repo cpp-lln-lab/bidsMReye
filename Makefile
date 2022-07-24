@@ -140,8 +140,8 @@ generalize:
 				--task auditory \
 				--model guided_fixations \
 				--action generalize \
-				--verbosity WARNING \
-				--debug True \
+				--verbosity INFO \
+				--debug False \
 				$$PWD/tests/data/moae_fmriprep \
 				$$PWD/outputs participant
 
