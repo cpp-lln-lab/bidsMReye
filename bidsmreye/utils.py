@@ -2,12 +2,71 @@
 import logging
 import os
 import re
+import warnings
 from pathlib import Path
 from typing import Optional
 
+from attrs import define
+from attrs import field
 from bids import BIDSLayout  # type: ignore
 
 log = logging.getLogger("rich")
+
+
+@define
+class Config:
+    """Set up config and check that all required fields are set."""
+
+    input_folder: str = field(default=None, converter=Path)
+
+    @input_folder.validator
+    def _check_input_folder(self, attribute, value):
+        if not value.is_dir:
+            raise ValueError(f"Input_folder must be an existing directory:\n{value}.")
+
+    output_folder: str = field(default=None, converter=Path)
+    model_weights_file = field(kw_only=True, default="")
+    participant: list = field(kw_only=True, default=[])
+    space: str = field(kw_only=True, default="")
+    task: str = field(kw_only=True, default="")
+    debug: bool = field(kw_only=True, default=False)
+    has_GPU = False
+
+    def __attrs_post_init__(self):
+        """Check that output_folder exists and gets info from layout if not specified."""
+        os.environ["CUDA_VISIBLE_DEVICES"] = "0" if self.has_GPU else ""
+
+        self.output_folder = Path(self.output_folder).joinpath("bidsmreye")
+        if not self.output_folder:
+            self.output_folder.mkdir(parents=True, exist_ok=True)
+
+        layout_in = BIDSLayout(self.input_folder, validate=False, derivatives=False)
+
+        # TODO throw error if no participants found or warning
+        #      if some requested participants are not found
+        subjects = layout_in.get_subjects()
+        if self.participant:
+            missing_subjects = list(set(self.participant) - set(subjects))
+            if missing_subjects:
+                warnings.warn(
+                    f"Task(s) {missing_subjects} not found in {self.input_folder}"
+                )
+            self.participant = list(set(self.participant) & set(subjects))
+        else:
+            self.participant = layout_in.get(
+                return_type="id", target="subject", subject=self.participant
+            )
+
+        # TODO throw error if no task found or warning
+        #      if some requested tasks are not found
+        tasks = layout_in.get_tasks()
+        if not self.task:
+            self.task = layout_in.get_tasks()
+        else:
+            missing_tasks = list(set(self.task) - set(tasks))
+            if missing_tasks:
+                warnings.warn(f"Task(s) {missing_tasks} not found in {self.input_folder}")
+            self.task = list(set(self.task) & set(tasks))
 
 
 def config() -> dict:
