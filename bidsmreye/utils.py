@@ -1,11 +1,13 @@
 """TODO."""
+import logging
 import os
 import re
 from pathlib import Path
 from typing import Optional
 
 from bids import BIDSLayout  # type: ignore
-from rich import print
+
+log = logging.getLogger("rich")
 
 
 def config() -> dict:
@@ -37,7 +39,7 @@ def move_file(input: Path, output: Path) -> None:
 
         output (str): _description_
     """
-    print(f"{input.resolve()} --> {output.resolve()}")
+    log.info(f"{input.resolve()} --> {output.resolve()}")
     create_dir_for_file(output)
     input.rename(output)
 
@@ -49,7 +51,7 @@ def create_dir_if_absent(output_path: Path) -> None:
         output_path (Path): _description_
     """
     if not output_path.is_dir():
-        print(f"Creating dir: {output_path}")
+        log.info(f"Creating dir: {output_path}")
     output_path.mkdir(parents=True, exist_ok=True)
 
 
@@ -103,8 +105,9 @@ def list_subjects(layout: BIDSLayout, cfg: Optional[dict] = None) -> list:
 
     if debug:
         subjects = [subjects[0]]
+        log.debug("Running first subject only.")
 
-    print(f"processing subjects: {subjects}\n")
+    log.info(f"processing subjects: {subjects}")
 
     return subjects
 

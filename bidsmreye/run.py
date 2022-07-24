@@ -1,17 +1,20 @@
 #!/usr/bin/env python
 """Main script."""
 import argparse
+import logging
 import os
 import sys
 from glob import glob
 from pathlib import Path
 
-from rich import print
+from rich.logging import RichHandler
 
 from bidsmreye.combine import combine
 from bidsmreye.generalize import generalize
 from bidsmreye.prepare_data import prepare_data
 from bidsmreye.utils import config
+
+FORMAT = "%(asctime)s - %(levelname)s - %(message)s"
 
 
 def main(argv=sys.argv) -> None:
@@ -83,11 +86,55 @@ def main(argv=sys.argv) -> None:
         choices=["guided_fixations"],
     )
     parser.add_argument(
+        "--verbosity",
+        help="INFO, WARNING. Defaults to INFO",
+        choices=["INFO", "WARNING"],
+    )
+    parser.add_argument(
         "--debug",
         help="true or false",
     )
 
     args = parser.parse_args(argv[1:])
+
+    cfg = set_cfg(args)
+
+    log_level = args.verbosity or "INFO"
+    if cfg["debug"]:
+        log_level = "DEBUG"
+
+    logging.basicConfig(
+        level=log_level, format=FORMAT, datefmt="[%X]", handlers=[RichHandler()]
+    )
+
+    log = logging.getLogger("rich")
+
+    if cfg["debug"]:
+        log.debug("DEBUG MODE")
+
+    if cfg["model_weights_file"] != "":
+        assert Path(cfg["model_weights_file"]).is_file()
+        log.info(f"Using model: {cfg['model_weights_file']}")
+
+    if args.analysis_level == "participant":
+
+        if args.action == "prepare":
+            log.info("PREPARING DATA")
+            prepare_data(cfg)
+
+        elif args.action == "combine":
+            log.info("COMBINING DATA")
+            combine(cfg)
+
+        elif args.action == "generalize":
+            log.info("GENERALIZING")
+            generalize(cfg)
+
+
+def set_cfg(args):
+    """Set the config."""
+    # TODO extract function
+    cfg = config()
 
     # TODO extract function
     subjects_to_analyze = []
@@ -98,9 +145,6 @@ def main(argv=sys.argv) -> None:
     else:
         subject_dirs = glob(os.path.join(args.bids_dir, "sub-*"))
         subjects_to_analyze = [subject_dir.split("-")[-1] for subject_dir in subject_dirs]
-
-    # TODO extract function
-    cfg = config()
 
     cfg["participant"] = subjects_to_analyze
 
@@ -118,20 +162,10 @@ def main(argv=sys.argv) -> None:
             "dataset1_guided_fixations.h5",
         )
 
-    if cfg["model_weights_file"] != "":
-        assert Path(cfg["model_weights_file"]).is_file()
-        print(f"\nUsing model: {cfg['model_weights_file']}")
+    if args.debug == "True":
+        cfg["debug"] = True
 
-    if args.analysis_level == "participant":
-
-        if args.action == "prepare":
-            prepare_data(cfg)
-
-        elif args.action == "combine":
-            combine(cfg)
-
-        elif args.action == "generalize":
-            generalize(cfg)
+    return cfg
 
 
 if __name__ == "__main__":
