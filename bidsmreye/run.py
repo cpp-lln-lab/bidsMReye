@@ -8,12 +8,17 @@ from glob import glob
 from pathlib import Path
 
 from rich.logging import RichHandler
+from rich.traceback import install
 
 from bidsmreye.combine import combine
 from bidsmreye.generalize import generalize
 from bidsmreye.prepare_data import prepare_data
 from bidsmreye.utils import config
 
+# let rich print the traceback
+install(show_locals=True)
+
+# log format
 FORMAT = "%(asctime)s - %(levelname)s - %(message)s"
 
 

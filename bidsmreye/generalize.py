@@ -130,8 +130,7 @@ def generalize(cfg: dict) -> None:
             bg_color="rgb(255,255,255)",
             ylim=[-11, 11],
         )
-        print(log.level)
-        if log.level in ["DEBUG", "INFO"]:
+        if log.isEnabledFor(logging.DEBUG) or log.isEnabledFor(logging.INFO):
             fig.show()
 
         entities = {"subject": subject_label, "task": cfg["task"], "space": cfg["space"]}
