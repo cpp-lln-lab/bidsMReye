@@ -1,0 +1,26 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "WeeXee",
+      "name": "Pauline Cabee",
+      "avatar_url": "https://avatars.githubusercontent.com/u/91776803?v=4",
+      "profile": "https://weexee.github.io/Portfolio/",
+      "contributions": [
+        "code",
+        "ideas",
+        "infra"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "bidsMReye",
+  "projectOwner": "cpp-lln-lab",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true
+}
