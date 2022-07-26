@@ -18,7 +18,7 @@ repos:
         rev: "4.0.1"
         hooks:
         -   id: flake8
-            exclude: tests/.*.py|version.*.py
+            exclude: tests/.*.py|version.*.py # ignore tests and versioneer related code
 
 
     - repo: https://github.com/ikamensh/flynt/
