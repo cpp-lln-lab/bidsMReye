@@ -10,10 +10,13 @@ from pathlib import Path
 from rich.logging import RichHandler
 from rich.traceback import install
 
+from . import _version
 from bidsmreye.combine import combine
 from bidsmreye.generalize import generalize
 from bidsmreye.prepare_data import prepare_data
 from bidsmreye.utils import config
+
+__version__ = _version.get_versions()["version"]
 
 # let rich print the traceback
 install(show_locals=True)
@@ -113,6 +116,8 @@ def main(argv=sys.argv) -> None:
     )
 
     log = logging.getLogger("rich")
+
+    log.info("Running bidsmreye version %s", __version__)
 
     if cfg["debug"]:
         log.debug("DEBUG MODE")

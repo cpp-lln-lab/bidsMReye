@@ -2,14 +2,16 @@
 import shutil
 from pathlib import Path
 
-import chevron
+import chevron  # type: ignore
 
+from . import _version
 from bidsmreye.utils import create_dir_for_file
+
+__version__ = _version.get_versions()["version"]
 
 
 def methods(output_dir: Path = Path(".")):
     """Write method section."""
-
     output_dir = output_dir.joinpath("logs")
     output_file = output_dir.joinpath("CITATION.md")
     create_dir_for_file(output_file)
@@ -22,7 +24,7 @@ def methods(output_dir: Path = Path(".")):
 
         foo = chevron.render(
             template=template,
-            data={},
+            data={"version": __version__},
             warn=True,
         )
 
