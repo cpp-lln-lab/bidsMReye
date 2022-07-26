@@ -4,7 +4,8 @@ title: "bidsMReye"
 
 version: 0.1.0
 
-abstract: BIDS app using deepMReye to decode eye motion for fMRI time series data.
+abstract:
+  "BIDS app using deepMReye to decode eye motion for fMRI time series data."
 
 message: "If you use this software, please cite it as below."
 
@@ -22,10 +23,13 @@ contact:
     given-names: Rémi
 
 authors:
-- family-names: "Gau"
-  given-names: "Rémi"
-  orcid: "https://orcid.org/0000-0002-1535-9767"
-  affiliation: "Université catholique de Louvain"
+  - family-names: "Gau"
+    given-names: "Rémi"
+    orcid: "https://orcid.org/0000-0002-1535-9767"
+    affiliation: "Université catholique de Louvain"
+
+  - family-names: "Cabee"
+    given-names: "Pauline"
 
 license: GPL-3.0
 

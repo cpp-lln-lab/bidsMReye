@@ -86,6 +86,10 @@ install: clean models ## install the package to the active Python's site-package
 install_dev: clean models ## install the package and development dependencies to the active Python's site-packages
 	pip install .[dev]
 
+
+validate_cff: ## Validate the citation file
+	cffconvert --validate
+
 ## TESTS
 
 test: models tests/data/moae_fmriprep ## run tests quickly with the default Python
