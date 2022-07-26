@@ -2,7 +2,11 @@
 import logging
 import os
 import re
+
 import warnings
+
+import shutil
+
 from pathlib import Path
 from typing import Optional
 
@@ -93,6 +97,8 @@ def config() -> dict:
 def move_file(input: Path, output: Path) -> None:
     """Move or rename a file and create target directory if it does not exist.
 
+    Should work even the source and target names are on different file systems.
+
     Args:
         input (Path): File to move.
 
@@ -100,7 +106,8 @@ def move_file(input: Path, output: Path) -> None:
     """
     log.info(f"{input.resolve()} --> {output.resolve()}")
     create_dir_for_file(output)
-    input.rename(output)
+    shutil.copy(input, output)
+    input.unlink()
 
 
 def create_dir_if_absent(output_path: Path) -> None:

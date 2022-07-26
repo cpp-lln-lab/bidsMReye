@@ -79,8 +79,11 @@ dist: clean ## builds source and wheel package
 	python setup.py bdist_wheel
 	ls -l dist
 
-install: clean ## install the package to the active Python's site-packages
-	python setup.py install
+install: clean models ## install the package to the active Python's site-packages
+	pip install .
+
+install_dev: clean models ## install the package to the active Python's site-packages
+	pip install .[dev]
 
 ## TESTS
 
@@ -102,11 +105,11 @@ models: models/dataset1_guided_fixations.h5 models/dataset5_free_viewing.h5
 
 models/dataset1_guided_fixations.h5:
 	mkdir -p models
-	wget https://osf.io/download/cqf74/ -O models/dataset1_guided_fixations.h5
+	wget -q https://osf.io/download/cqf74/ -O models/dataset1_guided_fixations.h5
 
 models/dataset5_free_viewing.h5:
 	mkdir -p models
-	wget https://osf.io/download/89nky/ -O models/dataset5_free_viewing.h5
+	wget -q https://osf.io/download/89nky/ -O models/dataset5_free_viewing.h5
 
 
 ## DEMO
@@ -155,7 +158,6 @@ Dockerfile_dev:
 	--base debian:stretch-slim \
 	--pkg-manager apt \
 	--install "git wget make" \
-	--user neuro \
 	--miniconda \
 		create_env="bidsmreye" \
 		conda_install="python=3.9 pip" \
@@ -163,21 +165,27 @@ Dockerfile_dev:
 	--run "mkdir -p /home/neuro/bidsMReye" \
 	--copy . /home/neuro/bidsMReye \
 	--workdir /home/neuro/bidsMReye \
+ 	--run "make models" \
 	--miniconda \
 		use_env="bidsmreye" \
 		pip_install="." \
-	--run "chmod "+x" /home/neuro/bidsMReye/docker_entrypoint.sh" \
-	--entrypoint /home/neuro/bidsMReye/docker_entrypoint.sh \
+	--copy ./docker_entrypoint.sh /neurodocker/startup.sh \
+	--run "chmod +x /neurodocker/startup.sh" \
+	--cmd bidsmreye \
 	> Dockerfile_dev
 
-# --run "make models"
 Docker_dev_build: Dockerfile_dev
 	docker build --tag bidsmreye:dev --file Dockerfile_dev .
 
 Docker_dev_build_no_cache: Dockerfile_dev
 	docker build --tag bidsmreye:dev --no-cache --file Dockerfile_dev .
 
-Docker_demo_prepare_data:
+Docker_demo: Docker_dev_build clean-demo
+	make Docker_prepare_data
+	make Docker_combine
+	make Docker_generalize
+
+Docker_prepare_data:
 	docker run --rm -it \
 				-v $$PWD/tests/data/moae_fmriprep:/home/neuro/data \
 				-v $$PWD/outputs:/home/neuro/outputs \
@@ -185,4 +193,31 @@ Docker_demo_prepare_data:
 				/home/neuro/data/ \
 				/home/neuro/outputs/ \
 				participant \
-				--action prepare
+				--action prepare \
+				--space MNI152NLin6Asym \
+				--task auditory
+
+Docker_combine:
+	docker run --rm -it \
+				-v $$PWD/tests/data/moae_fmriprep:/home/neuro/data \
+				-v $$PWD/outputs:/home/neuro/outputs \
+				bidsmreye:dev \
+				/home/neuro/data/ \
+				/home/neuro/outputs/ \
+				participant \
+				--action combine \
+				--space MNI152NLin6Asym \
+				--task auditory
+
+Docker_generalize:
+	docker run --rm -it \
+				-v $$PWD/tests/data/moae_fmriprep:/home/neuro/data \
+				-v $$PWD/outputs:/home/neuro/outputs \
+				bidsmreye:dev \
+				/home/neuro/data/ \
+				/home/neuro/outputs/ \
+				participant \
+				--action generalize \
+				--space MNI152NLin6Asym \
+				--model guided_fixations \
+				--task auditory
