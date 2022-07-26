@@ -153,7 +153,7 @@ clean-demo:
 
 ## DOCKER
 
-Dockerfile_dev:
+Dockerfile:
 	docker run --rm repronim/neurodocker:0.7.0 generate docker \
 	--base debian:stretch-slim \
 	--pkg-manager apt \
@@ -168,11 +168,11 @@ Dockerfile_dev:
  	--run "make models" \
 	--miniconda \
 		use_env="bidsmreye" \
-		pip_install="." \
+		pip_install="git+https://github.com/cpp-lln-lab/bidsMReye.git" \
 	--copy ./docker_entrypoint.sh /neurodocker/startup.sh \
 	--run "chmod +x /neurodocker/startup.sh" \
 	--cmd bidsmreye \
-	> Dockerfile_dev
+	> Dockerfile
 
 Docker_dev_build: Dockerfile_dev
 	docker build --tag bidsmreye:dev --file Dockerfile_dev .
