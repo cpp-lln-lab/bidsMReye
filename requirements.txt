@@ -1,3 +1,4 @@
 deepmreye @ git+https://github.com/DeepMReye/DeepMReye.git
 pybids
 rich
+attrs

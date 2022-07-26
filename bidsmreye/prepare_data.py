@@ -1,7 +1,8 @@
 """Run coregistration and extract data."""
+import logging
+
 from bids import BIDSLayout  # type: ignore
 from deepmreye import preprocess  # type: ignore
-from rich import print
 
 from bidsmreye.bidsutils import check_layout
 from bidsmreye.bidsutils import create_bidsname
@@ -13,6 +14,8 @@ from bidsmreye.utils import get_deepmreye_filename
 from bidsmreye.utils import list_subjects
 from bidsmreye.utils import move_file
 from bidsmreye.utils import return_regex
+
+log = logging.getLogger("rich")
 
 
 def coregister_and_extract_data(img: str) -> None:
@@ -31,7 +34,7 @@ def coregister_and_extract_data(img: str) -> None:
         z_edges,
     ) = preprocess.get_masks()
 
-    print(f"Input file: {img}")
+    log.info(f"Input file: {img}")
 
     preprocess.run_participant(
         img, dme_template, eyemask_big, eyemask_small, x_edges, y_edges, z_edges
@@ -48,7 +51,7 @@ def preprocess_subject(
         layout_out (BIDSLayout): Layout output dataset.
         subject_label (str): Can be a regular expression.
     """
-    print(f"Running subject: {subject_label}")
+    log.info(f"Running subject: {subject_label}")
 
     bf = layout_in.get(
         return_type="filename",

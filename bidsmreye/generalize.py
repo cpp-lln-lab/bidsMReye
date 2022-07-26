@@ -1,4 +1,5 @@
 """TODO."""
+import logging
 import warnings
 from pathlib import Path
 
@@ -17,6 +18,8 @@ from bidsmreye.bidsutils import get_dataset_layout
 from bidsmreye.utils import list_subjects
 from bidsmreye.utils import move_file
 from bidsmreye.utils import return_regex
+
+log = logging.getLogger("rich")
 
 
 def convert_confounds(cfg: dict, layout_out: BIDSLayout, subject_label: str):
@@ -47,7 +50,7 @@ def convert_confounds(cfg: dict, layout_out: BIDSLayout, subject_label: str):
 
         confound_name = create_bidsname(layout_out, key + "p", "confounds_tsv")
 
-        print(f"Saving to {confound_name} \n")
+        log.info(f"Saving to {confound_name}")
 
         pd.DataFrame(this_pred).to_csv(
             confound_name, sep="\t", header=["x_position", "y_position"], index=None
@@ -82,14 +85,12 @@ def generalize(cfg: dict) -> None:
         )
 
         for file in data:
-            print(f"adding file: {Path(file).name}")
+            log.info(f"adding file: {Path(file).name}")
             all_data.append(file)
 
         print("\n")
-
         generators = data_generator.create_generators(all_data, all_data)
         generators = (*generators, all_data, all_data)
-
         print("\n")
 
         # Get untrained model and load with trained weights
@@ -104,6 +105,12 @@ def generalize(cfg: dict) -> None:
         )
         model_inference.load_weights(model_weights)
 
+        verbose = 0
+        if log.isEnabledFor(logging.DEBUG):
+            verbose = 2
+        elif log.isEnabledFor(logging.INFO):
+            verbose = 1
+
         (evaluation, scores) = train.evaluate_model(
             dataset="tmp",
             model=model_inference,
@@ -111,10 +118,11 @@ def generalize(cfg: dict) -> None:
             save=True,
             model_path=f"{layout_out.root}/sub-{subject_label}/func/",
             model_description="",
-            verbose=3,
+            verbose=verbose,
             percentile_cut=80,
         )
 
+        # TODO save figure
         fig = analyse.visualise_predictions_slider(
             evaluation,
             scores,
@@ -122,7 +130,8 @@ def generalize(cfg: dict) -> None:
             bg_color="rgb(255,255,255)",
             ylim=[-11, 11],
         )
-        fig.show()
+        if log.isEnabledFor(logging.DEBUG) or log.isEnabledFor(logging.INFO):
+            fig.show()
 
         entities = {"subject": subject_label, "task": cfg["task"], "space": cfg["space"]}
         confound_numpy = create_bidsname(layout_out, entities, "confounds_numpy")

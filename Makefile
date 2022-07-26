@@ -58,7 +58,7 @@ lint/black: ## check style with black
 lint/mypy: ## check style with mypy
 	mypy bidsmreye
 
-lint: lint/black lint/flake8 lint/mypy ## check style
+lint: lint/black lint/mypy lint/flake8  ## check style
 
 docs: ## generate Sphinx HTML documentation, including API docs
 	rm -f docs/source/bidsmreye.rst
@@ -85,8 +85,10 @@ install: clean ## install the package to the active Python's site-packages
 ## TESTS
 
 test: models tests/data/moae_fmriprep ## run tests quickly with the default Python
-	python -m pytest --cov bidsmreye --cov-report html:htmlcov
-	$(BROWSER) htmlcov/index.html
+	python -m pytest --cov bidsmreye
+
+# python -m pytest --cov bidsmreye # --cov-report html:htmlcov
+# $(BROWSER) htmlcov/index.html
 
 tests/data/moae_fmriprep:
 	mkdir -p tests/data
@@ -115,13 +117,33 @@ demo: clean-demo
 	make generalize
 
 prepare_data: tests/data/moae_fmriprep models/dataset1_guided_fixations.h5
-	bidsmreye --space MNI152NLin6Asym --task auditory --action prepare $$PWD/tests/data/moae_fmriprep $$PWD/outputs participant
+	bidsmreye 	--space MNI152NLin6Asym \
+				--task auditory \
+				--action prepare \
+				--verbosity WARNING \
+				--debug True \
+				$$PWD/tests/data/moae_fmriprep \
+				$$PWD/outputs participant\
+
 
 combine:
-	bidsmreye --space MNI152NLin6Asym --task auditory --action combine $$PWD/tests/data/moae_fmriprep $$PWD/outputs participant
+	bidsmreye 	--space MNI152NLin6Asym \
+				--task auditory \
+				--action combine \
+				--verbosity INFO \
+				--debug False \
+				$$PWD/tests/data/moae_fmriprep \
+				$$PWD/outputs participant
 
 generalize:
-	bidsmreye --space MNI152NLin6Asym --task auditory --model guided_fixations --action generalize $$PWD/tests/data/moae_fmriprep $$PWD/outputs participant
+	bidsmreye 	--space MNI152NLin6Asym \
+				--task auditory \
+				--model guided_fixations \
+				--action generalize \
+				--verbosity INFO \
+				--debug False \
+				$$PWD/tests/data/moae_fmriprep \
+				$$PWD/outputs participant
 
 clean-demo:
 	rm -fr outputs

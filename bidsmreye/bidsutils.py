@@ -1,14 +1,16 @@
 """TODO."""
 import json
+import logging
 from pathlib import Path
 from typing import Optional
 from typing import Union
 
 from bids import BIDSLayout  # type: ignore
-from rich import print
 
 from bidsmreye.utils import config
 from bidsmreye.utils import create_dir_if_absent
+
+log = logging.getLogger("rich")
 
 
 def get_dataset_layout(dataset_path: Path, config: Optional[dict] = None) -> BIDSLayout:
@@ -27,7 +29,7 @@ def get_dataset_layout(dataset_path: Path, config: Optional[dict] = None) -> BID
     if config is None:
         pybids_config = get_pybids_config()
 
-    print(f"\nindexing {dataset_path}\n")
+    log.info(f"indexing {dataset_path}")
 
     return BIDSLayout(
         dataset_path, validate=False, derivatives=False, config=pybids_config

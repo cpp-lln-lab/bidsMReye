@@ -1,4 +1,5 @@
 """TODO."""
+import logging
 import pickle
 import warnings
 from pathlib import Path
@@ -6,7 +7,6 @@ from pathlib import Path
 import numpy as np  # type: ignore
 from bids import BIDSLayout  # type: ignore
 from deepmreye import preprocess  # type: ignore
-from rich import print
 
 from bidsmreye.bidsutils import check_layout
 from bidsmreye.bidsutils import create_bidsname
@@ -14,6 +14,8 @@ from bidsmreye.bidsutils import get_dataset_layout
 from bidsmreye.utils import list_subjects
 from bidsmreye.utils import move_file
 from bidsmreye.utils import return_regex
+
+log = logging.getLogger("rich")
 
 
 def process_subject(cfg: dict, layout_out: BIDSLayout, subject_label: str):
@@ -24,7 +26,7 @@ def process_subject(cfg: dict, layout_out: BIDSLayout, subject_label: str):
 
         subject_label (str): Can be a regular expression.
     """
-    print(f"Running subject: {subject_label}")
+    log.info(f"Running subject: {subject_label}")
 
     masks = layout_out.get(
         return_type="filename",
@@ -38,7 +40,7 @@ def process_subject(cfg: dict, layout_out: BIDSLayout, subject_label: str):
 
     for i, img in enumerate(masks):
 
-        print(f"Input mask: {img}")
+        log.info(f"Input mask: {img}")
 
         # Load mask and normalize it
         this_mask = pickle.load(open(img, "rb"))
