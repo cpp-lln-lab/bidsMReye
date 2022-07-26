@@ -1,1 +1,2 @@
 recursive-include bidsmreye/ *.json
+recursive-include bidsmreye/templates

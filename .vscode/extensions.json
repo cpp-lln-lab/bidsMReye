@@ -1,0 +1,15 @@
+{
+    "recommendations": [
+        "sourcery.sourcery",
+        "njpwerner.autodocstring",
+        "ms-azuretools.vscode-docker",
+        "dawhite.mustache",
+        "ms-python.vscode-pylance",
+        "ms-python.python",
+        "executablebookproject.myst-highlight",
+        "timonwong.shellcheck",
+        "foxundermoon.shell-format",
+        "lextudio.restructuredtext",
+        "lextudio.restructuredtext-pack"
+    ]
+}

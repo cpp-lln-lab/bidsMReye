@@ -1,4 +1,5 @@
 deepmreye @ git+https://github.com/DeepMReye/DeepMReye.git
+chevron
 pybids
 rich
 attrs

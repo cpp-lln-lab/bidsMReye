@@ -9,6 +9,7 @@ from bidsmreye.bidsutils import create_bidsname
 from bidsmreye.bidsutils import get_dataset_layout
 from bidsmreye.bidsutils import set_dataset_description
 from bidsmreye.bidsutils import write_dataset_description
+from bidsmreye.methods import methods
 from bidsmreye.utils import create_dir_if_absent
 from bidsmreye.utils import get_deepmreye_filename
 from bidsmreye.utils import list_subjects
@@ -91,6 +92,9 @@ def prepare_data(cfg) -> None:
     layout_out.dataset_description["DatasetType"] = "derivative"
     layout_out.dataset_description["GeneratedBy"][0]["Name"] = "bidsmreye"
     write_dataset_description(layout_out)
+
+    citation_file = methods(cfg["output_folder"])
+    log.info(f"Method section generated: {citation_file}")
 
     subjects = list_subjects(layout_in, cfg)
 
