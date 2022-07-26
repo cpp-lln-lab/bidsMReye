@@ -2,11 +2,8 @@
 import logging
 import os
 import re
-
-import warnings
-
 import shutil
-
+import warnings
 from pathlib import Path
 from typing import Optional
 
@@ -50,8 +47,7 @@ class Config:
         #      if some requested participants are not found
         subjects = layout_in.get_subjects()
         if self.participant:
-            missing_subjects = list(set(self.participant) - set(subjects))
-            if missing_subjects:
+            if missing_subjects := list(set(self.participant) - set(subjects)):
                 warnings.warn(
                     f"Task(s) {missing_subjects} not found in {self.input_folder}"
                 )
@@ -67,8 +63,7 @@ class Config:
         if not self.task:
             self.task = layout_in.get_tasks()
         else:
-            missing_tasks = list(set(self.task) - set(tasks))
-            if missing_tasks:
+            if missing_tasks := list(set(self.task) - set(tasks)):
                 warnings.warn(f"Task(s) {missing_tasks} not found in {self.input_folder}")
             self.task = list(set(self.task) & set(tasks))
 
