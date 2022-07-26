@@ -23,6 +23,7 @@ export PRINT_HELP_PYSCRIPT
 
 BROWSER := python -c "$$BROWSER_PYSCRIPT"
 
+# Put it first so that "make" without argument is like "make help".
 help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
@@ -48,7 +49,7 @@ clean-test: ## remove test and coverage artifacts
 	rm -fr .pytest_cache
 	rm -fr tests/data
 
-clean-models:
+clean-models: ## remove pretrained models
 	rm -fr models/
 
 lint/flake8: ## check style with flake8
@@ -82,7 +83,7 @@ dist: clean ## builds source and wheel package
 install: clean models ## install the package to the active Python's site-packages
 	pip install .
 
-install_dev: clean models ## install the package to the active Python's site-packages
+install_dev: clean models ## install the package and development dependencies to the active Python's site-packages
 	pip install .[dev]
 
 ## TESTS
@@ -90,10 +91,7 @@ install_dev: clean models ## install the package to the active Python's site-pac
 test: models tests/data/moae_fmriprep ## run tests quickly with the default Python
 	python -m pytest --cov bidsmreye
 
-# python -m pytest --cov bidsmreye # --cov-report html:htmlcov
-# $(BROWSER) htmlcov/index.html
-
-tests/data/moae_fmriprep:
+tests/data/moae_fmriprep: ## gets fmriprep preprocessed data of the SPM MOAE dataset from OSF
 	mkdir -p tests/data
 	wget -q https://osf.io/vufjs/download
 	unzip download
@@ -101,7 +99,7 @@ tests/data/moae_fmriprep:
 	mv moae_fmriprep tests/data/moae_fmriprep
 
 ## PRE-TRAINED MODELS
-models: models/dataset1_guided_fixations.h5 models/dataset5_free_viewing.h5
+models: models/dataset1_guided_fixations.h5 models/dataset5_free_viewing.h5 ## gets all pretrained models from OSF
 
 models/dataset1_guided_fixations.h5:
 	mkdir -p models
@@ -114,12 +112,12 @@ models/dataset5_free_viewing.h5:
 
 ## DEMO
 
-demo: clean-demo
+demo: clean-demo ## demo: runs all demo steps on MOAE dataset
 	make prepare_data
 	make combine
 	make generalize
 
-prepare_data: tests/data/moae_fmriprep models/dataset1_guided_fixations.h5
+prepare_data: tests/data/moae_fmriprep models/dataset1_guided_fixations.h5 ## demo: prepares the data of MOAE dataset
 	bidsmreye 	--space MNI152NLin6Asym \
 				--task auditory \
 				--action prepare \
@@ -129,7 +127,7 @@ prepare_data: tests/data/moae_fmriprep models/dataset1_guided_fixations.h5
 				$$PWD/outputs participant\
 
 
-combine:
+combine: ## demo: combines data and dummy labels of MOAE dataset
 	bidsmreye 	--space MNI152NLin6Asym \
 				--task auditory \
 				--action combine \
@@ -138,7 +136,7 @@ combine:
 				$$PWD/tests/data/moae_fmriprep \
 				$$PWD/outputs participant
 
-generalize:
+generalize: ## demo: predicts labels of MOAE dataset
 	bidsmreye 	--space MNI152NLin6Asym \
 				--task auditory \
 				--model guided_fixations \
@@ -149,7 +147,7 @@ generalize:
 				$$PWD/outputs participant
 
 clean-demo:
-	rm -fr outputs
+	rm -fr outputs/bidsmreye
 
 ## DOCKER
 
@@ -187,6 +185,7 @@ Docker_demo: Docker_dev_build clean-demo
 
 Docker_prepare_data:
 	docker run --rm -it \
+				--user "$(id -u):$(id -g)" \
 				-v $$PWD/tests/data/moae_fmriprep:/home/neuro/data \
 				-v $$PWD/outputs:/home/neuro/outputs \
 				bidsmreye:dev \
@@ -194,11 +193,12 @@ Docker_prepare_data:
 				/home/neuro/outputs/ \
 				participant \
 				--action prepare \
-				--space MNI152NLin6Asym \
+				--space T1w \
 				--task auditory
 
 Docker_combine:
 	docker run --rm -it \
+				--user "$(id -u):$(id -g)" \
 				-v $$PWD/tests/data/moae_fmriprep:/home/neuro/data \
 				-v $$PWD/outputs:/home/neuro/outputs \
 				bidsmreye:dev \
@@ -206,11 +206,12 @@ Docker_combine:
 				/home/neuro/outputs/ \
 				participant \
 				--action combine \
-				--space MNI152NLin6Asym \
+				--space T1w \
 				--task auditory
 
 Docker_generalize:
 	docker run --rm -it \
+				--user "$(id -u):$(id -g)" \
 				-v $$PWD/tests/data/moae_fmriprep:/home/neuro/data \
 				-v $$PWD/outputs:/home/neuro/outputs \
 				bidsmreye:dev \
@@ -218,6 +219,6 @@ Docker_generalize:
 				/home/neuro/outputs/ \
 				participant \
 				--action generalize \
-				--space MNI152NLin6Asym \
+				--space T1w \
 				--model guided_fixations \
 				--task auditory
