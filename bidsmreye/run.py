@@ -135,6 +135,10 @@ def main(argv=sys.argv) -> None:
             log.info("GENERALIZING")
             generalize(cfg)
 
+        else:
+            log.error("Unknown action")
+            sys.exit(1)
+
 
 def set_cfg(args):
     """Set the config."""

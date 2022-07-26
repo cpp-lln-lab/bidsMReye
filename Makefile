@@ -102,11 +102,11 @@ models: models/dataset1_guided_fixations.h5 models/dataset5_free_viewing.h5
 
 models/dataset1_guided_fixations.h5:
 	mkdir -p models
-	wget -q https://osf.io/download/cqf74/ -O models/dataset1_guided_fixations.h5
+	wget https://osf.io/download/cqf74/ -O models/dataset1_guided_fixations.h5
 
 models/dataset5_free_viewing.h5:
 	mkdir -p models
-	wget -q https://osf.io/download/89nky/ -O models/dataset5_free_viewing.h5
+	wget https://osf.io/download/89nky/ -O models/dataset5_free_viewing.h5
 
 
 ## DEMO
@@ -155,26 +155,34 @@ Dockerfile_dev:
 	--base debian:stretch-slim \
 	--pkg-manager apt \
 	--install "git wget make" \
+	--user neuro \
 	--miniconda \
 		create_env="bidsmreye" \
 		conda_install="python=3.9 pip" \
 		activate="true" \
-	--user neuro \
 	--run "mkdir -p /home/neuro/bidsMReye" \
 	--copy . /home/neuro/bidsMReye \
 	--workdir /home/neuro/bidsMReye \
-	--run "make models" \
-	--miniconda \
-		use_env="bidsmreye" \
-		pip_install="-r requirements.txt" \
 	--miniconda \
 		use_env="bidsmreye" \
 		pip_install="." \
-	--entrypoint build/lib/bidsmreye/run.py \
+	--run "chmod "+x" /home/neuro/bidsMReye/docker_entrypoint.sh" \
+	--entrypoint /home/neuro/bidsMReye/docker_entrypoint.sh \
 	> Dockerfile_dev
 
+# --run "make models"
 Docker_dev_build: Dockerfile_dev
-	docker build --tag bidsmereye:dev --file Dockerfile_dev .
+	docker build --tag bidsmreye:dev --file Dockerfile_dev .
 
 Docker_dev_build_no_cache: Dockerfile_dev
-	docker build --tag bidsmereye:dev --no-cache --file Dockerfile_dev .
+	docker build --tag bidsmreye:dev --no-cache --file Dockerfile_dev .
+
+Docker_demo_prepare_data:
+	docker run --rm -it \
+				-v $$PWD/tests/data/moae_fmriprep:/home/neuro/data \
+				-v $$PWD/outputs:/home/neuro/outputs \
+				bidsmreye:dev \
+				/home/neuro/data/ \
+				/home/neuro/outputs/ \
+				participant \
+				--action prepare
