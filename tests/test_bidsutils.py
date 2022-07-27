@@ -54,7 +54,7 @@ def test_create_bidsname():
 
     rel_path = output_file.relative_to(layout.root)
 
-    assert output_file.relative_to(layout.root) == Path("sub-01").joinpath(
+    assert rel_path == Path("sub-01").joinpath(
         "ses-01", "func", "sub-01_ses-01_task-motion_run-1_desc-eye_mask.p"
     )
 
