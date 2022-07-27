@@ -1,0 +1,11 @@
+{
+    "bold": {
+        "datatype": "func",
+        "suffix": "^bold$",
+        "extension": "nii.*"
+    },
+    "mask": {
+        "suffix": "mask",
+        "extension": "p"
+    }
+}

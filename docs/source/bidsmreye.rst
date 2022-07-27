@@ -28,6 +28,14 @@ bidsmreye.generalize module
    :undoc-members:
    :show-inheritance:
 
+bidsmreye.methods module
+------------------------
+
+.. automodule:: bidsmreye.methods
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 bidsmreye.prepare\_data module
 ------------------------------
 

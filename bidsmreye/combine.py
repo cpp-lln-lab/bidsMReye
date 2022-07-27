@@ -10,7 +10,9 @@ from deepmreye import preprocess  # type: ignore
 
 from bidsmreye.bidsutils import check_layout
 from bidsmreye.bidsutils import create_bidsname
+from bidsmreye.bidsutils import get_bids_filter_config
 from bidsmreye.bidsutils import get_dataset_layout
+from bidsmreye.utils import Config
 from bidsmreye.utils import list_subjects
 from bidsmreye.utils import move_file
 from bidsmreye.utils import return_regex
@@ -18,7 +20,7 @@ from bidsmreye.utils import return_regex
 log = logging.getLogger("rich")
 
 
-def process_subject(cfg: dict, layout_out: BIDSLayout, subject_label: str):
+def process_subject(cfg: Config, layout_out: BIDSLayout, subject_label: str):
     """_summary_.
 
     Args:
@@ -28,15 +30,17 @@ def process_subject(cfg: dict, layout_out: BIDSLayout, subject_label: str):
     """
     log.info(f"Running subject: {subject_label}")
 
-    masks = layout_out.get(
-        return_type="filename",
-        subject=return_regex(subject_label),
-        suffix="^mask$",
-        task=return_regex(cfg["task"]),
-        space=return_regex(cfg["space"]),
-        extension=".p",
-        regex_search=True,
-    )
+    this_filter = get_bids_filter_config()["mask"]
+    this_filter["suffix"] = return_regex(this_filter["suffix"])
+    this_filter["task"] = return_regex(cfg.task)
+    this_filter["space"] = return_regex(cfg.space)
+    this_filter["subject"] = subject_label
+
+    log.debug(f"Looking for files with filter\n{this_filter}")
+
+    masks = layout_out.get(return_type="filename", regex_search=True, **this_filter)
+
+    log.debug(f"Found files\n{masks}")
 
     for i, img in enumerate(masks):
 
@@ -82,7 +86,7 @@ def save_participant_file(layout_out: BIDSLayout, img, subj: dict):
 
         subj (dict): _description_
     """
-    output_file = create_bidsname(layout_out, img, "no_label")
+    output_file = create_bidsname(layout_out, Path(img), "no_label")
 
     preprocess.save_data(
         output_file.name,
@@ -98,13 +102,12 @@ def save_participant_file(layout_out: BIDSLayout, img, subj: dict):
     move_file(file_to_move, output_file)
 
 
-def combine(cfg: dict):
+def combine(cfg: Config):
     """Add labels to dataset."""
-    output_dataset_path = cfg["output_folder"]
-    layout_out = get_dataset_layout(output_dataset_path)
-    check_layout(layout_out)
+    layout_out = get_dataset_layout(cfg.output_folder)
+    check_layout(cfg, layout_out)
 
-    subjects = list_subjects(layout_out, cfg)
+    subjects = list_subjects(cfg, layout_out)
 
     for subject_label in subjects:
 

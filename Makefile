@@ -125,8 +125,8 @@ prepare_data: tests/data/moae_fmriprep models/dataset1_guided_fixations.h5 ## de
 	bidsmreye 	--space MNI152NLin6Asym \
 				--task auditory \
 				--action prepare \
-				--verbosity WARNING \
-				--debug True \
+				--verbosity INFO \
+				--debug true \
 				$$PWD/tests/data/moae_fmriprep \
 				$$PWD/outputs participant\
 
@@ -136,7 +136,7 @@ combine: ## demo: combines data and dummy labels of MOAE dataset
 				--task auditory \
 				--action combine \
 				--verbosity INFO \
-				--debug False \
+				--debug true \
 				$$PWD/tests/data/moae_fmriprep \
 				$$PWD/outputs participant
 
@@ -146,7 +146,7 @@ generalize: ## demo: predicts labels of MOAE dataset
 				--model guided_fixations \
 				--action generalize \
 				--verbosity INFO \
-				--debug False \
+				--debug true \
 				$$PWD/tests/data/moae_fmriprep \
 				$$PWD/outputs participant
 
