@@ -49,7 +49,7 @@ class Config:
         self.check_argument(attribute="space", layout_in=layout_in)
 
     def check_argument(self, attribute, layout_in: BIDSLayout):
-        """Check that all required fields are set."""
+        """Check an attribute value compared to a dataset content."""
         if attribute == "participant":
             value = layout_in.get_subjects()
         elif attribute == "task":
@@ -87,7 +87,7 @@ def move_file(input: Path, output: Path) -> None:
 
 
 def create_dir_if_absent(output_path: Union[str, Path]) -> None:
-    """_summary_.
+    """Create a path if it does not exist.
 
     Args:
         output_path (Path): _description_
@@ -100,7 +100,7 @@ def create_dir_if_absent(output_path: Union[str, Path]) -> None:
 
 
 def create_dir_for_file(file: Path) -> None:
-    """_summary_.
+    """Create the path to a file if it does not exist.
 
     Args:
         file (Path): _description_
@@ -108,15 +108,17 @@ def create_dir_for_file(file: Path) -> None:
     output_path = file.resolve().parent
     create_dir_if_absent(output_path)
 
+    # TODO refactor with create_dir_if_absent
+
 
 def return_regex(value: Union[str, Optional[list]]) -> Optional[str]:
-    """_summary_.
+    """Return the regular expression for a string or a list of strings.
 
     Args:
-        string (str): _description_
+        value (str, Optional[list]):
 
     Returns:
-        str: _description_
+        Optional[str]:
     """
     if isinstance(value, str):
         if value[0] != "^":
@@ -134,7 +136,7 @@ def return_regex(value: Union[str, Optional[list]]) -> Optional[str]:
 
 
 def list_subjects(cfg: Config, layout: BIDSLayout) -> list:
-    """_summary_.
+    """List subject in a BIDS dataset for a given Config.
 
     Args:
         layout (BIDSLayout): BIDSLayout of the dataset
