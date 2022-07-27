@@ -61,6 +61,38 @@ def convert_confounds(layout_out: BIDSLayout, file: Union[str, Path]) -> Path:
     return confound_name
 
 
+def create_and_save_figure(layout_out: BIDSLayout, file: str, evaluation, scores):
+
+    fig = analyse.visualise_predictions_slider(
+        evaluation,
+        scores,
+        color="rgb(0, 150, 175)",
+        bg_color="rgb(255,255,255)",
+        ylim=[-11, 11],
+    )
+    if log.isEnabledFor(logging.DEBUG) or log.isEnabledFor(logging.INFO):
+        fig.show()
+
+    confound_svg = create_bidsname(layout_out, file, "confounds_svg")
+    create_dir_for_file(confound_svg)
+    fig.write_image(confound_svg)
+
+
+def create_confounds_tsv(layout_out: BIDSLayout, file: str, subject_label: str):
+    confound_numpy = create_bidsname(layout_out, file, "confounds_numpy")
+
+    source_file = Path(layout_out.root).joinpath(
+        f"sub-{subject_label}", "func", "results_tmp.npy"
+    )
+
+    move_file(
+        source_file,
+        confound_numpy,
+    )
+
+    convert_confounds(layout_out, file)
+
+
 def generalize(cfg: Config) -> None:
     """Apply model weights to new data.
 
@@ -128,27 +160,6 @@ def generalize(cfg: Config) -> None:
                 percentile_cut=80,
             )
 
-            fig = analyse.visualise_predictions_slider(
-                evaluation,
-                scores,
-                color="rgb(0, 150, 175)",
-                bg_color="rgb(255,255,255)",
-                ylim=[-11, 11],
-            )
-            if log.isEnabledFor(logging.DEBUG) or log.isEnabledFor(logging.INFO):
-                fig.show()
+            create_and_save_figure(layout_out, file, evaluation, scores)
 
-            confound_svg = create_bidsname(layout_out, file, "confounds_svg")
-            create_dir_for_file(confound_svg)
-            fig.write_image(confound_svg)
-
-            confound_numpy = create_bidsname(layout_out, file, "confounds_numpy")
-            source_file = Path(layout_out.root).joinpath(
-                f"sub-{subject_label}", "func", "results_tmp.npy"
-            )
-            move_file(
-                source_file,
-                confound_numpy,
-            )
-
-            convert_confounds(layout_out, file)
+            create_confounds_tsv(layout_out, file, subject_label)
