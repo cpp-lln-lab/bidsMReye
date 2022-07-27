@@ -1,0 +1,8 @@
+[run]
+source = bidsmreye/*
+include = bidsmreye/*
+omit =
+    */setup.py
+    */*version.py
+[report]
+include = bidsmreye/*
