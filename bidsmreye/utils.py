@@ -57,16 +57,13 @@ class Config:
         elif attribute == "space":
             value = layout_in.get(return_type="id", target="space")
 
-        if not getattr(self, attribute):
-            setattr(self, attribute, value)
-        else:
+        if getattr(self, attribute):
             if missing_values := list(set(getattr(self, attribute)) - set(value)):
                 warnings.warn(
                     f"{attribute}(s) {missing_values} not found in {self.input_folder}"
                 )
             value = list(set(getattr(self, attribute)) & set(value))
-            setattr(self, attribute, value)
-
+        setattr(self, attribute, value)
         if not getattr(self, attribute):
             raise RuntimeError(f"No {attribute} not found in {self.input_folder}")
 
