@@ -122,28 +122,21 @@ demo: clean-demo ## demo: runs all demo steps on MOAE dataset
 	make generalize
 
 prepare_data: tests/data/moae_fmriprep models/dataset1_guided_fixations.h5 ## demo: prepares the data of MOAE dataset
-	bidsmreye 	--space MNI152NLin6Asym \
-				--task auditory \
-				--action prepare \
+	bidsmreye 	--action prepare \
 				--verbosity INFO \
 				--debug true \
 				$$PWD/tests/data/moae_fmriprep \
-				$$PWD/outputs participant\
-
+				$$PWD/outputs participant
 
 combine: ## demo: combines data and dummy labels of MOAE dataset
-	bidsmreye 	--space MNI152NLin6Asym \
-				--task auditory \
-				--action combine \
+	bidsmreye 	--action combine \
 				--verbosity INFO \
 				--debug true \
 				$$PWD/tests/data/moae_fmriprep \
 				$$PWD/outputs participant
 
 generalize: ## demo: predicts labels of MOAE dataset
-	bidsmreye 	--space MNI152NLin6Asym \
-				--task auditory \
-				--model guided_fixations \
+	bidsmreye 	--model guided_fixations \
 				--action generalize \
 				--verbosity INFO \
 				--debug true \

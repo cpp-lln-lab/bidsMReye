@@ -2,6 +2,7 @@
 import logging
 import warnings
 from pathlib import Path
+from typing import Union
 
 import numpy as np  # type: ignore
 import pandas as pd  # type: ignore
@@ -23,7 +24,7 @@ from bidsmreye.utils import return_regex
 log = logging.getLogger("rich")
 
 
-def convert_confounds(cfg: Config, layout_out: BIDSLayout, subject_label: str):
+def convert_confounds(layout_out: BIDSLayout, file: Union[str, Path]) -> Path:
     """Convert numpy output to TSV.
 
     Args:
@@ -33,8 +34,7 @@ def convert_confounds(cfg: Config, layout_out: BIDSLayout, subject_label: str):
 
         subject_label (str): The label(s) of the participant(s) that should be analyzed.
     """
-    entities = {"subject": subject_label, "task": cfg.task, "space": cfg.space}
-    confound_numpy = create_bidsname(layout_out, entities, "confounds_numpy")
+    confound_numpy = create_bidsname(layout_out, file, "confounds_numpy")
 
     content = np.load(
         file=confound_numpy,
@@ -57,6 +57,8 @@ def convert_confounds(cfg: Config, layout_out: BIDSLayout, subject_label: str):
             confound_name, sep="\t", header=["x_position", "y_position"], index=None
         )
 
+    return confound_name
+
 
 def generalize(cfg: Config) -> None:
     """Apply model weights to new data.
@@ -68,8 +70,6 @@ def generalize(cfg: Config) -> None:
     check_layout(cfg, layout_out)
 
     subjects = list_subjects(cfg, layout_out)
-
-    all_data = []
 
     for subject_label in subjects:
 
@@ -92,62 +92,60 @@ def generalize(cfg: Config) -> None:
         log.debug(f"Found files\n{data}")
 
         for file in data:
-            log.info(f"adding file: {Path(file).name}")
-            all_data.append(file)
 
-        print("\n")
-        generators = data_generator.create_generators(all_data, all_data)
-        generators = (*generators, all_data, all_data)
-        print("\n")
+            log.info(f"Processing file: {Path(file).name}")
 
-        # Get untrained model and load with trained weights
-        opts = model_opts.get_opts()
-        model_weights = cfg.model_weights_file
+            print("\n")
+            generators = data_generator.create_generators([file], [file])
+            generators = (*generators, [file], [file])
+            print("\n")
 
-        (model, model_inference) = train.train_model(
-            dataset="example_data",
-            generators=generators,
-            opts=opts,
-            return_untrained=True,
-        )
-        model_inference.load_weights(model_weights)
+            # Get untrained model and load with trained weights
+            opts = model_opts.get_opts()
 
-        verbose = 0
-        if log.isEnabledFor(logging.DEBUG):
-            verbose = 2
-        elif log.isEnabledFor(logging.INFO):
-            verbose = 1
+            (model, model_inference) = train.train_model(
+                dataset="example_data",
+                generators=generators,
+                opts=opts,
+                return_untrained=True,
+            )
+            model_inference.load_weights(cfg.model_weights_file)
 
-        (evaluation, scores) = train.evaluate_model(
-            dataset="tmp",
-            model=model_inference,
-            generators=generators,
-            save=True,
-            model_path=f"{layout_out.root}/sub-{subject_label}/func/",
-            model_description="",
-            verbose=verbose,
-            percentile_cut=80,
-        )
+            verbose = 0
+            if log.isEnabledFor(logging.DEBUG):
+                verbose = 2
+            elif log.isEnabledFor(logging.INFO):
+                verbose = 1
 
-        # TODO save figure
-        fig = analyse.visualise_predictions_slider(
-            evaluation,
-            scores,
-            color="rgb(0, 150, 175)",
-            bg_color="rgb(255,255,255)",
-            ylim=[-11, 11],
-        )
-        if log.isEnabledFor(logging.DEBUG) or log.isEnabledFor(logging.INFO):
-            fig.show()
+            (evaluation, scores) = train.evaluate_model(
+                dataset="tmp",
+                model=model_inference,
+                generators=generators,
+                save=True,
+                model_path=f"{layout_out.root}/sub-{subject_label}/func/",
+                model_description="",
+                verbose=verbose,
+                percentile_cut=80,
+            )
 
-        entities = {"subject": subject_label, "task": cfg.task, "space": cfg.space}
-        confound_numpy = create_bidsname(layout_out, entities, "confounds_numpy")
-        source_file = Path(layout_out.root).joinpath(
-            f"sub-{subject_label}", "func", "results_tmp.npy"
-        )
-        move_file(
-            source_file,
-            confound_numpy,
-        )
+            # TODO save figure
+            fig = analyse.visualise_predictions_slider(
+                evaluation,
+                scores,
+                color="rgb(0, 150, 175)",
+                bg_color="rgb(255,255,255)",
+                ylim=[-11, 11],
+            )
+            if log.isEnabledFor(logging.DEBUG) or log.isEnabledFor(logging.INFO):
+                fig.show()
 
-        convert_confounds(cfg, layout_out, subject_label)
+            confound_numpy = create_bidsname(layout_out, file, "confounds_numpy")
+            source_file = Path(layout_out.root).joinpath(
+                f"sub-{subject_label}", "func", "results_tmp.npy"
+            )
+            move_file(
+                source_file,
+                confound_numpy,
+            )
+
+            convert_confounds(layout_out, file)
