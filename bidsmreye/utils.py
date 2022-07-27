@@ -56,9 +56,9 @@ class Config:
             self.participant = layout_in.get(
                 return_type="id", target="subject", subject=self.participant
             )
+        if not self.participant:
+            raise RuntimeError(f"No subject not found in {self.input_folder}")
 
-        # TODO throw error if no task found or warning
-        #      if some requested tasks are not found
         tasks = layout_in.get_tasks()
         if not self.task:
             self.task = layout_in.get_tasks()
@@ -66,6 +66,8 @@ class Config:
             if missing_tasks := list(set(self.task) - set(tasks)):
                 warnings.warn(f"Task(s) {missing_tasks} not found in {self.input_folder}")
             self.task = list(set(self.task) & set(tasks))
+        if not self.task:
+            raise RuntimeError(f"No task not found in {self.input_folder}")
 
 
 def config() -> dict:
@@ -162,7 +164,7 @@ def list_subjects(layout: BIDSLayout, cfg: Optional[dict] = None) -> list:
         debug = cfg["debug"]
 
     if subjects == [] or subjects is None:
-        raise Exception("No subject found")
+        raise RuntimeError("No subject found")
 
     if debug:
         subjects = [subjects[0]]
