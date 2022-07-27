@@ -176,7 +176,7 @@ def get_config(config_file: Path = None, default: str = "") -> dict:
 
     """
     if config_file is None or not Path(config_file).exists():
-        my_path = Path(__file__).resolve().parent
+        my_path = Path(__file__).resolve().parent.joinpath("config")
         config_file = my_path.joinpath(default)
 
     if config_file is None or not Path(config_file).exists():

@@ -43,13 +43,11 @@ class Config:
 
         layout_in = BIDSLayout(self.input_folder, validate=False, derivatives=False)
 
-        # TODO throw error if no participants found or warning
-        #      if some requested participants are not found
         subjects = layout_in.get_subjects()
         if self.participant:
             if missing_subjects := list(set(self.participant) - set(subjects)):
                 warnings.warn(
-                    f"Task(s) {missing_subjects} not found in {self.input_folder}"
+                    f"Subject(s) {missing_subjects} not found in {self.input_folder}"
                 )
             self.participant = list(set(self.participant) & set(subjects))
         else:
@@ -192,7 +190,7 @@ def get_deepmreye_filename(layout: BIDSLayout, img: str, filetype: str = None) -
         str: _description_
     """
     if not img:
-        raise Exception("No file")
+        raise ValueError("No file")
 
     if isinstance(img, (list)):
         img = img[0]
@@ -214,7 +212,7 @@ def return_deepmreye_output_filename(filename: str, filetype: str = None) -> str
     Args:
         filename (str): _description_
 
-        filetype (str): Any of the following: None, "mask", "report". Defautls to None.
+        filetype (str): Any of the following: None, "mask", "report". Defaults to None.
 
     Returns:
         str: _description_

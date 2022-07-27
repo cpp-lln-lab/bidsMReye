@@ -6,6 +6,7 @@ from deepmreye import preprocess  # type: ignore
 
 from bidsmreye.bidsutils import check_layout
 from bidsmreye.bidsutils import create_bidsname
+from bidsmreye.bidsutils import get_bids_filter_config
 from bidsmreye.bidsutils import get_dataset_layout
 from bidsmreye.bidsutils import set_dataset_description
 from bidsmreye.bidsutils import write_dataset_description
@@ -54,14 +55,16 @@ def preprocess_subject(
     """
     log.info(f"Running subject: {subject_label}")
 
+    bids_filter = get_bids_filter_config()
+
     bf = layout_in.get(
         return_type="filename",
         subject=return_regex(subject_label),
-        suffix="^bold$",
         task=return_regex(cfg["task"]),
         space=return_regex(cfg["space"]),
         extension=".nii.*",
         regex_search=True,
+        filters=bids_filter["bold"],
     )
 
     for img in bf:
