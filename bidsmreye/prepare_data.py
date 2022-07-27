@@ -64,7 +64,7 @@ def preprocess_subject(
         space=return_regex(cfg["space"]),
         extension=".nii.*",
         regex_search=True,
-        filters=bids_filter["bold"],
+        **bids_filter["bold"],
     )
 
     for img in bf:

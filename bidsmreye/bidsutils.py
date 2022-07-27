@@ -238,10 +238,9 @@ def check_layout(layout: BIDSLayout) -> None:
         return_type="filename",
         task=cfg["task"],
         space=cfg["space"],
-        suffix="^bold$",
         extension="nii.*",
         regex_search=True,
-        filters=bids_filter["bold"],
+        **bids_filter["bold"],
     )
 
     generated_by = desc["GeneratedBy"][0]["Name"]
