@@ -17,6 +17,7 @@ from bidsmreye.bidsutils import check_layout
 from bidsmreye.bidsutils import create_bidsname
 from bidsmreye.bidsutils import get_dataset_layout
 from bidsmreye.utils import Config
+from bidsmreye.utils import create_dir_for_file
 from bidsmreye.utils import list_subjects
 from bidsmreye.utils import move_file
 from bidsmreye.utils import return_regex
@@ -100,7 +101,6 @@ def generalize(cfg: Config) -> None:
             generators = (*generators, [file], [file])
             print("\n")
 
-            # Get untrained model and load with trained weights
             opts = model_opts.get_opts()
 
             (model, model_inference) = train.train_model(
@@ -128,7 +128,6 @@ def generalize(cfg: Config) -> None:
                 percentile_cut=80,
             )
 
-            # TODO save figure
             fig = analyse.visualise_predictions_slider(
                 evaluation,
                 scores,
@@ -138,6 +137,10 @@ def generalize(cfg: Config) -> None:
             )
             if log.isEnabledFor(logging.DEBUG) or log.isEnabledFor(logging.INFO):
                 fig.show()
+
+            confound_svg = create_bidsname(layout_out, file, "confounds_svg")
+            create_dir_for_file(confound_svg)
+            fig.write_image(confound_svg)
 
             confound_numpy = create_bidsname(layout_out, file, "confounds_numpy")
             source_file = Path(layout_out.root).joinpath(

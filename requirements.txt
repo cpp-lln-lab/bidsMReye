@@ -3,3 +3,4 @@ chevron
 pybids
 rich
 attrs
+kaleido
