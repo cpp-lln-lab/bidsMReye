@@ -207,9 +207,7 @@ def create_bidsname(
     """
     if isinstance(filename, dict):
         entities = filename
-    elif isinstance(filename, Path):
-        entities = layout.parse_file_entities(filename)
-    elif isinstance(filename, str):
+    elif isinstance(filename, (Path, str)):
         entities = layout.parse_file_entities(filename)
     else:
         raise TypeError(f"filename must be a dict or a Path, not {type(filename)}")
