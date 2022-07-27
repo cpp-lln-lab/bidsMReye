@@ -24,8 +24,8 @@ log = logging.getLogger("rich")
 def coregister_and_extract_data(img: str) -> None:
     """Coregister image to eye template and extract data from eye mask for one image.
 
-    Args:
-        img (str): Image to coregister
+    :param img: Image to coregister and extract data from
+    :type img: str
     """
     (
         eyemask_small,
@@ -88,8 +88,8 @@ def preprocess_subject(
 def prepare_data(cfg: Config) -> None:
     """Run coregistration and extract data for all subjects.
 
-    Args:
-        cfg (Config): Configuration object.
+    :param cfg: Configuration object
+    :type cfg: Config
     """
     layout_in = get_dataset_layout(cfg.input_folder)
     check_layout(cfg, layout_in)

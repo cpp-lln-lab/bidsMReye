@@ -28,12 +28,18 @@ log = logging.getLogger("rich")
 def convert_confounds(layout_out: BIDSLayout, file: Union[str, Path]) -> Path:
     """Convert numpy output to TSV.
 
-    Args:
-        cfg (Config): configuration object
+    :param layout_out: pybids layout to of the dataset to act on.
+    :type layout_out: BIDSLayout
 
-        layout_out (_type_): pybids layout to of the dataset to act on.
+    :param file: File to generate the confounds for.
+    :type file: Union[str, Path]
 
-        subject_label (str): The label(s) of the participant(s) that should be analyzed.
+    :return: Name of the file generated.
+    :rtype: Path
+
+    This function should preferably work on a single file
+    but should still be able to unpack the results from a numpy file
+    with results from multiple files.
     """
     confound_numpy = create_bidsname(layout_out, file, "confounds_numpy")
 
@@ -62,7 +68,20 @@ def convert_confounds(layout_out: BIDSLayout, file: Union[str, Path]) -> Path:
 
 
 def create_and_save_figure(layout_out: BIDSLayout, file: str, evaluation, scores):
+    """Generate a figure for the eye motion timeseries.
 
+    :param layout_out:
+    :type  layout_out: BIDSLayout
+
+    :param file:
+    :type  file: str
+
+    :param evaluation: see ``deepmreye.train.evaluate_model``
+    :type  evaluation: _type_
+
+    :param scores: see ``deepmreye.train.evaluate_model``
+    :type  scores: _type_
+    """
     fig = analyse.visualise_predictions_slider(
         evaluation,
         scores,
@@ -79,6 +98,17 @@ def create_and_save_figure(layout_out: BIDSLayout, file: str, evaluation, scores
 
 
 def create_confounds_tsv(layout_out: BIDSLayout, file: str, subject_label: str):
+    """Generate a TSV file for the eye motion timeseries.
+
+    :param layout_out:
+    :type layout_out: BIDSLayout
+
+    :param file:
+    :type file: str
+
+    :param subject_label:
+    :type subject_label: str
+    """
     confound_numpy = create_bidsname(layout_out, file, "confounds_numpy")
 
     source_file = Path(layout_out.root).joinpath(
@@ -96,8 +126,8 @@ def create_confounds_tsv(layout_out: BIDSLayout, file: str, subject_label: str):
 def generalize(cfg: Config) -> None:
     """Apply model weights to new data.
 
-    Args:
-        cfg (dict): configuration dictionary
+    :param cfg: Congiguration object
+    :type cfg: Config
     """
     layout_out = get_dataset_layout(cfg.output_folder)
     check_layout(cfg, layout_out)
