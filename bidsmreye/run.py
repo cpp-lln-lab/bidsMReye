@@ -22,7 +22,7 @@ __version__ = _version.get_versions()["version"]
 install(show_locals=True)
 
 # log format
-FORMAT = "%(asctime)s - %(levelname)s - %(message)s"
+FORMAT = "bidsMReye - %(asctime)s - %(levelname)s - %(message)s"
 
 
 def main(argv=sys.argv) -> None:

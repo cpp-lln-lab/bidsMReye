@@ -130,10 +130,10 @@ def return_regex(string: str) -> str:
     """_summary_.
 
     Args:
-        string (_type_): _description_
+        string (str): _description_
 
     Returns:
-        _type_: _description_
+        str: _description_
     """
     return f"^{string}$"
 
