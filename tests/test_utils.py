@@ -27,17 +27,20 @@ def test_Config():
     assert cfg.output_folder == Path(__file__).parent.joinpath("data", "bidsmreye")
     assert sorted(cfg.participant) == ["01", "02", "03", "04", "05"]
     assert sorted(cfg.task) == ["nback", "rest"]
+    assert sorted(cfg.space) == ["MNI152NLin2009cAsym", "T1w"]
 
 
-def test_Config_task_participant():
+def test_Config_task_omit_missing_values():
     cfg = Config(
         pybids_test_dataset(),
         Path(__file__).parent.joinpath("data"),
         task=["auditory", "rest"],
         participant=["01", "07"],
+        space=["T1w", "T2w"],
     )
     assert cfg.participant == ["01"]
     assert cfg.task == ["rest"]
+    assert cfg.space == ["T1w"]
 
 
 def test_missing_subject():
@@ -74,6 +77,25 @@ def test_no_task():
             pybids_test_dataset(),
             Path(__file__).parent.joinpath("data"),
             task=["foo"],
+        )
+    assert e_info.type == RuntimeError
+
+
+def test_missing_space():
+    with pytest.warns(UserWarning):
+        Config(
+            pybids_test_dataset(),
+            Path(__file__).parent.joinpath("data"),
+            space=["T1w", "T2w"],
+        )
+
+
+def test_no_subject():
+    with pytest.raises(Exception) as e_info:
+        Config(
+            pybids_test_dataset(),
+            Path(__file__).parent.joinpath("data"),
+            space=["T2w"],
         )
     assert e_info.type == RuntimeError
 

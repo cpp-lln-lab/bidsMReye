@@ -43,29 +43,33 @@ class Config:
 
         layout_in = BIDSLayout(self.input_folder, validate=False, derivatives=False)
 
-        subjects = layout_in.get_subjects()
-        if self.participant:
-            if missing_subjects := list(set(self.participant) - set(subjects)):
-                warnings.warn(
-                    f"Subject(s) {missing_subjects} not found in {self.input_folder}"
-                )
-            self.participant = list(set(self.participant) & set(subjects))
-        else:
-            self.participant = layout_in.get(
-                return_type="id", target="subject", subject=self.participant
-            )
-        if not self.participant:
-            raise RuntimeError(f"No subject not found in {self.input_folder}")
+        self.check_argument(attribute="participant", layout_in=layout_in)
+        self.check_argument(attribute="task", layout_in=layout_in)
+        self.check_argument(attribute="space", layout_in=layout_in)
 
-        tasks = layout_in.get_tasks()
-        if not self.task:
-            self.task = layout_in.get_tasks()
+    def check_argument(self, attribute: str = None, layout_in: BIDSLayout = None):
+        """Check that all required fields are set."""
+        if attribute == "participant":
+            value = layout_in.get_subjects()
+        elif attribute == "task":
+            value = layout_in.get_tasks()
+        elif attribute == "space":
+            value = layout_in.get(return_type="id", target="space")
+
+        if not getattr(self, attribute):
+            setattr(self, attribute, value)
         else:
-            if missing_tasks := list(set(self.task) - set(tasks)):
-                warnings.warn(f"Task(s) {missing_tasks} not found in {self.input_folder}")
-            self.task = list(set(self.task) & set(tasks))
-        if not self.task:
-            raise RuntimeError(f"No task not found in {self.input_folder}")
+            if missing_values := list(set(getattr(self, attribute)) - set(value)):
+                warnings.warn(
+                    f"{attribute}(s) {missing_values} not found in {self.input_folder}"
+                )
+            value = list(set(getattr(self, attribute)) & set(value))
+            setattr(self, attribute, value)
+
+        if not getattr(self, attribute):
+            raise RuntimeError(f"No {attribute} not found in {self.input_folder}")
+
+        return self
 
 
 def config() -> dict:

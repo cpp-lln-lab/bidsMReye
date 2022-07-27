@@ -133,7 +133,7 @@ def get_bidsname_config(config_file: Path = None) -> dict:
 
 
 def get_pybids_config(config_file: Path = None) -> dict:
-    """Load pybids coniguration.
+    """Load pybids configuration.
 
     Args:
         config_file (Path, optional): Defaults to None.
@@ -228,9 +228,11 @@ def check_layout(layout: BIDSLayout) -> None:
     """
     desc = layout.get_dataset_description()
     if desc["DatasetType"] != "derivative":
-        raise Exception("Input dataset should be BIDS derivative")
+        raise RuntimeError("Input dataset should be BIDS derivative")
 
     cfg = config()
+
+    bids_filter = get_bids_filter_config()
 
     bf = layout.get(
         return_type="filename",
@@ -239,6 +241,7 @@ def check_layout(layout: BIDSLayout) -> None:
         suffix="^bold$",
         extension="nii.*",
         regex_search=True,
+        filters=bids_filter["bold"],
     )
 
     generated_by = desc["GeneratedBy"][0]["Name"]
@@ -253,4 +256,4 @@ def check_layout(layout: BIDSLayout) -> None:
         )
 
     if bf == []:
-        raise Exception("Input dataset does not have any data to process")
+        raise RuntimeError("Input dataset does not have any data to process")
