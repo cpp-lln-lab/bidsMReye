@@ -2,9 +2,7 @@
 """Main script."""
 import argparse
 import logging
-import os
 import sys
-from glob import glob
 from pathlib import Path
 
 from rich.logging import RichHandler
@@ -14,7 +12,7 @@ from . import _version
 from bidsmreye.combine import combine
 from bidsmreye.generalize import generalize
 from bidsmreye.prepare_data import prepare_data
-from bidsmreye.utils import config
+from bidsmreye.utils import Config
 
 __version__ = _version.get_versions()["version"]
 
@@ -101,16 +99,28 @@ def main(argv=sys.argv) -> None:
     parser.add_argument(
         "--debug",
         help="true or false",
+        choices=["true", "false"],
     )
 
     args = parser.parse_args(argv[1:])
 
-    cfg = set_cfg(args)
+    if args.model in {"guided_fixations", "", None}:
+        model_weights_file = Path.cwd().joinpath(
+            "models",
+            "dataset1_guided_fixations.h5",
+        )
 
-    log_level = args.verbosity or "INFO"
-    if cfg["debug"]:
-        log_level = "DEBUG"
+    cfg = Config(
+        args.bids_dir,
+        args.output_dir,
+        participant=[args.participant_label] if args.participant_label else None,
+        task=[args.task] if args.task else None,
+        space=[args.space] if args.space else None,
+        debug=args.debug == "true",
+        model_weights_file=model_weights_file,
+    )
 
+    log_level = "DEBUG" if cfg.debug else args.verbosity or "INFO"
     logging.basicConfig(
         level=log_level, format=FORMAT, datefmt="[%X]", handlers=[RichHandler()]
     )
@@ -119,12 +129,12 @@ def main(argv=sys.argv) -> None:
 
     log.info("Running bidsmreye version %s", __version__)
 
-    if cfg["debug"]:
+    if cfg.debug:
         log.debug("DEBUG MODE")
 
-    if cfg["model_weights_file"] != "":
-        assert Path(cfg["model_weights_file"]).is_file()
-        log.info(f"Using model: {cfg['model_weights_file']}")
+    if cfg.model_weights_file not in {"", None}:
+        assert Path(cfg.model_weights_file).is_file()
+        log.info(f"Using model: {cfg.model_weights_file}")
 
     if args.analysis_level == "participant":
 
@@ -143,43 +153,6 @@ def main(argv=sys.argv) -> None:
         else:
             log.error("Unknown action")
             sys.exit(1)
-
-
-def set_cfg(args):
-    """Set the config."""
-    # TODO extract function
-    cfg = config()
-
-    # TODO extract function
-    subjects_to_analyze = []
-    # only for a subset of subjects
-    if args.participant_label:
-        subjects_to_analyze = args.participant_label
-    # for all subjects
-    else:
-        subject_dirs = glob(os.path.join(args.bids_dir, "sub-*"))
-        subjects_to_analyze = [subject_dir.split("-")[-1] for subject_dir in subject_dirs]
-
-    cfg["participant"] = subjects_to_analyze
-
-    if args.task:
-        cfg["task"] = args.task
-    if args.task:
-        cfg["space"] = args.space
-
-    cfg["input_folder"] = Path(args.bids_dir)
-    cfg["output_folder"] = Path(args.output_dir).joinpath("bidsmreye")
-
-    if args.model == "guided_fixations":
-        cfg["model_weights_file"] = Path.cwd().joinpath(
-            "models",
-            "dataset1_guided_fixations.h5",
-        )
-
-    if args.debug == "True":
-        cfg["debug"] = True
-
-    return cfg
 
 
 if __name__ == "__main__":

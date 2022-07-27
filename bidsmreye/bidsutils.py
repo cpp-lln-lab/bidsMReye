@@ -7,13 +7,15 @@ from typing import Union
 
 from bids import BIDSLayout  # type: ignore
 
-from bidsmreye.utils import config
+from bidsmreye.utils import Config
 from bidsmreye.utils import create_dir_if_absent
 
 log = logging.getLogger("rich")
 
 
-def get_dataset_layout(dataset_path: Path, config: Optional[dict] = None) -> BIDSLayout:
+def get_dataset_layout(
+    dataset_path: Union[str, Path], config: Optional[dict] = None
+) -> BIDSLayout:
     """Return a BIDSLayout object for the dataset at the given path.
 
     Args:
@@ -24,6 +26,8 @@ def get_dataset_layout(dataset_path: Path, config: Optional[dict] = None) -> BID
     Returns:
         BIDSLayout: _description_
     """
+    if isinstance(dataset_path, str):
+        dataset_path = Path(dataset_path)
     create_dir_if_absent(dataset_path)
 
     if config is None:
@@ -187,7 +191,7 @@ def get_config(config_file: Path = None, default: str = "") -> dict:
 
 
 def create_bidsname(
-    layout: BIDSLayout, filename: Union[dict, Path], filetype: str
+    layout: BIDSLayout, filename: Union[dict, str, Path], filetype: str
 ) -> Path:
     """Return a BIDS valid filename for layout and a filename or a dict of BIDS entities.
 
@@ -203,8 +207,12 @@ def create_bidsname(
     """
     if isinstance(filename, dict):
         entities = filename
-    else:
+    elif isinstance(filename, Path):
         entities = layout.parse_file_entities(filename)
+    elif isinstance(filename, str):
+        entities = layout.parse_file_entities(filename)
+    else:
+        raise TypeError(f"filename must be a dict or a Path, not {type(filename)}")
 
     bids_name_config = get_bidsname_config()
 
@@ -215,7 +223,7 @@ def create_bidsname(
     return output_file.resolve()
 
 
-def check_layout(layout: BIDSLayout) -> None:
+def check_layout(cfg: Config, layout: BIDSLayout) -> None:
     """_summary_.
 
     Args:
@@ -230,29 +238,26 @@ def check_layout(layout: BIDSLayout) -> None:
     if desc["DatasetType"] != "derivative":
         raise RuntimeError("Input dataset should be BIDS derivative")
 
-    cfg = config()
-
-    bids_filter = get_bids_filter_config()
-
-    bf = layout.get(
-        return_type="filename",
-        task=cfg["task"],
-        space=cfg["space"],
-        extension="nii.*",
-        regex_search=True,
-        **bids_filter["bold"],
-    )
+    this_filter = get_bids_filter_config()["bold"]
 
     generated_by = desc["GeneratedBy"][0]["Name"]
     if generated_by.lower() == "bidsmreye":
-        bf = layout.get(
-            return_type="filename",
-            task=cfg["task"],
-            space=cfg["space"],
-            suffix="^mask$",
-            extension="p",
-            regex_search=True,
-        )
+        this_filter = get_bids_filter_config()["mask"]
+
+    this_filter["task"] = cfg.task
+    this_filter["space"] = cfg.space
+
+    log.debug(f"Looking for files with filter\n{this_filter}")
+
+    bf = layout.get(
+        return_type="filename",
+        regex_search=True,
+        **this_filter,
+    )
 
     if bf == []:
-        raise RuntimeError("Input dataset does not have any data to process")
+        raise RuntimeError(
+            f"""
+            Input dataset {layout.root} does not have any data to process for filter\n{this_filter}
+            """
+        )

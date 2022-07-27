@@ -6,6 +6,7 @@ import shutil
 import warnings
 from pathlib import Path
 from typing import Optional
+from typing import Union
 
 from attrs import define
 from attrs import field
@@ -26,10 +27,10 @@ class Config:
             raise ValueError(f"Input_folder must be an existing directory:\n{value}.")
 
     output_folder: str = field(default=None, converter=Path)
-    model_weights_file = field(kw_only=True, default="")
-    participant: list = field(kw_only=True, default=[])
-    space: str = field(kw_only=True, default="")
-    task: str = field(kw_only=True, default="")
+    participant: Optional[list] = field(kw_only=True, default=None)
+    space: Optional[list] = field(kw_only=True, default=None)
+    task: Optional[list] = field(kw_only=True, default=None)
+    model_weights_file: Union[str, Path] = field(kw_only=True, default=None)
     debug: bool = field(kw_only=True, default=False)
     has_GPU = False
 
@@ -47,7 +48,7 @@ class Config:
         self.check_argument(attribute="task", layout_in=layout_in)
         self.check_argument(attribute="space", layout_in=layout_in)
 
-    def check_argument(self, attribute: str = None, layout_in: BIDSLayout = None):
+    def check_argument(self, attribute, layout_in: BIDSLayout):
         """Check that all required fields are set."""
         if attribute == "participant":
             value = layout_in.get_subjects()
@@ -72,27 +73,6 @@ class Config:
         return self
 
 
-def config() -> dict:
-    """Return default configuration.
-
-    Returns:
-        dict: _description_
-    """
-    has_GPU = False
-
-    os.environ["CUDA_VISIBLE_DEVICES"] = "0" if has_GPU else ""
-
-    return {
-        "output_folder": "",
-        "input_folder": "",
-        "model_weights_file": "",
-        "participant": [],
-        "space": "",
-        "task": "",
-        "debug": False,
-    }
-
-
 def move_file(input: Path, output: Path) -> None:
     """Move or rename a file and create target directory if it does not exist.
 
@@ -109,12 +89,14 @@ def move_file(input: Path, output: Path) -> None:
     input.unlink()
 
 
-def create_dir_if_absent(output_path: Path) -> None:
+def create_dir_if_absent(output_path: Union[str, Path]) -> None:
     """_summary_.
 
     Args:
         output_path (Path): _description_
     """
+    if isinstance(output_path, str):
+        output_path = Path(output_path)
     if not output_path.is_dir():
         log.info(f"Creating dir: {output_path}")
     output_path.mkdir(parents=True, exist_ok=True)
@@ -130,7 +112,7 @@ def create_dir_for_file(file: Path) -> None:
     create_dir_if_absent(output_path)
 
 
-def return_regex(string: str) -> str:
+def return_regex(value: Union[str, Optional[list]]) -> Optional[str]:
     """_summary_.
 
     Args:
@@ -139,16 +121,28 @@ def return_regex(string: str) -> str:
     Returns:
         str: _description_
     """
-    return f"^{string}$"
+    if isinstance(value, str):
+        if value[0] != "^":
+            value = f"^{value}"
+        if not value.endswith("$"):
+            value = f"{value}$"
+
+    if isinstance(value, list):
+        new_value = ""
+        for i in value:
+            new_value = f"{new_value}{return_regex(i)}|"
+        value = new_value[:-1]
+
+    return value
 
 
-def list_subjects(layout: BIDSLayout, cfg: Optional[dict] = None) -> list:
+def list_subjects(cfg: Config, layout: BIDSLayout) -> list:
     """_summary_.
 
     Args:
         layout (BIDSLayout): BIDSLayout of the dataset
 
-        cfg (dict or None, optional): Defaults to None.
+        cfg (Config): Config object
 
     Raises:
         Exception: _description_
@@ -156,19 +150,12 @@ def list_subjects(layout: BIDSLayout, cfg: Optional[dict] = None) -> list:
     Returns:
         _type_: _description_
     """
-    if cfg is None or cfg["participant"] == []:
-        subjects = layout.get_subjects()
-        debug = False
-    else:
-        subjects = layout.get(
-            return_type="id", target="subject", subject=cfg["participant"]
-        )
-        debug = cfg["debug"]
+    subjects = layout.get(return_type="id", target="subject", subject=cfg.participant)
 
     if subjects == [] or subjects is None:
         raise RuntimeError("No subject found")
 
-    if debug:
+    if cfg.debug:
         subjects = [subjects[0]]
         log.debug("Running first subject only.")
 

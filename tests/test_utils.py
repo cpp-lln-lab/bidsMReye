@@ -6,10 +6,10 @@ from bids.tests import get_test_data_path
 
 from bidsmreye.bidsutils import get_dataset_layout
 from bidsmreye.utils import Config
-from bidsmreye.utils import config
 from bidsmreye.utils import get_deepmreye_filename
 from bidsmreye.utils import list_subjects
 from bidsmreye.utils import return_deepmreye_output_filename
+from bidsmreye.utils import return_regex
 
 
 def pybids_test_dataset():
@@ -100,18 +100,24 @@ def test_no_subject():
     assert e_info.type == RuntimeError
 
 
+def test_return_regex():
+    assert return_regex("foo") == "^foo$"
+    assert return_regex("^foo") == "^foo$"
+    assert return_regex("foo$") == "^foo$"
+    assert return_regex(["foo", "bar"]) == "^foo$|^bar$"
+
+
 def test_list_subjects():
 
-    cfg = config()
+    cfg = Config(
+        pybids_test_dataset(),
+        Path(__file__).parent.joinpath("data"),
+    )
 
     layout = get_dataset_layout(pybids_test_dataset())
 
-    subjects = list_subjects(layout, cfg)
+    subjects = list_subjects(cfg, layout)
     assert len(subjects) == 5
-
-    cfg["participant"] = ["02"]
-    subjects = list_subjects(layout, cfg)
-    assert subjects == ["02"]
 
 
 def test_get_dataset_layout_smoke_test():

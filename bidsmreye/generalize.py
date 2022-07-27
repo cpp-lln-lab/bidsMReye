@@ -15,6 +15,7 @@ from rich import print
 from bidsmreye.bidsutils import check_layout
 from bidsmreye.bidsutils import create_bidsname
 from bidsmreye.bidsutils import get_dataset_layout
+from bidsmreye.utils import Config
 from bidsmreye.utils import list_subjects
 from bidsmreye.utils import move_file
 from bidsmreye.utils import return_regex
@@ -22,17 +23,17 @@ from bidsmreye.utils import return_regex
 log = logging.getLogger("rich")
 
 
-def convert_confounds(cfg: dict, layout_out: BIDSLayout, subject_label: str):
+def convert_confounds(cfg: Config, layout_out: BIDSLayout, subject_label: str):
     """Convert numpy output to TSV.
 
     Args:
-        cfg (dict): configuration dictionary
+        cfg (Config): configuration object
 
         layout_out (_type_): pybids layout to of the dataset to act on.
 
         subject_label (str): The label(s) of the participant(s) that should be analyzed.
     """
-    entities = {"subject": subject_label, "task": cfg["task"], "space": cfg["space"]}
+    entities = {"subject": subject_label, "task": cfg.task, "space": cfg.space}
     confound_numpy = create_bidsname(layout_out, entities, "confounds_numpy")
 
     content = np.load(
@@ -48,7 +49,7 @@ def convert_confounds(cfg: dict, layout_out: BIDSLayout, subject_label: str):
 
             this_pred = np.nanmedian(item["pred_y"], axis=1)
 
-        confound_name = create_bidsname(layout_out, key + "p", "confounds_tsv")
+        confound_name = create_bidsname(layout_out, Path(key + "p"), "confounds_tsv")
 
         log.info(f"Saving to {confound_name}")
 
@@ -57,32 +58,38 @@ def convert_confounds(cfg: dict, layout_out: BIDSLayout, subject_label: str):
         )
 
 
-def generalize(cfg: dict) -> None:
+def generalize(cfg: Config) -> None:
     """Apply model weights to new data.
 
     Args:
         cfg (dict): configuration dictionary
     """
-    output_dataset_path = cfg["output_folder"]
+    layout_out = get_dataset_layout(cfg.output_folder)
+    check_layout(cfg, layout_out)
 
-    layout_out = get_dataset_layout(output_dataset_path)
-    check_layout(layout_out)
-
-    subjects = list_subjects(layout_out, cfg)
+    subjects = list_subjects(cfg, layout_out)
 
     all_data = []
 
     for subject_label in subjects:
 
+        this_filter = {
+            "subject": return_regex(subject_label),
+            "suffix": "^bidsmreye$",
+            "task": return_regex(cfg.task),
+            "space": return_regex(cfg.space),
+            "extension": ".npz",
+        }
+
+        log.debug(f"Looking for files with filter\n{this_filter}")
+
         data = layout_out.get(
             return_type="filename",
-            subject=return_regex(subject_label),
-            suffix="^bidsmreye$",
-            task=return_regex(cfg["task"]),
-            space=return_regex(cfg["space"]),
-            extension=".npz",
             regex_search=True,
+            **this_filter,
         )
+
+        log.debug(f"Found files\n{data}")
 
         for file in data:
             log.info(f"adding file: {Path(file).name}")
@@ -95,7 +102,7 @@ def generalize(cfg: dict) -> None:
 
         # Get untrained model and load with trained weights
         opts = model_opts.get_opts()
-        model_weights = cfg["model_weights_file"]
+        model_weights = cfg.model_weights_file
 
         (model, model_inference) = train.train_model(
             dataset="example_data",
@@ -133,7 +140,7 @@ def generalize(cfg: dict) -> None:
         if log.isEnabledFor(logging.DEBUG) or log.isEnabledFor(logging.INFO):
             fig.show()
 
-        entities = {"subject": subject_label, "task": cfg["task"], "space": cfg["space"]}
+        entities = {"subject": subject_label, "task": cfg.task, "space": cfg.space}
         confound_numpy = create_bidsname(layout_out, entities, "confounds_numpy")
         source_file = Path(layout_out.root).joinpath(
             f"sub-{subject_label}", "func", "results_tmp.npy"
