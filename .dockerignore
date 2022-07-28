@@ -15,7 +15,6 @@ Pipfile
 **/__pycache__
 **/pytest_cache
 **/.dockerignore
-**/.git
 **/.gitignore
 **/.vscode
 **/Dockerfile*
