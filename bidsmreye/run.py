@@ -9,7 +9,6 @@ from rich.logging import RichHandler
 from rich.traceback import install
 
 from . import _version
-from bidsmreye.combine import combine
 from bidsmreye.download import download
 from bidsmreye.generalize import generalize
 from bidsmreye.prepare_data import prepare_data
@@ -60,7 +59,7 @@ def main(argv=sys.argv) -> None:
         - combine:    combine data labels and data from different runs into a single file
         - generalize: generalize from data to give predicted labels
         """,
-        choices=["all", "prepare", "combine", "generalize"],
+        choices=["all", "prepare", "generalize"],
         default="all",
     )
     parser.add_argument(
@@ -170,6 +169,7 @@ def main(argv=sys.argv) -> None:
         bids_filter=args.bids_filter_file,
     )
 
+    # log DEBUG and WARNING cannot be shown anymore ???
     log_level = "DEBUG" if cfg.debug else args.verbosity
     logging.basicConfig(
         level=log_level, format=FORMAT, datefmt="[%X]", handlers=[RichHandler()]
@@ -188,14 +188,10 @@ def main(argv=sys.argv) -> None:
 
         if args.action == "all":
             prepare_data(cfg)
-            combine(cfg)
             generalize(cfg)
 
         elif args.action == "prepare":
             prepare_data(cfg)
-
-        elif args.action == "combine":
-            combine(cfg)
 
         elif args.action == "generalize":
             generalize(cfg)

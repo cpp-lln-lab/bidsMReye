@@ -154,15 +154,6 @@ prepare: tests/data/moae_fmriprep ## demo: prepares the data of MOAE dataset
 				$$PWD/outputs/moae_fmriprep/derivatives \
 				participant
 
-combine: ## demo: combines data and dummy labels of MOAE dataset
-	bidsmreye 	--action combine \
-				--verbosity INFO \
-				--debug true \
-				--reset_database true \
-				$$PWD/tests/data/moae_fmriprep \
-				$$PWD/outputs/moae_fmriprep/derivatives \
-				participant
-
 generalize: ## demo: predicts labels of MOAE dataset
 	bidsmreye 	--action generalize \
 				--verbosity WARNING \
@@ -188,16 +179,6 @@ get_ds002799: tests/data/data_ds002799
 
 ds002799_prepare: get_ds002799 models/dataset1_guided_fixations.h5
 	bidsmreye 	--action prepare \
-				--verbosity INFO \
-				$$PWD/tests/data/ds002799/derivatives/fmriprep \
-				$$PWD/outputs/ds002799/derivatives \
-				participant \
-				--participant_label 302 307 \
-				--space MNI152NLin2009cAsym T1w \
-				--run 1 2
-
-ds002799_combine:
-	bidsmreye 	--action combine \
 				--verbosity INFO \
 				$$PWD/tests/data/ds002799/derivatives/fmriprep \
 				$$PWD/outputs/ds002799/derivatives \
@@ -281,7 +262,6 @@ docker_dev_build_no_cache: docker/Dockerfile_dev
 
 docker_demo: Docker_build clean-demo
 	make Docker_prepare_data
-	make Docker_combine
 	make Docker_generalize
 
 docker_prepare_data:
@@ -294,17 +274,6 @@ docker_prepare_data:
 				/home/neuro/outputs/ \
 				participant \
 				--action prepare
-
-docker_combine:
-	docker run --rm -it \
-				--user "$(id -u):$(id -g)" \
-				-v $$PWD/tests/data/moae_fmriprep:/home/neuro/data \
-				-v $$PWD/outputs:/home/neuro/outputs \
-				bidsmreye:latest \
-				/home/neuro/data/ \
-				/home/neuro/outputs/ \
-				participant \
-				--action combine
 
 docker_generalize:
 	docker run --rm -it \
