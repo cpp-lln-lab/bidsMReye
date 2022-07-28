@@ -224,8 +224,8 @@ docker/Dockerfile: ## Dockerfile for the bidsmreye docker image
 		conda_install="python=3.9 pip" \
 		activate="true" \
 		pip_install="git+https://github.com/cpp-lln-lab/bidsMReye.git" \
-	--copy Makefile /home/neuro/bidsMReye \
 	--run "mkdir -p /home/neuro/bidsMReye" \
+	--copy Makefile /home/neuro/bidsMReye \
 	--workdir /home/neuro/bidsMReye \
  	--run "make models" \
 	--copy ./docker/entrypoint.sh /neurodocker/startup.sh \
@@ -299,5 +299,4 @@ docker_generalize:
 				/home/neuro/data/ \
 				/home/neuro/outputs/ \
 				participant \
-				--action generalize \
-				--model guided_fixations
+				--action generalize

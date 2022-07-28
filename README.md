@@ -52,21 +52,31 @@ cd bidsMReye
 make install
 ```
 
+For Windows you will have to download the pre-trained model weights manually.
+
+- model:
+  - URL: [https://osf.io/download/cqf74/](https://osf.io/download/cqf74/)
+  - destination file: models/dataset1_guided_fixations.h5
+
 ## Demo
 
-For Linux or MacOS you use `make` to run all the different steps of the demo.
+This will run bidsMReye on the fmriprep preprocessed data of the SPM MOAE
+dataset (that you can find on the open science framework).
 
-For Windows you will have to download the data and the pre-trained model weights
-manually.
+For Linux or MacOS you can use `make` to get the data of the demo.
+
+```bash
+make tests/data/moae_fmriprep
+```
+
+For Windows you will have to download the data manually.
 
 - data
 
   - URL: [https://osf.io/vufjs/download](https://osf.io/vufjs/download)
   - destination folder: tests/data/moae_fmriprep
 
-- model:
-  - URL: [https://osf.io/download/cqf74/](https://osf.io/download/cqf74/)
-  - destination file: models/dataset1_guided_fixations.h5
+The directory where you want to run the demo should look like this:
 
 ```bash
 ├── models
@@ -81,13 +91,59 @@ manually.
                  └── func
 ```
 
-### after installing the pacakage locally
+### Using docker
+
+For Linux or MacOS you can use `make` to get run all the steps of the demo.
+
+```bash
+make docker_demo
+```
+
+This will run the different steps of the demo:
+
+```bash
+docker run --rm -it \
+      --user "$(id -u):$(id -g)" \
+      -v $PWD/tests/data/moae_fmriprep:/home/neuro/data \
+      -v $PWD/outputs:/home/neuro/outputs \
+      bidsmreye:latest \
+      /home/neuro/data/ \
+      /home/neuro/outputs/ \
+      participant \
+      --action prepare
+
+
+docker run --rm -it \
+      --user "$(id -u):$(id -g)" \
+      -v $PWD/tests/data/moae_fmriprep:/home/neuro/data \
+      -v $PWD/outputs:/home/neuro/outputs \
+      bidsmreye:latest \
+      /home/neuro/data/ \
+      /home/neuro/outputs/ \
+      participant \
+      --action combine
+
+
+docker run --rm -it \
+      --user "$(id -u):$(id -g)" \
+      -v $PWD/tests/data/moae_fmriprep:/home/neuro/data \
+      -v $PWD/outputs:/home/neuro/outputs \
+      bidsmreye:latest \
+      /home/neuro/data/ \
+      /home/neuro/outputs/ \
+      participant \
+      --action generalize
+```
+
+### After installing the package locally
+
+For Linux or MacOS you can use `make` to get run all the steps of the demo.
 
 ```bash
 make demo
 ```
 
-Running the different steps of the demo:
+This will run the different steps of the demo:
 
 ```bash
 bids_dir="$PWD/tests/data/moae_fmriprep "
