@@ -200,6 +200,9 @@ def generalize(cfg: Config) -> None:
     :param cfg: Configuration object
     :type cfg: Config
     """
+    log.info("GENERALIZING")
+    log.info(f"Using model: {cfg.model_weights_file}")
+
     layout_out = get_dataset_layout(cfg.output_folder)
     check_layout(cfg, layout_out)
 

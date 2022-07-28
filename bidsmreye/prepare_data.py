@@ -99,6 +99,8 @@ def prepare_data(cfg: Config) -> None:
     :param cfg: Configuration object
     :type cfg: Config
     """
+    log.info("PREPARING DATA")
+
     layout_in = get_dataset_layout(cfg.input_folder, use_database=True)
     check_layout(cfg, layout_in)
 

@@ -10,6 +10,7 @@ from rich.traceback import install
 
 from . import _version
 from bidsmreye.combine import combine
+from bidsmreye.download import download
 from bidsmreye.generalize import generalize
 from bidsmreye.prepare_data import prepare_data
 from bidsmreye.utils import Config
@@ -100,11 +101,19 @@ def main(argv=sys.argv) -> None:
         """,
         nargs="+",
     )
+    # TODO make it possible to pass path to a model ?
     parser.add_argument(
         "--model",
         help="model to use",
-        choices=["guided_fixations"],
-        default="guided_fixations",
+        choices=[
+            "1_guided_fixations",
+            "2_pursuit",
+            "3_openclosed",
+            "3_pursuit",
+            "4_pursuit",
+            "5_free_viewing",
+        ],
+        default="1_guided_fixations",
     )
     parser.add_argument(
         "--verbosity",
@@ -143,11 +152,10 @@ def main(argv=sys.argv) -> None:
 
     args = parser.parse_args(argv[1:])
 
-    if args.model in {"guided_fixations", "", None}:
-        model_weights_file = Path.cwd().joinpath(
-            "models",
-            "dataset1_guided_fixations.h5",
-        )
+    model_weights_file = None
+    if args.action in ["all", "generalize"]:
+        model_weights_file = download(model_name=args.model)
+        assert Path(model_weights_file).is_file()
 
     cfg = Config(
         args.bids_dir,
@@ -157,12 +165,12 @@ def main(argv=sys.argv) -> None:
         run=args.run or None,
         space=args.space or None,
         debug=args.debug,
-        model_weights_file=model_weights_file,
         reset_database=args.reset_database,
+        model_weights_file=model_weights_file,
         bids_filter=args.bids_filter_file,
     )
 
-    log_level = "DEBUG" if cfg.debug else args.verbosity or "INFO"
+    log_level = "DEBUG" if cfg.debug else args.verbosity
     logging.basicConfig(
         level=log_level, format=FORMAT, datefmt="[%X]", handlers=[RichHandler()]
     )
@@ -171,33 +179,25 @@ def main(argv=sys.argv) -> None:
 
     log.info("Running bidsmreye version %s", __version__)
 
+    log.info(f"Configuration:\n{cfg}")
+
     if cfg.debug:
         log.debug("DEBUG MODE")
-
-    if cfg.model_weights_file not in {"", None}:
-        assert Path(cfg.model_weights_file).is_file()
-        log.info(f"Using model: {cfg.model_weights_file}")
 
     if args.analysis_level == "participant":
 
         if args.action == "all":
-            log.info("PREPARING DATA")
             prepare_data(cfg)
-            log.info("COMBINING DATA")
             combine(cfg)
-            log.info("GENERALIZING")
             generalize(cfg)
 
         elif args.action == "prepare":
-            log.info("PREPARING DATA")
             prepare_data(cfg)
 
         elif args.action == "combine":
-            log.info("COMBINING DATA")
             combine(cfg)
 
         elif args.action == "generalize":
-            log.info("GENERALIZING")
             generalize(cfg)
 
         else:

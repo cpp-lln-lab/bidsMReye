@@ -115,6 +115,8 @@ def combine(cfg: Config):
     :param cfg: Configuration object.
     :type cfg: Config
     """
+    log.info("COMBINING DATA")
+
     layout_out = get_dataset_layout(cfg.output_folder)
     check_layout(cfg, layout_out)
 

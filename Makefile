@@ -119,7 +119,7 @@ servedocs: docs ## compile the docs watching for changes
 
 ## TESTS
 
-test: models tests/data/moae_fmriprep ## run tests quickly with the default Python
+test: tests/data/moae_fmriprep ## run tests quickly with the default Python
 	python -m pytest --cov bidsmreye
 
 tests/data/moae_fmriprep: ## gets fmriprep preprocessed data of the SPM MOAE dataset from OSF
@@ -136,7 +136,7 @@ tests/data/moae_fmriprep: ## gets fmriprep preprocessed data of the SPM MOAE dat
 clean-demo:
 	rm -fr outputs/moae_fmriprep
 
-demo: clean-demo tests/data/moae_fmriprep models/dataset1_guided_fixations.h5 ## demo: runs all demo steps on MOAE dataset
+demo: clean-demo tests/data/moae_fmriprep ## demo: runs all demo steps on MOAE dataset
 	bidsmreye 	--action all \
 				--verbosity INFO \
 				--debug true \
@@ -145,7 +145,7 @@ demo: clean-demo tests/data/moae_fmriprep models/dataset1_guided_fixations.h5 ##
 				$$PWD/outputs/moae_fmriprep/derivatives \
 				participant
 
-prepare: tests/data/moae_fmriprep models/dataset1_guided_fixations.h5 ## demo: prepares the data of MOAE dataset
+prepare: tests/data/moae_fmriprep ## demo: prepares the data of MOAE dataset
 	bidsmreye 	--action prepare \
 				--verbosity INFO \
 				--debug true \
@@ -164,9 +164,8 @@ combine: ## demo: combines data and dummy labels of MOAE dataset
 				participant
 
 generalize: ## demo: predicts labels of MOAE dataset
-	bidsmreye 	--model guided_fixations \
-				--action generalize \
-				--verbosity INFO \
+	bidsmreye 	--action generalize \
+				--verbosity WARNING \
 				--debug true \
 				--reset_database true \
 				$$PWD/tests/data/moae_fmriprep \

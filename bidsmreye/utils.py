@@ -41,7 +41,7 @@ class Config:
     space: Optional[Any] = field(kw_only=True, default=None)
     task: Optional[Any] = field(kw_only=True, default=None)
     run: Optional[Any] = field(kw_only=True, default=None)
-    model_weights_file: Union[str, Path] = field(kw_only=True, default=None)
+    model_weights_file: Optional[Path] = field(kw_only=True, default=None)
     debug: Union[str, bool] = field(kw_only=True, default=False)
     reset_database: Union[str, bool] = field(kw_only=True, default=False)
     bids_filter = field(kw_only=True, default=None)
