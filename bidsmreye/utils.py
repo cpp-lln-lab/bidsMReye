@@ -42,15 +42,15 @@ class Config:
     run: Optional[Any] = field(kw_only=True, default=None)
     model_weights_file: Union[str, Path] = field(kw_only=True, default=None)
     debug: Union[str, bool] = field(kw_only=True, default=False)
+    reset_database: Union[str, bool] = field(kw_only=True, default=False)
     has_GPU = False
 
     def __attrs_post_init__(self):
         """Check that output_folder exists and gets info from layout if not specified."""
         os.environ["CUDA_VISIBLE_DEVICES"] = "0" if self.has_GPU else ""
 
-        if not self.debug:
-            self.debug = False
         self.debug = converters.to_bool(self.debug)
+        self.reset_database = converters.to_bool(self.reset_database)
 
         if not self.run:
             self.run = []
@@ -59,7 +59,6 @@ class Config:
         if not self.output_folder:
             self.output_folder.mkdir(parents=True, exist_ok=True)
 
-        #  TODO add option to reset DB
         database_path = self.input_folder.joinpath("pybids_db")
 
         layout_in = BIDSLayout(
@@ -67,6 +66,7 @@ class Config:
             validate=False,
             derivatives=False,
             database_path=database_path,
+            reset_database=self.reset_database,
         )
 
         if not database_path.is_dir():

@@ -58,6 +58,7 @@ def main(argv=sys.argv) -> None:
         - generalize: generalize from data to give predicted labels
         """,
         choices=["all", "prepare", "combine", "generalize"],
+        default="all",
     )
     parser.add_argument(
         "--participant_label",
@@ -105,16 +106,28 @@ def main(argv=sys.argv) -> None:
         "--model",
         help="model to use",
         choices=["guided_fixations"],
+        default="guided_fixations",
     )
     parser.add_argument(
         "--verbosity",
         help="INFO, WARNING. Defaults to INFO",
         choices=["INFO", "WARNING"],
+        default="INFO",
     )
     parser.add_argument(
         "--debug",
-        help="true or false",
+        help="true or false. Defaults to False",
         choices=["true", "false"],
+        default="false",
+    )
+    parser.add_argument(
+        "--reset_database",
+        help="""
+        Resets the database of the input dataset.
+        Values: true or false. Defaults to false.
+        """,
+        choices=["true", "false"],
+        default="false",
     )
     parser.add_argument(
         "-v",
@@ -143,6 +156,7 @@ def main(argv=sys.argv) -> None:
         space=args.space or None,
         debug=args.debug,
         model_weights_file=model_weights_file,
+        reset_database=args.reset_database,
     )
 
     log_level = "DEBUG" if cfg.debug else args.verbosity or "INFO"

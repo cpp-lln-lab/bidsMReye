@@ -135,6 +135,7 @@ demo: clean-demo tests/data/moae_fmriprep models/dataset1_guided_fixations.h5 ##
 	bidsmreye 	--action all \
 				--verbosity INFO \
 				--debug true \
+				--reset_database true \
 				$$PWD/tests/data/moae_fmriprep \
 				$$PWD/outputs/moae_fmriprep/derivatives \
 				participant
@@ -143,6 +144,7 @@ prepare: tests/data/moae_fmriprep models/dataset1_guided_fixations.h5 ## demo: p
 	bidsmreye 	--action prepare \
 				--verbosity INFO \
 				--debug true \
+				--reset_database true \
 				$$PWD/tests/data/moae_fmriprep \
 				$$PWD/outputs/moae_fmriprep/derivatives \
 				participant
@@ -151,6 +153,7 @@ combine: ## demo: combines data and dummy labels of MOAE dataset
 	bidsmreye 	--action combine \
 				--verbosity INFO \
 				--debug true \
+				--reset_database true \
 				$$PWD/tests/data/moae_fmriprep \
 				$$PWD/outputs/moae_fmriprep/derivatives \
 				participant
@@ -160,6 +163,7 @@ generalize: ## demo: predicts labels of MOAE dataset
 				--action generalize \
 				--verbosity INFO \
 				--debug true \
+				--reset_database true \
 				$$PWD/tests/data/moae_fmriprep \
 				$$PWD/outputs/moae_fmriprep/derivatives \
 				participant
