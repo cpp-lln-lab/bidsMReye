@@ -5,9 +5,11 @@ import re
 import shutil
 import warnings
 from pathlib import Path
+from typing import Any
 from typing import Optional
 from typing import Union
 
+from attrs import converters
 from attrs import define
 from attrs import field
 from bids import BIDSLayout  # type: ignore
@@ -27,35 +29,52 @@ class Config:
             raise ValueError(f"Input_folder must be an existing directory:\n{value}.")
 
     output_folder: str = field(default=None, converter=Path)
-    participant: Optional[list] = field(kw_only=True, default=None)
-    space: Optional[list] = field(kw_only=True, default=None)
-    task: Optional[list] = field(kw_only=True, default=None)
+    participant: Optional[Any] = field(kw_only=True, default=None)
+    space: Optional[Any] = field(kw_only=True, default=None)
+    task: Optional[Any] = field(kw_only=True, default=None)
+    run: Optional[Any] = field(kw_only=True, default=None)
     model_weights_file: Union[str, Path] = field(kw_only=True, default=None)
-    debug: bool = field(kw_only=True, default=False)
+    debug: Union[str, bool] = field(kw_only=True, default=False)
     has_GPU = False
 
     def __attrs_post_init__(self):
         """Check that output_folder exists and gets info from layout if not specified."""
         os.environ["CUDA_VISIBLE_DEVICES"] = "0" if self.has_GPU else ""
 
-        self.output_folder = Path(self.output_folder).joinpath("bidsmreye")
+        self.debug = converters.to_bool(self.debug)
+
+        self.output_folder = self.output_folder.joinpath("bidsmreye")
         if not self.output_folder:
             self.output_folder.mkdir(parents=True, exist_ok=True)
 
-        layout_in = BIDSLayout(self.input_folder, validate=False, derivatives=False)
+        #  TODO add option to reset DB
+        database_path = self.input_folder.joinpath("pybids_db")
+
+        layout_in = BIDSLayout(
+            self.input_folder,
+            validate=False,
+            derivatives=False,
+            database_path=database_path,
+        )
+
+        if not database_path.is_dir():
+            layout_in.save(database_path)
 
         self.check_argument(attribute="participant", layout_in=layout_in)
         self.check_argument(attribute="task", layout_in=layout_in)
+        self.check_argument(attribute="run", layout_in=layout_in)
         self.check_argument(attribute="space", layout_in=layout_in)
 
     def check_argument(self, attribute, layout_in: BIDSLayout):
-        """Check an attribute value compared to a dataset content."""
+        """Check an attribute value compared to a the input dataset content."""
         if attribute == "participant":
             value = layout_in.get_subjects()
         elif attribute == "task":
             value = layout_in.get_tasks()
-        elif attribute == "space":
-            value = layout_in.get(return_type="id", target="space")
+        elif attribute in ["space", "run"]:
+            value = layout_in.get(return_type="id", target=attribute, datatype="func")
+
+        self.listify(attribute)
 
         if getattr(self, attribute):
             if missing_values := list(set(getattr(self, attribute)) - set(value)):
@@ -63,9 +82,19 @@ class Config:
                     f"{attribute}(s) {missing_values} not found in {self.input_folder}"
                 )
             value = list(set(getattr(self, attribute)) & set(value))
+
         setattr(self, attribute, value)
-        if not getattr(self, attribute):
+
+        # run can be empty if run entity is not used
+        if attribute not in ["run"] and not getattr(self, attribute):
             raise RuntimeError(f"No {attribute} not found in {self.input_folder}")
+
+        return self
+
+    def listify(self, attribute):
+        """Convert attribute to list if not already."""
+        if getattr(self, attribute) and not isinstance(getattr(self, attribute), list):
+            setattr(self, attribute, [getattr(self, attribute)])
 
         return self
 

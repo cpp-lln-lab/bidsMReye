@@ -14,7 +14,9 @@ log = logging.getLogger("rich")
 
 
 def get_dataset_layout(
-    dataset_path: Union[str, Path], config: Optional[dict] = None
+    dataset_path: Union[str, Path],
+    config: Optional[dict] = None,
+    use_database: bool = False,
 ) -> BIDSLayout:
     """Return a BIDSLayout object for the dataset at the given path.
 
@@ -35,8 +37,21 @@ def get_dataset_layout(
 
     log.info(f"indexing {dataset_path}")
 
+    if not use_database:
+        return BIDSLayout(
+            dataset_path,
+            validate=False,
+            derivatives=False,
+            config=pybids_config,
+        )
+
+    database_path = dataset_path.joinpath("pybids_db")
     return BIDSLayout(
-        dataset_path, validate=False, derivatives=False, config=pybids_config
+        dataset_path,
+        validate=False,
+        derivatives=False,
+        config=pybids_config,
+        database_path=database_path,
     )
 
 
@@ -233,17 +248,30 @@ def check_layout(cfg: Config, layout: BIDSLayout) -> None:
         Exception: _description_
     """
     desc = layout.get_dataset_description()
-    if desc["DatasetType"] != "derivative":
+    if (
+        "DatasetType" not in desc
+        and "PipelineDescription" not in desc
+        or "DatasetType" in desc
+        and desc["DatasetType"] != "derivative"
+    ):
         raise RuntimeError("Input dataset should be BIDS derivative")
 
     this_filter = get_bids_filter_config()["bold"]
 
-    generated_by = desc["GeneratedBy"][0]["Name"]
-    if generated_by.lower() == "bidsmreye":
+    if "GeneratedBy" in desc:
+        generated_by = desc["GeneratedBy"]
+    elif "PipelineDescription" in desc:
+        generated_by = desc["PipelineDescription"]
+
+    if isinstance(generated_by, list):
+        generated_by = generated_by[0]
+
+    if generated_by["Name"].lower() == "bidsmreye":
         this_filter = get_bids_filter_config()["mask"]
 
     this_filter["task"] = cfg.task
     this_filter["space"] = cfg.space
+    this_filter["run"] = cfg.run
 
     log.debug(f"Looking for files with filter\n{this_filter}")
 

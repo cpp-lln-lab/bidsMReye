@@ -7,5 +7,10 @@
     "mask": {
         "suffix": "mask",
         "extension": "p"
+    },
+    "no_label": {
+        "desc": "nolabel",
+        "suffix": "^bidsmreye$$",
+        "extension": "npz"
     }
 }

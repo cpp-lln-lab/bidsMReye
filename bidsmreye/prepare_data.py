@@ -42,7 +42,7 @@ def coregister_and_extract_data(img: str) -> None:
     )
 
 
-def preprocess_subject(
+def process_subject(
     cfg: Config, layout_in: BIDSLayout, layout_out: BIDSLayout, subject_label: str
 ) -> None:
     """Run coregistration and extract data for one subject.
@@ -59,6 +59,8 @@ def preprocess_subject(
     this_filter["task"] = return_regex(cfg.task)
     this_filter["space"] = return_regex(cfg.space)
     this_filter["subject"] = subject_label
+    if cfg.run:
+        this_filter["run"] = return_regex(cfg.run)
 
     log.debug(f"Looking for files with filter\n{this_filter}")
 
@@ -91,7 +93,7 @@ def prepare_data(cfg: Config) -> None:
     :param cfg: Configuration object
     :type cfg: Config
     """
-    layout_in = get_dataset_layout(cfg.input_folder)
+    layout_in = get_dataset_layout(cfg.input_folder, use_database=True)
     check_layout(cfg, layout_in)
 
     create_dir_if_absent(cfg.output_folder)
@@ -108,4 +110,4 @@ def prepare_data(cfg: Config) -> None:
 
     for subject_label in subjects:
 
-        preprocess_subject(cfg, layout_in, layout_out, subject_label)
+        process_subject(cfg, layout_in, layout_out, subject_label)

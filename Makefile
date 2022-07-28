@@ -1,4 +1,4 @@
-.PHONY: clean clean-build clean-pyc clean-test coverage dist docs help install lint lint/flake8 lint/black Dockerfile_dev
+.PHONY: clean clean-build clean-pyc clean-test coverage dist  help install Dockerfile_dev
 .DEFAULT_GOAL := help
 
 define BROWSER_PYSCRIPT
@@ -52,25 +52,14 @@ clean-test: ## remove test and coverage artifacts
 clean-models: ## remove pretrained models
 	rm -fr models/
 
-lint/flake8: ## check style with flake8
-	flake8 bidsmreye tests
-lint/black: ## check style with black
-	black bidsmreye tests
-lint/mypy: ## check style with mypy
-	mypy bidsmreye
 
-lint: lint/black lint/mypy lint/flake8  ## check style
+## INSTALL
 
-docs: ## generate Sphinx HTML documentation, including API docs
-	rm -f docs/source/bidsmreye.rst
-	rm -f docs/source/modules.rst
-	sphinx-apidoc -o docs/source bidsmreye
-	$(MAKE) -C docs clean
-	$(MAKE) -C docs html
-	$(BROWSER) docs/_build/html/index.html
+install: clean models ## install the package to the active Python's site-packages
+	pip install .
 
-servedocs: docs ## compile the docs watching for changes
-	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
+install_dev: clean models ## install the package and development dependencies to the active Python's site-packages
+	pip install .[dev]
 
 release: dist ## package and upload a release
 	twine upload dist/*
@@ -80,27 +69,6 @@ dist: clean ## builds source and wheel package
 	python setup.py bdist_wheel
 	ls -l dist
 
-install: clean models ## install the package to the active Python's site-packages
-	pip install .
-
-install_dev: clean models ## install the package and development dependencies to the active Python's site-packages
-	pip install .[dev]
-
-
-validate_cff: ## Validate the citation file
-	cffconvert --validate
-
-## TESTS
-
-test: models tests/data/moae_fmriprep ## run tests quickly with the default Python
-	python -m pytest --cov bidsmreye
-
-tests/data/moae_fmriprep: ## gets fmriprep preprocessed data of the SPM MOAE dataset from OSF
-	mkdir -p tests/data
-	wget -q https://osf.io/vufjs/download
-	unzip download
-	rm download
-	mv moae_fmriprep tests/data/moae_fmriprep
 
 ## PRE-TRAINED MODELS
 models: models/dataset1_guided_fixations.h5 models/dataset5_free_viewing.h5 ## gets all pretrained models from OSF
@@ -114,7 +82,54 @@ models/dataset5_free_viewing.h5:
 	wget -q https://osf.io/download/89nky/ -O models/dataset5_free_viewing.h5
 
 
+## STYLE
+
+lint/flake8: ## check style with flake8
+	flake8 bidsmreye tests
+lint/black: ## check style with black
+	black bidsmreye tests
+lint/mypy: ## check style with mypy
+	mypy bidsmreye
+
+lint: lint/black lint/mypy lint/flake8  ## check style
+
+validate_cff: ## Validate the citation file
+	cffconvert --validate
+
+
+## DOC
+.PHONY: docs
+
+docs: ## generate Sphinx HTML documentation, including API docs
+	rm -f docs/source/bidsmreye.rst
+	rm -f docs/source/modules.rst
+	sphinx-apidoc -o docs/source bidsmreye
+	$(MAKE) -C docs clean
+	$(MAKE) -C docs html
+	$(BROWSER) docs/_build/html/index.html
+
+servedocs: docs ## compile the docs watching for changes
+	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
+
+
+## TESTS
+
+test: models tests/data/moae_fmriprep ## run tests quickly with the default Python
+	python -m pytest --cov bidsmreye
+
+tests/data/moae_fmriprep: ## gets fmriprep preprocessed data of the SPM MOAE dataset from OSF
+	mkdir -p tests/data
+	wget -q https://osf.io/vufjs/download
+	unzip download
+	rm download
+	mv moae_fmriprep tests/data/moae_fmriprep
+
+
 ## DEMO
+.PHONY: clean-demo
+
+clean-demo:
+	rm -fr outputs/moae_fmriprep
 
 demo: clean-demo ## demo: runs all demo steps on MOAE dataset
 	make prepare_data
@@ -126,14 +141,16 @@ prepare_data: tests/data/moae_fmriprep models/dataset1_guided_fixations.h5 ## de
 				--verbosity INFO \
 				--debug true \
 				$$PWD/tests/data/moae_fmriprep \
-				$$PWD/outputs participant
+				$$PWD/outputs/moae_fmriprep/derivatives \
+				participant
 
 combine: ## demo: combines data and dummy labels of MOAE dataset
 	bidsmreye 	--action combine \
 				--verbosity INFO \
 				--debug true \
 				$$PWD/tests/data/moae_fmriprep \
-				$$PWD/outputs participant
+				$$PWD/outputs/moae_fmriprep/derivatives \
+				participant
 
 generalize: ## demo: predicts labels of MOAE dataset
 	bidsmreye 	--model guided_fixations \
@@ -141,14 +158,78 @@ generalize: ## demo: predicts labels of MOAE dataset
 				--verbosity INFO \
 				--debug true \
 				$$PWD/tests/data/moae_fmriprep \
-				$$PWD/outputs participant
+				$$PWD/outputs/moae_fmriprep/derivatives \
+				participant
 
-clean-demo:
-	rm -fr outputs/bidsmreye
+
+## Openneuro data
+.PHONY: get_ds002799_dat
+
+tests/data/data_ds002799:
+	datalad install -s ///openneuro/ds002799 tests/data/ds002799
+
+get_ds002799_data: tests/data/data_ds002799
+	cd tests/data/ds002799/derivatives/fmriprep && \
+	datalad get sub-30[27]/ses-*/func/*run-*preproc*bold*
+
+process_ds002799_data: get_ds002799_data models/dataset1_guided_fixations.h5
+	bidsmreye 	--action prepare \
+				--verbosity INFO \
+				--debug true \
+				$$PWD/tests/data/ds002799/derivatives/fmriprep \
+				$$PWD/outputs/ds002799/derivatives \
+				participant \
+				--participant_label 302 307 \
+				--space MNI152NLin2009cAsym T1w \
+				--run 1 2
+
+	bidsmreye 	--action combine \
+				--verbosity INFO \
+				--debug true \
+				$$PWD/tests/data/ds002799/derivatives/fmriprep \
+				$$PWD/outputs/ds002799/derivatives \
+				participant \
+				--participant_label 302 307 \
+				--space MNI152NLin2009cAsym T1w \
+				--run 1 2
+
+	bidsmreye 	--action generalize \
+				--verbosity INFO \
+				--debug true \
+				$$PWD/tests/data/ds002799/derivatives/fmriprep \
+				$$PWD/outputs/ds002799/derivatives \
+				participant \
+				--participant_label 302 307 \
+				--space MNI152NLin2009cAsym T1w \
+				--run 1 2
 
 ## DOCKER
 
-Dockerfile:
+docker/Dockerfile: ## Dockerfile for the bidsmreye docker image
+	docker run --rm repronim/neurodocker:0.7.0 generate docker \
+	--base debian:stretch-slim \
+	--pkg-manager apt \
+	--install "git wget make" \
+	--miniconda \
+		create_env="bidsmreye" \
+		conda_install="python=3.9 pip" \
+		activate="true" \
+	--run "mkdir -p /home/neuro/bidsMReye" \
+	--copy Makefile /home/neuro/bidsMReye \
+	--workdir /home/neuro/bidsMReye \
+ 	--run "make models" \
+	--miniconda \
+		use_env="bidsmreye" \
+		pip_install="git+https://github.com/cpp-lln-lab/bidsMReye.git" \
+	--copy ./docker_entrypoint.sh /neurodocker/startup.sh \
+	--run "chmod +x /neurodocker/startup.sh" \
+	--cmd bidsmreye \
+	> docker/Dockerfile
+
+Docker_build: docker/Dockerfile
+	docker build --tag bidsmreye:latest --file docker/Dockerfile .
+
+docker/Dockerfile_dev: ## Dockerfile for the bidsmreye docker image using local pacakge
 	docker run --rm repronim/neurodocker:0.7.0 generate docker \
 	--base debian:stretch-slim \
 	--pkg-manager apt \
@@ -163,19 +244,19 @@ Dockerfile:
  	--run "make models" \
 	--miniconda \
 		use_env="bidsmreye" \
-		pip_install="git+https://github.com/cpp-lln-lab/bidsMReye.git" \
+		pip_install="." \
 	--copy ./docker_entrypoint.sh /neurodocker/startup.sh \
 	--run "chmod +x /neurodocker/startup.sh" \
 	--cmd bidsmreye \
-	> Dockerfile
+	> docker/Dockerfile_dev
 
-Docker_dev_build: Dockerfile_dev
-	docker build --tag bidsmreye:dev --file Dockerfile_dev .
+Docker_dev_build: docker/Dockerfile_dev
+	docker build --tag bidsmreye:dev --file docker/Dockerfile_dev .
 
-Docker_dev_build_no_cache: Dockerfile_dev
-	docker build --tag bidsmreye:dev --no-cache --file Dockerfile_dev .
+Docker_dev_build_no_cache: docker/Dockerfile_dev
+	docker build --tag bidsmreye:dev --no-cache --file docker/Dockerfile_dev .
 
-Docker_demo: Docker_dev_build clean-demo
+Docker_demo: Docker_build clean-demo
 	make Docker_prepare_data
 	make Docker_combine
 	make Docker_generalize
@@ -185,37 +266,31 @@ Docker_prepare_data:
 				--user "$(id -u):$(id -g)" \
 				-v $$PWD/tests/data/moae_fmriprep:/home/neuro/data \
 				-v $$PWD/outputs:/home/neuro/outputs \
-				bidsmreye:dev \
+				bidsmreye:latest \
 				/home/neuro/data/ \
 				/home/neuro/outputs/ \
 				participant \
-				--action prepare \
-				--space T1w \
-				--task auditory
+				--action prepare
 
 Docker_combine:
 	docker run --rm -it \
 				--user "$(id -u):$(id -g)" \
 				-v $$PWD/tests/data/moae_fmriprep:/home/neuro/data \
 				-v $$PWD/outputs:/home/neuro/outputs \
-				bidsmreye:dev \
+				bidsmreye:latest \
 				/home/neuro/data/ \
 				/home/neuro/outputs/ \
 				participant \
-				--action combine \
-				--space T1w \
-				--task auditory
+				--action combine
 
 Docker_generalize:
 	docker run --rm -it \
 				--user "$(id -u):$(id -g)" \
 				-v $$PWD/tests/data/moae_fmriprep:/home/neuro/data \
 				-v $$PWD/outputs:/home/neuro/outputs \
-				bidsmreye:dev \
+				bidsmreye:latest \
 				/home/neuro/data/ \
 				/home/neuro/outputs/ \
 				participant \
 				--action generalize \
-				--space T1w \
-				--model guided_fixations \
-				--task auditory
+				--model guided_fixations

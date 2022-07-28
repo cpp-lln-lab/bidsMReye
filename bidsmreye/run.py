@@ -49,17 +49,6 @@ def main(argv=sys.argv) -> None:
         choices=["participant"],
     )
     parser.add_argument(
-        "--participant_label",
-        help="""
-        The label(s) of the participant(s) that should be analyzed.
-        The label corresponds to sub-<participant_label> from the BIDS spec
-        (so it does not include "sub-").
-        If this parameter is not provided, all subjects will be analyzed.
-        Multiple participants can be specified with a space separated list.
-        """,
-        nargs="+",
-    )
-    parser.add_argument(
         "--action",
         help="""
         What action to perform:
@@ -71,6 +60,18 @@ def main(argv=sys.argv) -> None:
         choices=["prepare", "combine", "generalize"],
     )
     parser.add_argument(
+        "--participant_label",
+        help="""
+        The label(s) of the participant(s) that should be analyzed.
+        The label corresponds to sub-<participant_label> from the BIDS spec
+        (so it does not include "sub-").
+        If this parameter is not provided, all subjects will be analyzed.
+        Multiple participants can be specified with a space separated list.
+        """,
+        nargs="+",
+    )
+    parser.add_argument(
+        "-t",
         "--task",
         help="""
         The label of the task that will be analyzed.
@@ -79,6 +80,16 @@ def main(argv=sys.argv) -> None:
         """,
     )
     parser.add_argument(
+        "-r",
+        "--run",
+        help="""
+        The label of the run that will be analyzed.
+        The label corresponds to run-<task_label> from the BIDS spec
+        so it does not include "run-").
+        """,
+    )
+    parser.add_argument(
+        "-s",
         "--space",
         help="""
         The label of the space that will be analyzed.
@@ -87,6 +98,7 @@ def main(argv=sys.argv) -> None:
         """,
     )
     parser.add_argument(
+        "-m",
         "--model",
         help="model to use",
         choices=["guided_fixations"],
@@ -101,6 +113,15 @@ def main(argv=sys.argv) -> None:
         help="true or false",
         choices=["true", "false"],
     )
+    parser.add_argument(
+        "-v",
+        "--version",
+        action="version",
+        help="show program's version number and exit",
+        version=f"\nbidsMReye version {__version__}\n",
+    )
+    # --bids-filter-file
+    # --reset_database
 
     args = parser.parse_args(argv[1:])
 
@@ -113,10 +134,11 @@ def main(argv=sys.argv) -> None:
     cfg = Config(
         args.bids_dir,
         args.output_dir,
-        participant=[args.participant_label] if args.participant_label else None,
-        task=[args.task] if args.task else None,
-        space=[args.space] if args.space else None,
-        debug=args.debug == "true",
+        participant=args.participant_label or None,
+        task=args.task or None,
+        run=args.run or None,
+        space=args.space or None,
+        debug=args.debug,
         model_weights_file=model_weights_file,
     )
 

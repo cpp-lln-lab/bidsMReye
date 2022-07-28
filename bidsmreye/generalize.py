@@ -15,6 +15,7 @@ from rich import print
 
 from bidsmreye.bidsutils import check_layout
 from bidsmreye.bidsutils import create_bidsname
+from bidsmreye.bidsutils import get_bids_filter_config
 from bidsmreye.bidsutils import get_dataset_layout
 from bidsmreye.utils import Config
 from bidsmreye.utils import create_dir_for_file
@@ -123,6 +124,77 @@ def create_confounds_tsv(layout_out: BIDSLayout, file: str, subject_label: str):
     convert_confounds(layout_out, file)
 
 
+def process_subject(cfg: Config, layout_out: BIDSLayout, subject_label: str):
+    """Run generalize for one subject.
+
+    :param cfg:
+    :type cfg: Config
+
+    :param layout_out:
+    :type layout_out: BIDSLayout
+
+    :param subject_label:
+    :type subject_label: str
+    """
+    this_filter = get_bids_filter_config()["no_label"]
+    this_filter["suffix"] = return_regex(this_filter["suffix"])
+    this_filter["task"] = return_regex(cfg.task)
+    this_filter["space"] = return_regex(cfg.space)
+    this_filter["subject"] = subject_label
+    if cfg.run:
+        this_filter["run"] = return_regex(cfg.run)
+
+    log.debug(f"Looking for files with filter\n{this_filter}")
+
+    data = layout_out.get(
+        return_type="filename",
+        regex_search=True,
+        **this_filter,
+    )
+
+    log.debug(f"Found files\n{data}")
+
+    for file in data:
+
+        log.info(f"Processing file: {Path(file).name}")
+
+        print("\n")
+        generators = data_generator.create_generators([file], [file])
+        generators = (*generators, [file], [file])
+        print("\n")
+
+        opts = model_opts.get_opts()
+
+        (model, model_inference) = train.train_model(
+            dataset="example_data",
+            generators=generators,
+            opts=opts,
+            return_untrained=True,
+        )
+        model_inference.load_weights(cfg.model_weights_file)
+
+        verbose = 0
+        if log.isEnabledFor(logging.DEBUG):
+            verbose = 2
+        elif log.isEnabledFor(logging.INFO):
+            verbose = 1
+
+        (evaluation, scores) = train.evaluate_model(
+            dataset="tmp",
+            model=model_inference,
+            generators=generators,
+            save=True,
+            model_path=f"{layout_out.root}/sub-{subject_label}/func/",
+            model_description="",
+            verbose=verbose,
+            percentile_cut=80,
+        )
+
+        create_and_save_figure(layout_out, file, evaluation, scores)
+
+        create_confounds_tsv(layout_out, file, subject_label)
+
+
 def generalize(cfg: Config) -> None:
     """Apply model weights to new data.
 
@@ -136,60 +208,4 @@ def generalize(cfg: Config) -> None:
 
     for subject_label in subjects:
 
-        this_filter = {
-            "subject": return_regex(subject_label),
-            "suffix": "^bidsmreye$",
-            "task": return_regex(cfg.task),
-            "space": return_regex(cfg.space),
-            "extension": ".npz",
-        }
-
-        log.debug(f"Looking for files with filter\n{this_filter}")
-
-        data = layout_out.get(
-            return_type="filename",
-            regex_search=True,
-            **this_filter,
-        )
-
-        log.debug(f"Found files\n{data}")
-
-        for file in data:
-
-            log.info(f"Processing file: {Path(file).name}")
-
-            print("\n")
-            generators = data_generator.create_generators([file], [file])
-            generators = (*generators, [file], [file])
-            print("\n")
-
-            opts = model_opts.get_opts()
-
-            (model, model_inference) = train.train_model(
-                dataset="example_data",
-                generators=generators,
-                opts=opts,
-                return_untrained=True,
-            )
-            model_inference.load_weights(cfg.model_weights_file)
-
-            verbose = 0
-            if log.isEnabledFor(logging.DEBUG):
-                verbose = 2
-            elif log.isEnabledFor(logging.INFO):
-                verbose = 1
-
-            (evaluation, scores) = train.evaluate_model(
-                dataset="tmp",
-                model=model_inference,
-                generators=generators,
-                save=True,
-                model_path=f"{layout_out.root}/sub-{subject_label}/func/",
-                model_description="",
-                verbose=verbose,
-                percentile_cut=80,
-            )
-
-            create_and_save_figure(layout_out, file, evaluation, scores)
-
-            create_confounds_tsv(layout_out, file, subject_label)
+        process_subject(cfg, layout_out, subject_label)

@@ -35,6 +35,8 @@ def process_subject(cfg: Config, layout_out: BIDSLayout, subject_label: str):
     this_filter["task"] = return_regex(cfg.task)
     this_filter["space"] = return_regex(cfg.space)
     this_filter["subject"] = subject_label
+    if cfg.run:
+        this_filter["run"] = return_regex(cfg.run)
 
     log.debug(f"Looking for files with filter\n{this_filter}")
 
