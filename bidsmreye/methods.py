@@ -15,7 +15,8 @@ def methods(output_dir: Union[str, Path] = Path(".")) -> Path:
     """Write method section.
 
     :param output_dir: Defaults to Path(".")
-    :type output_dir: Union[str, Path], optional
+    :type  output_dir: Union[str, Path], optional
+
     :return: Outout file name.
     :rtype: Path
     """

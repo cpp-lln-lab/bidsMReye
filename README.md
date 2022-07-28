@@ -26,28 +26,37 @@ improve their pre-trained models.
 
 ## Install
 
+Better to use the docker image but you can also build the package locally if you
+want.
+
+### Docker
+
+Pull the latest docker image:
+
+```bash
+docker pull cpplab/bidsmreye:latest
+```
+
+### Install from source
+
 Clone this repository.
 
 ```bash
 git clone git://github.com/cpp-lln-lab/bidsmreye
 ```
 
-Then install it.
+Then install the package and download the pre-trained models with:
 
 ```bash
 cd bidsMReye
-pip install .
+make install
 ```
 
 ## Demo
 
 For Linux or MacOS you use `make` to run all the different steps of the demo.
 
-```bash
-make demo
-```
-
-For Windows you will have to download the data and the pre-trained weights
+For Windows you will have to download the data and the pre-trained model weights
 manually.
 
 - data
@@ -72,30 +81,29 @@ manually.
                  └── func
 ```
 
+### after installing the pacakage locally
+
+```bash
+make demo
+```
+
 Running the different steps of the demo:
 
 ```bash
 bids_dir="$PWD/tests/data/moae_fmriprep "
 output_dir="$PWD/outputs "
 
-bidsmreye --space MNI152NLin6Asym \
-                --task auditory \
-                --action prepare \
-                $bids_dir \
-                $output_dir
+bidsmreye --action prepare \
+          $bids_dir \
+          $output_dir
 
-bidsmreye --space MNI152NLin6Asym \
-                --task auditory \
-                --action combine \
-                $bids_dir \
-                $output_dir
+bidsmreye --action combine \
+          $bids_dir \
+          $output_dir
 
-bidsmreye --space MNI152NLin6Asym \
-                --task auditory \
-                --action generalize \
-                --model guided_fixations \
-                $bids_dir \
-                $output_dir
+bidsmreye --action generalize \
+          $bids_dir \
+          $output_dir
 ```
 
 ## Contributors ✨

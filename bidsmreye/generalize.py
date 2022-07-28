@@ -71,7 +71,7 @@ def convert_confounds(layout_out: BIDSLayout, file: Union[str, Path]) -> Path:
 def create_and_save_figure(layout_out: BIDSLayout, file: str, evaluation, scores):
     """Generate a figure for the eye motion timeseries.
 
-    :param layout_out:
+    :param layout_out: Output dataset layout.
     :type  layout_out: BIDSLayout
 
     :param file:
@@ -90,7 +90,7 @@ def create_and_save_figure(layout_out: BIDSLayout, file: str, evaluation, scores
         bg_color="rgb(255,255,255)",
         ylim=[-11, 11],
     )
-    if log.isEnabledFor(logging.DEBUG) or log.isEnabledFor(logging.INFO):
+    if log.isEnabledFor(logging.DEBUG):
         fig.show()
 
     confound_svg = create_bidsname(layout_out, file, "confounds_svg")
@@ -113,7 +113,7 @@ def create_confounds_tsv(layout_out: BIDSLayout, file: str, subject_label: str):
     confound_numpy = create_bidsname(layout_out, file, "confounds_numpy")
 
     source_file = Path(layout_out.root).joinpath(
-        f"sub-{subject_label}", "func", "results_tmp.npy"
+        f"sub-{subject_label}", "results_tmp.npy"
     )
 
     move_file(
@@ -127,7 +127,7 @@ def create_confounds_tsv(layout_out: BIDSLayout, file: str, subject_label: str):
 def process_subject(cfg: Config, layout_out: BIDSLayout, subject_label: str):
     """Run generalize for one subject.
 
-    :param cfg:
+    :param cfg: Configuration object
     :type cfg: Config
 
     :param layout_out:
@@ -184,7 +184,7 @@ def process_subject(cfg: Config, layout_out: BIDSLayout, subject_label: str):
             model=model_inference,
             generators=generators,
             save=True,
-            model_path=f"{layout_out.root}/sub-{subject_label}/func/",
+            model_path=f"{layout_out.root}/sub-{subject_label}/",
             model_description="",
             verbose=verbose,
             percentile_cut=80,
@@ -198,7 +198,7 @@ def process_subject(cfg: Config, layout_out: BIDSLayout, subject_label: str):
 def generalize(cfg: Config) -> None:
     """Apply model weights to new data.
 
-    :param cfg: Congiguration object
+    :param cfg: Configuration object
     :type cfg: Config
     """
     layout_out = get_dataset_layout(cfg.output_folder)

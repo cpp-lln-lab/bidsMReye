@@ -21,12 +21,16 @@ log = logging.getLogger("rich")
 
 
 def process_subject(cfg: Config, layout_out: BIDSLayout, subject_label: str):
-    """_summary_.
+    """Process subject.
 
-    Args:
-        layout_out (BIDSLayout): _description_
+    :param cfg: Configuration object.
+    :type cfg: Config
 
-        subject_label (str): Can be a regular expression.
+    :param layout_out: Output dataset layout.
+    :type layout_out: BIDSLayout
+
+    :param subject_label: Can be a regular expression.
+    :type subject_label: str
     """
     log.info(f"Running subject: {subject_label}")
 
@@ -79,14 +83,16 @@ def process_subject(cfg: Config, layout_out: BIDSLayout, subject_label: str):
 
 
 def save_participant_file(layout_out: BIDSLayout, img, subj: dict):
-    """_summary_.
+    """_summary_
 
-    Args:
-        layout_out (BIDSLayout): _description_
+    :param layout_out: Output dataset layout.
+    :type layout_out: BIDSLayout
 
-        img (_type_): _description_
+    :param img: _description_
+    :type img: _type_
 
-        subj (dict): _description_
+    :param subj: _description_
+    :type subj: dict
     """
     output_file = create_bidsname(layout_out, Path(img), "no_label")
 
@@ -105,7 +111,11 @@ def save_participant_file(layout_out: BIDSLayout, img, subj: dict):
 
 
 def combine(cfg: Config):
-    """Add labels to dataset."""
+    """Add labels to dataset.
+
+    :param cfg: Configuration object.
+    :type cfg: Config
+    """
     layout_out = get_dataset_layout(cfg.output_folder)
     check_layout(cfg, layout_out)
 

@@ -78,6 +78,7 @@ def main(argv=sys.argv) -> None:
         The label corresponds to task-<task_label> from the BIDS spec
         so it does not include "task-").
         """,
+        nargs="+",
     )
     parser.add_argument(
         "-r",
@@ -87,6 +88,7 @@ def main(argv=sys.argv) -> None:
         The label corresponds to run-<task_label> from the BIDS spec
         so it does not include "run-").
         """,
+        nargs="+",
     )
     parser.add_argument(
         "-s",
@@ -96,6 +98,7 @@ def main(argv=sys.argv) -> None:
         The label corresponds to space-<space_label> from the BIDS spec
         (so it does not include "space-").
         """,
+        nargs="+",
     )
     parser.add_argument(
         "-m",

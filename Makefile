@@ -1,4 +1,4 @@
-.PHONY: clean clean-build clean-pyc clean-test coverage dist  help install Dockerfile_dev
+.PHONY: clean clean-build clean-pyc clean-test coverage dist  help install
 .DEFAULT_GOAL := help
 
 define BROWSER_PYSCRIPT
@@ -59,7 +59,7 @@ install: clean models ## install the package to the active Python's site-package
 	pip install .
 
 install_dev: clean models ## install the package and development dependencies to the active Python's site-packages
-	pip install .[dev]
+	pip install -e .[dev]
 
 release: dist ## package and upload a release
 	twine upload dist/*
@@ -132,11 +132,11 @@ clean-demo:
 	rm -fr outputs/moae_fmriprep
 
 demo: clean-demo ## demo: runs all demo steps on MOAE dataset
-	make prepare_data
+	make prepare
 	make combine
 	make generalize
 
-prepare_data: tests/data/moae_fmriprep models/dataset1_guided_fixations.h5 ## demo: prepares the data of MOAE dataset
+prepare: tests/data/moae_fmriprep models/dataset1_guided_fixations.h5 ## demo: prepares the data of MOAE dataset
 	bidsmreye 	--action prepare \
 				--verbosity INFO \
 				--debug true \
@@ -165,17 +165,19 @@ generalize: ## demo: predicts labels of MOAE dataset
 ## Openneuro data
 .PHONY: get_ds002799_dat
 
+clean-ds002799:
+	rm -fr outputs/ds002799/derivatives
+
 tests/data/data_ds002799:
 	datalad install -s ///openneuro/ds002799 tests/data/ds002799
 
-get_ds002799_data: tests/data/data_ds002799
+get_ds002799: tests/data/data_ds002799
 	cd tests/data/ds002799/derivatives/fmriprep && \
 	datalad get sub-30[27]/ses-*/func/*run-*preproc*bold*
 
-process_ds002799_data: get_ds002799_data models/dataset1_guided_fixations.h5
+ds002799_prepare: get_ds002799 models/dataset1_guided_fixations.h5
 	bidsmreye 	--action prepare \
 				--verbosity INFO \
-				--debug true \
 				$$PWD/tests/data/ds002799/derivatives/fmriprep \
 				$$PWD/outputs/ds002799/derivatives \
 				participant \
@@ -183,9 +185,9 @@ process_ds002799_data: get_ds002799_data models/dataset1_guided_fixations.h5
 				--space MNI152NLin2009cAsym T1w \
 				--run 1 2
 
+ds002799_combine:
 	bidsmreye 	--action combine \
 				--verbosity INFO \
-				--debug true \
 				$$PWD/tests/data/ds002799/derivatives/fmriprep \
 				$$PWD/outputs/ds002799/derivatives \
 				participant \
@@ -193,9 +195,9 @@ process_ds002799_data: get_ds002799_data models/dataset1_guided_fixations.h5
 				--space MNI152NLin2009cAsym T1w \
 				--run 1 2
 
+ds002799_generalize:
 	bidsmreye 	--action generalize \
 				--verbosity INFO \
-				--debug true \
 				$$PWD/tests/data/ds002799/derivatives/fmriprep \
 				$$PWD/outputs/ds002799/derivatives \
 				participant \
@@ -203,7 +205,14 @@ process_ds002799_data: get_ds002799_data models/dataset1_guided_fixations.h5
 				--space MNI152NLin2009cAsym T1w \
 				--run 1 2
 
+ds002799: clean-ds002799
+	make ds002799_prepare
+	make ds002799_combine
+	make ds002799_generalize
+
+
 ## DOCKER
+.PHONY: docker/Dockerfile docker/Dockerfile_dev
 
 docker/Dockerfile: ## Dockerfile for the bidsmreye docker image
 	docker run --rm repronim/neurodocker:0.7.0 generate docker \
@@ -214,20 +223,18 @@ docker/Dockerfile: ## Dockerfile for the bidsmreye docker image
 		create_env="bidsmreye" \
 		conda_install="python=3.9 pip" \
 		activate="true" \
-	--run "mkdir -p /home/neuro/bidsMReye" \
+		pip_install="git+https://github.com/cpp-lln-lab/bidsMReye.git" \
 	--copy Makefile /home/neuro/bidsMReye \
+	--run "mkdir -p /home/neuro/bidsMReye" \
 	--workdir /home/neuro/bidsMReye \
  	--run "make models" \
-	--miniconda \
-		use_env="bidsmreye" \
-		pip_install="git+https://github.com/cpp-lln-lab/bidsMReye.git" \
-	--copy ./docker_entrypoint.sh /neurodocker/startup.sh \
+	--copy ./docker/entrypoint.sh /neurodocker/startup.sh \
 	--run "chmod +x /neurodocker/startup.sh" \
 	--cmd bidsmreye \
 	> docker/Dockerfile
 
-Docker_build: docker/Dockerfile
-	docker build --tag bidsmreye:latest --file docker/Dockerfile .
+docker_build: docker/Dockerfile
+	docker build --tag cpplab/bidsmreye:latest --file docker/Dockerfile .
 
 docker/Dockerfile_dev: ## Dockerfile for the bidsmreye docker image using local pacakge
 	docker run --rm repronim/neurodocker:0.7.0 generate docker \
@@ -245,23 +252,23 @@ docker/Dockerfile_dev: ## Dockerfile for the bidsmreye docker image using local 
 	--miniconda \
 		use_env="bidsmreye" \
 		pip_install="." \
-	--copy ./docker_entrypoint.sh /neurodocker/startup.sh \
+	--copy ./docker/entrypoint.sh /neurodocker/startup.sh \
 	--run "chmod +x /neurodocker/startup.sh" \
 	--cmd bidsmreye \
 	> docker/Dockerfile_dev
 
-Docker_dev_build: docker/Dockerfile_dev
-	docker build --tag bidsmreye:dev --file docker/Dockerfile_dev .
+docker_dev_build: docker/Dockerfile_dev
+	docker build --tag cpplab/bidsmreye:dev --file docker/Dockerfile_dev .
 
-Docker_dev_build_no_cache: docker/Dockerfile_dev
+docker_dev_build_no_cache: docker/Dockerfile_dev
 	docker build --tag bidsmreye:dev --no-cache --file docker/Dockerfile_dev .
 
-Docker_demo: Docker_build clean-demo
+docker_demo: Docker_build clean-demo
 	make Docker_prepare_data
 	make Docker_combine
 	make Docker_generalize
 
-Docker_prepare_data:
+docker_prepare_data:
 	docker run --rm -it \
 				--user "$(id -u):$(id -g)" \
 				-v $$PWD/tests/data/moae_fmriprep:/home/neuro/data \
@@ -272,7 +279,7 @@ Docker_prepare_data:
 				participant \
 				--action prepare
 
-Docker_combine:
+docker_combine:
 	docker run --rm -it \
 				--user "$(id -u):$(id -g)" \
 				-v $$PWD/tests/data/moae_fmriprep:/home/neuro/data \
@@ -283,7 +290,7 @@ Docker_combine:
 				participant \
 				--action combine
 
-Docker_generalize:
+docker_generalize:
 	docker run --rm -it \
 				--user "$(id -u):$(id -g)" \
 				-v $$PWD/tests/data/moae_fmriprep:/home/neuro/data \

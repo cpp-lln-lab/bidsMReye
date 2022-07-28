@@ -34,7 +34,11 @@ class Config:
     task: Optional[Any] = field(kw_only=True, default=None)
     run: Optional[Any] = field(kw_only=True, default=None)
     model_weights_file: Union[str, Path] = field(kw_only=True, default=None)
-    debug: Union[str, bool] = field(kw_only=True, default=False)
+    debug: Union[str, bool] = field(
+        kw_only=True,
+        default=False,
+        converter=converters.default_if_none(default=False, factory=None),
+    )
     has_GPU = False
 
     def __attrs_post_init__(self):
@@ -76,6 +80,15 @@ class Config:
 
         self.listify(attribute)
 
+        # convert all run values to integers
+        if attribute in ["run"]:
+            for i, j in enumerate(value):
+                value[i] = int(j)
+            tmp = [int(j) for j in getattr(self, attribute)]
+            setattr(self, attribute, tmp)
+
+        # keep only values that are intersection of requested values
+        # and those present in the dataset
         if getattr(self, attribute):
             if missing_values := list(set(getattr(self, attribute)) - set(value)):
                 warnings.warn(

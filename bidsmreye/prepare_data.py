@@ -47,10 +47,17 @@ def process_subject(
 ) -> None:
     """Run coregistration and extract data for one subject.
 
-    Args:
-        layout_in (BIDSLayout): Layout input dataset.
-        layout_out (BIDSLayout): Layout output dataset.
-        subject_label (str): Can be a regular expression.
+    :param cfg: Configuration object.
+    :type cfg: Config
+
+    :param layout_in: Layout input dataset.
+    :type layout_in: BIDSLayout
+
+    :param layout_out: Layout output dataset.
+    :type layout_out: BIDSLayout
+
+    :param subject_label: Can be a regular expression.
+    :type subject_label: str
     """
     log.info(f"Running subject: {subject_label}")
 
