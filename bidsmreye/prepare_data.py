@@ -4,19 +4,19 @@ import logging
 from bids import BIDSLayout  # type: ignore
 from deepmreye import preprocess  # type: ignore
 
-from bidsmreye.bidsutils import check_layout
-from bidsmreye.bidsutils import create_bidsname
-from bidsmreye.bidsutils import get_bids_filter_config
-from bidsmreye.bidsutils import get_dataset_layout
-from bidsmreye.bidsutils import set_dataset_description
-from bidsmreye.bidsutils import write_dataset_description
 from bidsmreye.methods import methods
+from bidsmreye.utils import check_layout
 from bidsmreye.utils import Config
+from bidsmreye.utils import create_bidsname
 from bidsmreye.utils import create_dir_if_absent
+from bidsmreye.utils import get_bids_filter_config
+from bidsmreye.utils import get_dataset_layout
 from bidsmreye.utils import get_deepmreye_filename
 from bidsmreye.utils import list_subjects
 from bidsmreye.utils import move_file
 from bidsmreye.utils import return_regex
+from bidsmreye.utils import set_dataset_description
+from bidsmreye.utils import write_dataset_description
 
 log = logging.getLogger("rich")
 

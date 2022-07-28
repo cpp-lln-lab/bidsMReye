@@ -130,14 +130,20 @@ def main(argv=sys.argv) -> None:
         default="false",
     )
     parser.add_argument(
+        "--bids_filter_file",
+        help="""
+        A JSON file describing custom BIDS input filters using PyBIDS.
+        For further details, please check out TBD.
+        """,
+    )
+    parser.add_argument(
         "-v",
         "--version",
         action="version",
         help="show program's version number and exit",
         version=f"\nbidsMReye version {__version__}\n",
     )
-    # --bids-filter-file
-    # --reset_database
+    #
 
     args = parser.parse_args(argv[1:])
 
@@ -157,6 +163,7 @@ def main(argv=sys.argv) -> None:
         debug=args.debug,
         model_weights_file=model_weights_file,
         reset_database=args.reset_database,
+        bids_filter=args.bids_filter_file,
     )
 
     log_level = "DEBUG" if cfg.debug else args.verbosity or "INFO"

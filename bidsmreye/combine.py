@@ -8,11 +8,11 @@ import numpy as np  # type: ignore
 from bids import BIDSLayout  # type: ignore
 from deepmreye import preprocess  # type: ignore
 
-from bidsmreye.bidsutils import check_layout
-from bidsmreye.bidsutils import create_bidsname
-from bidsmreye.bidsutils import get_bids_filter_config
-from bidsmreye.bidsutils import get_dataset_layout
+from bidsmreye.utils import check_layout
 from bidsmreye.utils import Config
+from bidsmreye.utils import create_bidsname
+from bidsmreye.utils import get_bids_filter_config
+from bidsmreye.utils import get_dataset_layout
 from bidsmreye.utils import list_subjects
 from bidsmreye.utils import move_file
 from bidsmreye.utils import return_regex
