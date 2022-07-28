@@ -272,7 +272,7 @@ docker_dev_build: docker/Dockerfile_dev
 	docker build --tag cpplab/bidsmreye:dev --file docker/Dockerfile_dev .
 
 docker_dev_build_no_cache: docker/Dockerfile_dev
-	docker build --tag bidsmreye:dev --no-cache --file docker/Dockerfile_dev .
+	docker build --tag cpplab/bidsmreye:dev --no-cache --file docker/Dockerfile_dev .
 
 docker_demo: docker_dev_build clean-demo
 	make docker_prepare_data
@@ -280,10 +280,10 @@ docker_demo: docker_dev_build clean-demo
 
 docker_prepare_data:
 	docker run --rm -it \
-				--user "$(id -u):$(id -g)" \
+				--user "$$(id -u):$$(id -g)" \
 				-v $$PWD/tests/data/moae_fmriprep:/home/neuro/data \
 				-v $$PWD/outputs/moae_fmriprep/derivatives:/home/neuro/outputs/ \
-				bidsmreye:dev \
+				cpplab/bidsmreye:dev \
 				/home/neuro/data/ \
 				/home/neuro/outputs/ \
 				participant \
@@ -293,10 +293,10 @@ docker_prepare_data:
 
 docker_generalize:
 	docker run --rm -it \
-				--user "$(id -u):$(id -g)" \
+				--user "$$(id -u):$$(id -g)" \
 				-v $$PWD/tests/data/moae_fmriprep:/home/neuro/data \
 				-v $$PWD/outputs/moae_fmriprep/derivatives:/home/neuro/outputs/ \
-				bidsmreye:dev \
+				cpplab/bidsmreye:dev \
 				/home/neuro/data/ \
 				/home/neuro/outputs/ \
 				participant \
