@@ -1,23 +1,14 @@
 """Download the models from OSF."""
 import argparse
-import logging
 from pathlib import Path
 
 import pkg_resources  # type: ignore
 import pooch  # type: ignore
-from rich.logging import RichHandler
-from rich.traceback import install
 
+from bidsmreye.utils import bidsmreye_log
 from bidsmreye.utils import move_file
 
-# let rich print the traceback
-install(show_locals=True)
-
-# log format
-FORMAT = "bidsMReye - %(asctime)s - %(levelname)s - %(message)s"
-
-logging.basicConfig(level="INFO", format=FORMAT, datefmt="[%X]", handlers=[RichHandler()])
-log = logging.getLogger("rich")
+log = bidsmreye_log(name="bidsmreye")
 
 
 def main():

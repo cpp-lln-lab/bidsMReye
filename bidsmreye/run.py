@@ -3,24 +3,17 @@
 import argparse
 import logging
 import sys
-from pathlib import Path
-
-from rich.logging import RichHandler
-from rich.traceback import install
 
 from . import _version
 from bidsmreye.download import download
 from bidsmreye.generalize import generalize
 from bidsmreye.prepare_data import prepare_data
+from bidsmreye.utils import bidsmreye_log
 from bidsmreye.utils import Config
 
 __version__ = _version.get_versions()["version"]
 
-# let rich print the traceback
-install(show_locals=True)
-
-# log format
-FORMAT = "bidsMReye - %(asctime)s - %(levelname)s - %(message)s"
+log = bidsmreye_log(name="bidsmreye")
 
 
 def main(argv=sys.argv) -> None:
@@ -151,10 +144,7 @@ def main(argv=sys.argv) -> None:
 
     args = parser.parse_args(argv[1:])
 
-    model_weights_file = None
-    if args.action in ["all", "generalize"]:
-        model_weights_file = download(model_name=args.model)
-        assert Path(model_weights_file).is_file()
+    model_weights_file = args.model or None
 
     cfg = Config(
         args.bids_dir,
@@ -169,20 +159,20 @@ def main(argv=sys.argv) -> None:
         bids_filter=args.bids_filter_file,
     )
 
-    # log DEBUG and WARNING cannot be shown anymore ???
     log_level = "DEBUG" if cfg.debug else args.verbosity
-    logging.basicConfig(
-        level=log_level, format=FORMAT, datefmt="[%X]", handlers=[RichHandler()]
-    )
 
-    log = logging.getLogger("rich")
+    log.setLevel(log_level)
+    print(logging.getLevelName(log).upper())
 
     log.info("Running bidsmreye version %s", __version__)
 
-    log.info(f"Configuration:\n{cfg}")
-
     if cfg.debug:
         log.debug("DEBUG MODE")
+
+    log.debug(f"Configuration:\n{cfg}")
+
+    if args.action in ["all", "generalize"]:
+        download(cfg.model_weights_file)
 
     if args.analysis_level == "participant":
 

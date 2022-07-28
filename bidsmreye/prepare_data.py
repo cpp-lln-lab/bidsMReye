@@ -21,7 +21,7 @@ from bidsmreye.utils import set_dataset_description
 from bidsmreye.utils import write_dataset_description
 
 
-log = logging.getLogger("rich")
+log = logging.getLogger("bidsmreye")
 
 
 def coregister_and_extract_data(img: str) -> None:

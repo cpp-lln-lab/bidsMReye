@@ -14,8 +14,36 @@ from attrs import converters
 from attrs import define
 from attrs import field
 from bids import BIDSLayout  # type: ignore
+from rich.logging import RichHandler
+from rich.traceback import install
 
-log = logging.getLogger("rich")
+log = logging.getLogger("bidsmreye")
+
+
+def bidsmreye_log(name=None):
+    """Create log.
+
+    :param name: _description_, defaults to None
+    :type name: _type_, optional
+
+    :return: _description_
+    :rtype: _type_
+    """
+    # let rich print the traceback
+    install(show_locals=True)
+
+    FORMAT = "bidsMReye - %(asctime)s - %(levelname)s - %(message)s"
+
+    log_level = "INFO"
+
+    if not name:
+        name = "rich"
+
+    logging.basicConfig(
+        level=log_level, format=FORMAT, datefmt="[%X]", handlers=[RichHandler()]
+    )
+
+    return logging.getLogger(name)
 
 
 @define
@@ -41,7 +69,7 @@ class Config:
     space: Optional[Any] = field(kw_only=True, default=None)
     task: Optional[Any] = field(kw_only=True, default=None)
     run: Optional[Any] = field(kw_only=True, default=None)
-    model_weights_file: Optional[Path] = field(kw_only=True, default=None)
+    model_weights_file: Optional[str] = field(kw_only=True, default=None)
     debug: Union[str, bool] = field(kw_only=True, default=False)
     reset_database: Union[str, bool] = field(kw_only=True, default=False)
     bids_filter = field(kw_only=True, default=None)
