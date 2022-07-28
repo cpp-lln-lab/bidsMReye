@@ -46,7 +46,8 @@ def main(argv=sys.argv) -> None:
         Multiple participant level analyses can be run independently (in parallel)
         using the same output_dir.
         """,
-        choices=["participant"],
+        # choices=["participant"],
+        default="participant",
     )
     parser.add_argument(
         "--action",
@@ -72,7 +73,6 @@ def main(argv=sys.argv) -> None:
         nargs="+",
     )
     parser.add_argument(
-        "-t",
         "--task",
         help="""
         The label of the task that will be analyzed.
@@ -82,7 +82,6 @@ def main(argv=sys.argv) -> None:
         nargs="+",
     )
     parser.add_argument(
-        "-r",
         "--run",
         help="""
         The label of the run that will be analyzed.
@@ -92,7 +91,6 @@ def main(argv=sys.argv) -> None:
         nargs="+",
     )
     parser.add_argument(
-        "-s",
         "--space",
         help="""
         The label of the space that will be analyzed.
@@ -102,7 +100,6 @@ def main(argv=sys.argv) -> None:
         nargs="+",
     )
     parser.add_argument(
-        "-m",
         "--model",
         help="model to use",
         choices=["guided_fixations"],
@@ -137,13 +134,11 @@ def main(argv=sys.argv) -> None:
         """,
     )
     parser.add_argument(
-        "-v",
         "--version",
         action="version",
         help="show program's version number and exit",
         version=f"\nbidsMReye version {__version__}\n",
     )
-    #
 
     args = parser.parse_args(argv[1:])
 

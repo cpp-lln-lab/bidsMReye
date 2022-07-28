@@ -44,7 +44,7 @@ class Config:
     model_weights_file: Union[str, Path] = field(kw_only=True, default=None)
     debug: Union[str, bool] = field(kw_only=True, default=False)
     reset_database: Union[str, bool] = field(kw_only=True, default=False)
-    bids_filter: Union[str, dict, Path] = field(kw_only=True, default=None)
+    bids_filter = field(kw_only=True, default=None)
     has_GPU = False
 
     def __attrs_post_init__(self):
@@ -58,6 +58,7 @@ class Config:
         if not self.run:
             self.run = []
 
+        # TODO test for passing bids_filter
         if not self.bids_filter:
             self.bids_filter = get_bids_filter_config()
 

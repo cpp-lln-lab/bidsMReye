@@ -4,14 +4,6 @@ bidsmreye package
 Submodules
 ----------
 
-bidsmreye.bidsutils module
---------------------------
-
-.. automodule:: bidsmreye.bidsutils
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 bidsmreye.combine module
 ------------------------
 

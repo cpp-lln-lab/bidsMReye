@@ -17,7 +17,6 @@ from bidsmreye.utils import check_layout
 from bidsmreye.utils import Config
 from bidsmreye.utils import create_bidsname
 from bidsmreye.utils import create_dir_for_file
-from bidsmreye.utils import get_bids_filter_config
 from bidsmreye.utils import get_dataset_layout
 from bidsmreye.utils import list_subjects
 from bidsmreye.utils import move_file
@@ -136,7 +135,7 @@ def process_subject(cfg: Config, layout_out: BIDSLayout, subject_label: str):
     :param subject_label:
     :type subject_label: str
     """
-    this_filter = get_bids_filter_config()["no_label"]
+    this_filter = cfg.bids_filter["no_label"]
     this_filter["suffix"] = return_regex(this_filter["suffix"])
     this_filter["task"] = return_regex(cfg.task)
     this_filter["space"] = return_regex(cfg.space)

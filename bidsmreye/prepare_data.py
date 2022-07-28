@@ -9,7 +9,6 @@ from bidsmreye.utils import check_layout
 from bidsmreye.utils import Config
 from bidsmreye.utils import create_bidsname
 from bidsmreye.utils import create_dir_if_absent
-from bidsmreye.utils import get_bids_filter_config
 from bidsmreye.utils import get_dataset_layout
 from bidsmreye.utils import get_deepmreye_filename
 from bidsmreye.utils import list_subjects
@@ -61,7 +60,7 @@ def process_subject(
     """
     log.info(f"Running subject: {subject_label}")
 
-    this_filter = get_bids_filter_config()["bold"]
+    this_filter = cfg.bids_filter["bold"]
     this_filter["suffix"] = return_regex(this_filter["suffix"])
     this_filter["task"] = return_regex(cfg.task)
     this_filter["space"] = return_regex(cfg.space)
