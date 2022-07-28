@@ -9,5 +9,6 @@
         "eyemask",
         "filefolder"
     ],
-    "autoDocstring.docstringFormat": "sphinx"
+    "autoDocstring.docstringFormat": "sphinx",
+    "esbonio.sphinx.confDir": ""
 }

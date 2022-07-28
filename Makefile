@@ -131,10 +131,13 @@ tests/data/moae_fmriprep: ## gets fmriprep preprocessed data of the SPM MOAE dat
 clean-demo:
 	rm -fr outputs/moae_fmriprep
 
-demo: clean-demo ## demo: runs all demo steps on MOAE dataset
-	make prepare
-	make combine
-	make generalize
+demo: clean-demo tests/data/moae_fmriprep models/dataset1_guided_fixations.h5 ## demo: runs all demo steps on MOAE dataset
+	bidsmreye 	--action all \
+				--verbosity INFO \
+				--debug true \
+				$$PWD/tests/data/moae_fmriprep \
+				$$PWD/outputs/moae_fmriprep/derivatives \
+				participant
 
 prepare: tests/data/moae_fmriprep models/dataset1_guided_fixations.h5 ## demo: prepares the data of MOAE dataset
 	bidsmreye 	--action prepare \
@@ -206,9 +209,14 @@ ds002799_generalize:
 				--run 1 2
 
 ds002799: clean-ds002799
-	make ds002799_prepare
-	make ds002799_combine
-	make ds002799_generalize
+	bidsmreye 	--action all \
+				--verbosity INFO \
+				$$PWD/tests/data/ds002799/derivatives/fmriprep \
+				$$PWD/outputs/ds002799/derivatives \
+				participant \
+				--participant_label 302 307 \
+				--space MNI152NLin2009cAsym T1w \
+				--run 1 2
 
 
 ## DOCKER

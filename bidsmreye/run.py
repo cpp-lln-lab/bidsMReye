@@ -57,7 +57,7 @@ def main(argv=sys.argv) -> None:
         - combine: combine data labels and data from different runs into a single file
         - generalize: generalize from data to give predicted labels
         """,
-        choices=["prepare", "combine", "generalize"],
+        choices=["all", "prepare", "combine", "generalize"],
     )
     parser.add_argument(
         "--participant_label",
@@ -163,7 +163,15 @@ def main(argv=sys.argv) -> None:
 
     if args.analysis_level == "participant":
 
-        if args.action == "prepare":
+        if args.action == "all":
+            log.info("PREPARING DATA")
+            prepare_data(cfg)
+            log.info("COMBINING DATA")
+            combine(cfg)
+            log.info("GENERALIZING")
+            generalize(cfg)
+
+        elif args.action == "prepare":
             log.info("PREPARING DATA")
             prepare_data(cfg)
 

@@ -7,6 +7,7 @@ Welcome to bidsMReye's documentation!
 
    readme
    installation
+   demo
    modules
 
 Indices and tables
