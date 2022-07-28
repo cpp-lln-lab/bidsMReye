@@ -56,7 +56,7 @@ For Windows you will have to download the pre-trained model weights manually.
 
 - model:
   - URL: [https://osf.io/download/cqf74/](https://osf.io/download/cqf74/)
-  - destination file: models/dataset1_guided_fixations.h5
+  - destination file: `models/dataset1_guided_fixations.h5`
 
 ## Usage
 

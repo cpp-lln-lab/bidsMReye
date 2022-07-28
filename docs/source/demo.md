@@ -14,7 +14,7 @@ For Windows you will have to download the data manually.
 - data
 
   - URL: [https://osf.io/vufjs/download](https://osf.io/vufjs/download)
-  - destination folder: tests/data/moae_fmriprep
+  - destination folder: `tests/data/moae_fmriprep`
 
 The directory where you want to run the demo should look like this:
 
@@ -31,7 +31,7 @@ The directory where you want to run the demo should look like this:
                  └── func
 ```
 
-### Using docker
+## Using docker
 
 For Linux or MacOS you can use `make` to get run all the steps of the demo.
 
@@ -75,7 +75,7 @@ docker run --rm -it \
       --action generalize
 ```
 
-### After installing the package locally
+## After installing the package locally
 
 For Linux or MacOS you can use `make` to get run all the steps of the demo.
 

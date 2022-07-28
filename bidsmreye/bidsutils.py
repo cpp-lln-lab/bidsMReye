@@ -20,13 +20,17 @@ def get_dataset_layout(
 ) -> BIDSLayout:
     """Return a BIDSLayout object for the dataset at the given path.
 
-    Args:
-        dataset_path (Path): Path to the dataset.
+    :param dataset_path: Path to the dataset.
+    :type dataset_path: Union[str, Path]
 
-        config (dict, None): Pybids config to use. Defaults to None.
+    :param config: Pybids config to use. Defaults to None.
+    :type config: Optional[dict], optional
 
-    Returns:
-        BIDSLayout: _description_
+    :param use_database: Defaults to False
+    :type use_database: bool, optional
+
+    :return: _description_
+    :rtype: BIDSLayout
     """
     if isinstance(dataset_path, str):
         dataset_path = Path(dataset_path)
@@ -58,8 +62,8 @@ def get_dataset_layout(
 def write_dataset_description(layout: BIDSLayout) -> None:
     """Add a dataset_description.json to a BIDS dataset.
 
-    Args:
-        layout (BIDSLayout): BIDSLayout of the dataset to update.
+    :param layout: BIDSLayout of the dataset to update.
+    :type layout: BIDSLayout
     """
     output_file = Path(layout.root).joinpath("dataset_description.json")
 
@@ -70,13 +74,14 @@ def write_dataset_description(layout: BIDSLayout) -> None:
 def set_dataset_description(layout: BIDSLayout, is_derivative: bool = True) -> BIDSLayout:
     """Add dataset description to a layout.
 
-    Args:
-        layout (BIDSLayout): _description_
+    :param layout: _description_
+    :type layout: BIDSLayout
 
-        is_derivative (bool, optional): Defaults to True.
+    :param is_derivative: Defaults to True
+    :type is_derivative: bool, optional
 
-    Returns:
-        BIDSLayout: Updated BIDSLayout of the dataset
+    :return: Updated BIDSLayout of the dataset
+    :rtype: BIDSLayout
     """
     data = {
         "Name": "dataset name",
@@ -120,11 +125,11 @@ def set_dataset_description(layout: BIDSLayout, is_derivative: bool = True) -> B
 def init_derivatives_layout(output_location: Path) -> BIDSLayout:
     """Initialize a derivatives dataset and returns its layout.
 
-    Args:
-        output_location (_type_): _description_
+    :param output_location:
+    :type output_location: Path
 
-    Returns:
-        BIDSLayout:
+    :return:
+    :rtype: BIDSLayout
     """
     layout_out = get_dataset_layout(output_location)
     layout_out = set_dataset_description(layout_out)
@@ -137,11 +142,11 @@ def init_derivatives_layout(output_location: Path) -> BIDSLayout:
 def get_bidsname_config(config_file: Path = None) -> dict:
     """Load configuration for naming output BIDS files.
 
-    Args:
-        config_file (Path, optional): Defaults to None.
+    :param config_file: Defaults to None
+    :type config_file: Path, optional
 
-    Returns:
-        dict: Config as a dictionary.
+    :return: Config as a dictionary.
+    :rtype: dict
 
     See the Path construction demo in the pybids tutorial.
 
@@ -154,11 +159,10 @@ def get_bidsname_config(config_file: Path = None) -> dict:
 def get_pybids_config(config_file: Path = None) -> dict:
     """Load pybids configuration.
 
-    Args:
-        config_file (Path, optional): Defaults to None.
-
-    Returns:
-        dict: pybids config.
+    :param config_file: Defaults to None
+    :type config_file: Path, optional
+    :return: _description_
+    :rtype: dict
 
     Pybids configs are stored in the layout module.
 
@@ -171,11 +175,11 @@ def get_pybids_config(config_file: Path = None) -> dict:
 def get_bids_filter_config(config_file: Path = None) -> dict:
     """Load the bids filter file config.
 
-    Args:
-        config_file (Path, optional): Config to load. Defaults to None.
+    :param config_file: Config to load. Defaults to None.
+    :type config_file: Path, optional
 
-    Returns:
-        dict: _description_
+    :return: _description_
+    :rtype: dict
     """
     default = "default_filter_file.json"
     return get_config(config_file, default)
@@ -184,15 +188,17 @@ def get_bids_filter_config(config_file: Path = None) -> dict:
 def get_config(config_file: Path = None, default: str = "") -> dict:
     """Load a config stored in a JSON.
 
-    Args:
-        config_file (str, optional): File to load. Defaults to None.
-        Will look into the config directory if None.
+    :param config_file: File to load. Defaults to None.
+                        Will look into the config directory if None.
+    :type config_file: Path, optional
 
-        default (str, optional): Default file to load. Defaults to "".
+    :param default: Default file to load. Defaults to ""
+    :type default: str, optional
 
-    Returns:
-        dict: Config as a dictionary.
+    :raises FileNotFoundError: _description_
 
+    :return: Config as a dictionary.
+    :rtype: dict
     """
     if config_file is None or not Path(config_file).exists():
         my_path = Path(__file__).resolve().parent.joinpath("config")
@@ -210,15 +216,19 @@ def create_bidsname(
 ) -> Path:
     """Return a BIDS valid filename for layout and a filename or a dict of BIDS entities.
 
-    Args:
-        layout (BIDSLayout): BIDSLayout of the dataset.
+    :param layout: BIDSLayout of the dataset.
+    :type layout: BIDSLayout
 
-        filename (Union[dict, Path]): Dictonary of BIDS entities or a Path to a file.
+    :param filename: Dictionary of BIDS entities or a Path to a file.
+    :type filename: Union[dict, str, Path]
 
-        filetype (str): One of the file type available in the BIDS name config.
+    :param filetype: One of the file type available in the BIDS name config.
+    :type filetype: str
 
-    Returns:
-        Path: _description_
+    :raises TypeError:
+
+    :return:
+    :rtype: Path
     """
     if isinstance(filename, dict):
         entities = filename
@@ -237,15 +247,16 @@ def create_bidsname(
 
 
 def check_layout(cfg: Config, layout: BIDSLayout) -> None:
-    """_summary_.
+    """Check layout.
 
-    Args:
-        layout (BIDSLayout): BIDSLayout of the dataset.
+    :param cfg: Configuration object
+    :type cfg: Config
 
-    Raises:
-        Exception: _description_
+    :param layout: BIDSLayout of the dataset.
+    :type layout: BIDSLayout
 
-        Exception: _description_
+    :raises RuntimeError: _description_
+    :raises RuntimeError: _description_
     """
     desc = layout.get_dataset_description()
     if (

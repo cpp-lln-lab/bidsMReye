@@ -19,7 +19,14 @@ log = logging.getLogger("rich")
 
 @define
 class Config:
-    """Set up config and check that all required fields are set."""
+    """Set up config and check that all required fields are set.
+
+    :raises ValueError: _description_
+    :raises RuntimeError: _description_
+
+    :return: _description_
+    :rtype: _type_
+    """
 
     input_folder: str = field(default=None, converter=Path)
 
@@ -71,7 +78,19 @@ class Config:
         self.check_argument(attribute="space", layout_in=layout_in)
 
     def check_argument(self, attribute, layout_in: BIDSLayout):
-        """Check an attribute value compared to a the input dataset content."""
+        """Check an attribute value compared to a the input dataset content.
+
+        :param attribute:
+        :type attribute: _type_
+
+        :param layout_in:
+        :type layout_in: BIDSLayout
+
+        :raises RuntimeError:
+
+        :return:
+        :rtype: _type_
+        """
         if attribute == "participant":
             value = layout_in.get_subjects()
         elif attribute == "task":
@@ -118,10 +137,11 @@ def move_file(input: Path, output: Path) -> None:
 
     Should work even the source and target names are on different file systems.
 
-    Args:
-        input (Path): File to move.
+    :param input:File to move.
+    :type input: Path
 
-        output (str): _description_
+    :param output:
+    :type output: Path
     """
     log.info(f"{input.resolve()} --> {output.resolve()}")
     create_dir_for_file(output)
@@ -132,8 +152,8 @@ def move_file(input: Path, output: Path) -> None:
 def create_dir_if_absent(output_path: Union[str, Path]) -> None:
     """Create a path if it does not exist.
 
-    Args:
-        output_path (Path): _description_
+    :param output_path:
+    :type output_path: Union[str, Path]
     """
     if isinstance(output_path, str):
         output_path = Path(output_path)
@@ -145,8 +165,8 @@ def create_dir_if_absent(output_path: Union[str, Path]) -> None:
 def create_dir_for_file(file: Path) -> None:
     """Create the path to a file if it does not exist.
 
-    Args:
-        file (Path): _description_
+    :param file:
+    :type file: Path
     """
     output_path = file.resolve().parent
     create_dir_if_absent(output_path)
@@ -157,11 +177,11 @@ def create_dir_for_file(file: Path) -> None:
 def return_regex(value: Union[str, Optional[list]]) -> Optional[str]:
     """Return the regular expression for a string or a list of strings.
 
-    Args:
-        value (str, Optional[list]):
+    :param value:
+    :type value: Union[str, Optional[list]]
 
-    Returns:
-        Optional[str]:
+    :return:
+    :rtype: Optional[str]
     """
     if isinstance(value, str):
         if value[0] != "^":
@@ -181,16 +201,16 @@ def return_regex(value: Union[str, Optional[list]]) -> Optional[str]:
 def list_subjects(cfg: Config, layout: BIDSLayout) -> list:
     """List subject in a BIDS dataset for a given Config.
 
-    Args:
-        layout (BIDSLayout): BIDSLayout of the dataset
+    :param cfg: Configuration object
+    :type cfg: Config
 
-        cfg (Config): Config object
+    :param layout: BIDSLayout of the dataset.
+    :type layout: BIDSLayout
 
-    Raises:
-        Exception: _description_
+    :raises RuntimeError: _description_
 
-    Returns:
-        _type_: _description_
+    :return: _description_
+    :rtype: list
     """
     subjects = layout.get(return_type="id", target="subject", subject=cfg.participant)
 
@@ -207,20 +227,21 @@ def list_subjects(cfg: Config, layout: BIDSLayout) -> list:
 
 
 def get_deepmreye_filename(layout: BIDSLayout, img: str, filetype: str = None) -> Path:
-    """_summary_.
+    """Get deepmreye filename.
 
-    Args:
-        layout (BIDSLayout): BIDSLayout of the dataset.
+    :param layout: BIDSLayout of the dataset.
+    :type layout: BIDSLayout
 
-        img (str): _description_
+    :param img: _description_
+    :type img: str
 
-        filetype (str): Any of the following: None, "mask", "report". Defautls to None.
+    :param filetype: Any of the following: None, "mask", "report"D defaults to None
+    :type filetype: str, optional
 
-    Raises:
-        Exception: _description_
+    :raises ValueError: _description_
 
-    Returns:
-        str: _description_
+    :return: _description_
+    :rtype: Path
     """
     if not img:
         raise ValueError("No file")
@@ -240,15 +261,16 @@ def get_deepmreye_filename(layout: BIDSLayout, img: str, filetype: str = None) -
 
 
 def return_deepmreye_output_filename(filename: str, filetype: str = None) -> str:
-    """_summary_.
+    """Return deepmreye output filename.
 
-    Args:
-        filename (str): _description_
+    :param filename:
+    :type filename: str
 
-        filetype (str): Any of the following: None, "mask", "report". Defaults to None.
+    :param filetype: Any of the following: None, "mask", "report". defaults to None
+    :type filetype: str, optional
 
-    Returns:
-        str: _description_
+    :return: _description_
+    :rtype: str
     """
     if filetype is None:
         pass
