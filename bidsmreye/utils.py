@@ -70,8 +70,8 @@ class Config:
     task: Optional[Any] = field(kw_only=True, default=None)
     run: Optional[Any] = field(kw_only=True, default=None)
     model_weights_file = field(kw_only=True, default=None)
-    debug: Union[str, bool] = field(kw_only=True, default=False)
-    reset_database: Union[str, bool] = field(kw_only=True, default=False)
+    debug: Union[str, bool] = field(kw_only=True, default=None)
+    reset_database: Union[str, bool] = field(kw_only=True, default=None)
     bids_filter = field(kw_only=True, default=None)
     has_GPU = False
 
@@ -79,8 +79,12 @@ class Config:
         """Check that output_folder exists and gets info from layout if not specified."""
         os.environ["CUDA_VISIBLE_DEVICES"] = "0" if self.has_GPU else ""
 
+        if not self.debug:
+            self.debug = False
         self.debug = converters.to_bool(self.debug)
 
+        if not self.reset_database:
+            self.reset_database = False
         self.reset_database = converters.to_bool(self.reset_database)
 
         if not self.run:

@@ -71,6 +71,16 @@ dist: clean ## builds source and wheel package
 
 clean-modesl: ## remove pretrained models
 	rm -fr models/
+
+models_docker:
+	mkdir -p models
+	wget -q https://osf.io/download/cqf74/ -O models/dataset1_guided_fixations.h5
+	wget -q https://osf.io/download/4f6m7/ -O models/dataset2_pursuit.h5
+	wget -q https://osf.io/download/8cr2j/ -O models/dataset3_openclosed.h5
+	wget -q https://osf.io/download/e89wp/ -O models/dataset3_pursuit.h5
+	wget -q https://osf.io/download/96nyp/ -O models/dataset4_pursuit.h5
+	wget -q https://osf.io/download/89nky/ -O models/dataset5_free_viewing.h5
+
 models: ## gets all pretrained models from OSF
 	bidsmreye_model --model_name all
 models/dataset1_guided_fixations.h5:
@@ -138,9 +148,6 @@ clean-demo:
 
 demo: clean-demo tests/data/moae_fmriprep ## demo: runs all demo steps on MOAE dataset
 	bidsmreye 	--action all \
-				--verbosity INFO \
-				--debug true \
-				--reset_database true \
 				$$PWD/tests/data/moae_fmriprep \
 				$$PWD/outputs/moae_fmriprep/derivatives \
 				participant
@@ -222,9 +229,8 @@ docker/Dockerfile: ## Dockerfile for the bidsmreye docker image
 		activate="true" \
 		pip_install="git+https://github.com/cpp-lln-lab/bidsMReye.git" \
 	--run "mkdir -p /home/neuro/bidsMReye" \
-	--copy Makefile /home/neuro/bidsMReye \
 	--workdir /home/neuro/bidsMReye \
- 	--run "make models" \
+ 	--run "bidsmreye_model --model_name all" \
 	--copy ./docker/entrypoint.sh /neurodocker/startup.sh \
 	--run "chmod +x /neurodocker/startup.sh" \
 	--cmd bidsmreye \
@@ -238,17 +244,20 @@ docker/Dockerfile_dev: ## Dockerfile for the bidsmreye docker image using local 
 	--base debian:stretch-slim \
 	--pkg-manager apt \
 	--install "git wget make" \
+	--run "mkdir -p /home/neuro/bidsMReye/models" \
+	--copy . /home/neuro/bidsMReye \
+	--workdir /home/neuro/bidsMReye \
+ 	--run "wget -q https://osf.io/download/cqf74/ -O models/dataset1_guided_fixations.h5" \
+	--run "wget -q https://osf.io/download/4f6m7/ -O models/dataset2_pursuit.h5" \
+	--run "wget -q https://osf.io/download/8cr2j/ -O models/dataset3_openclosed.h5" \
+	--run "wget -q https://osf.io/download/e89wp/ -O models/dataset3_pursuit.h5" \
+	--run "wget -q https://osf.io/download/96nyp/ -O models/dataset4_pursuit.h5" \
+	--run "wget -q https://osf.io/download/89nky/ -O models/dataset5_free_viewing.h5" \
 	--miniconda \
 		create_env="bidsmreye" \
 		conda_install="python=3.9 pip" \
 		activate="true" \
-	--run "mkdir -p /home/neuro/bidsMReye" \
-	--copy . /home/neuro/bidsMReye \
-	--workdir /home/neuro/bidsMReye \
-	--miniconda \
-		use_env="bidsmreye" \
 		pip_install="." \
- 	--run "make models" \
 	--copy ./docker/entrypoint.sh /neurodocker/startup.sh \
 	--run "chmod +x /neurodocker/startup.sh" \
 	--cmd bidsmreye \
@@ -260,27 +269,29 @@ docker_dev_build: docker/Dockerfile_dev
 docker_dev_build_no_cache: docker/Dockerfile_dev
 	docker build --tag bidsmreye:dev --no-cache --file docker/Dockerfile_dev .
 
-docker_demo: Docker_build clean-demo
-	make Docker_prepare_data
-	make Docker_generalize
+docker_demo: docker_dev_build clean-demo
+	make docker_prepare_data
+	make docker_generalize
 
 docker_prepare_data:
 	docker run --rm -it \
 				--user "$(id -u):$(id -g)" \
 				-v $$PWD/tests/data/moae_fmriprep:/home/neuro/data \
-				-v $$PWD/outputs:/home/neuro/outputs \
-				bidsmreye:latest \
+				-v $$PWD/outputs/moae_fmriprep/derivatives:/home/neuro/outputs/ \
+				bidsmreye:dev \
+				--reset_database true \
+				--debug true \
+				--action prepare \
 				/home/neuro/data/ \
 				/home/neuro/outputs/ \
-				participant \
-				--action prepare
+				participant
 
 docker_generalize:
 	docker run --rm -it \
 				--user "$(id -u):$(id -g)" \
 				-v $$PWD/tests/data/moae_fmriprep:/home/neuro/data \
-				-v $$PWD/outputs:/home/neuro/outputs \
-				bidsmreye:latest \
+				-v $$PWD/outputs/moae_fmriprep/derivatives:/home/neuro/outputs/ \
+				bidsmreye:dev \
 				/home/neuro/data/ \
 				/home/neuro/outputs/ \
 				participant \

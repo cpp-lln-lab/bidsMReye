@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 """Main script."""
 import argparse
-import logging
 import sys
 
 from . import _version
@@ -162,13 +161,13 @@ def main(argv=sys.argv) -> None:
     log_level = "DEBUG" if cfg.debug else args.verbosity
 
     log.setLevel(log_level)
-    print(logging.getLevelName(log).upper())
 
     log.info("Running bidsmreye version %s", __version__)
 
     if cfg.debug:
         log.debug("DEBUG MODE")
 
+    log.debug(f"args:\n{args}")
     log.debug(f"Configuration:\n{cfg}")
 
     if args.action in ["all", "generalize"]:
