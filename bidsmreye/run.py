@@ -172,7 +172,7 @@ def main(argv=sys.argv) -> None:
     log.debug(f"Configuration:\n{cfg}")
 
     if args.action in ["all", "generalize"]:
-        download(cfg.model_weights_file)
+        cfg.model_weights_file = download(cfg.model_weights_file)
 
     if args.analysis_level == "participant":
 

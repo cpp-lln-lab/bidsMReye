@@ -56,33 +56,38 @@ def coregister_and_extract_data(img: str) -> None:
     )
 
 
-def combine_data_with_empty_labels(layout_out, subject_label, img, i=1):
+def combine_data_with_empty_labels(layout_out, img, i=1):
     """Combine data with empty labels.
 
     :param layout_out: _description_
     :type layout_out: _type_
+
     :param subject_label: _description_
     :type subject_label: _type_
+
     :param img: _description_
     :type img: _type_
+
     :param i: _description_, defaults to 1
     :type i: int, optional
     """
-    log.info(f"Combining data with empty labesl: {img}")
+    log.info(f"Combining data with empty labels: {img}")
 
-    # Load mask and normalize it
-    this_mask = pickle.load(open(img, "rb"))
-    this_mask = preprocess.normalize_img(this_mask)
+    # Load data and normalize it
+    data = pickle.load(open(img, "rb"))
+    data = preprocess.normalize_img(data)
 
     # If experiment has no labels use dummy labels
     # 10 is the number of subTRs used in the pretrained weights, 2 is XY
-    this_label = np.zeros((this_mask.shape[3], 10, 2))
+    labels = np.zeros((data.shape[3], 10, 2))
+
+    entities = layout_out.parse_file_entities(img)
 
     # Store for each runs
     subj = {"data": [], "labels": [], "ids": []}  # type: dict
-    subj["data"].append(this_mask)
-    subj["labels"].append(this_label)
-    subj["ids"].append(([subject_label] * this_label.shape[0], [i] * this_label.shape[0]))
+    subj["data"].append(data)
+    subj["labels"].append(labels)
+    subj["ids"].append(([entities["subject"]] * labels.shape[0], [i] * labels.shape[0]))
 
     output_file = create_bidsname(layout_out, Path(img), "no_label")
 
@@ -98,6 +103,8 @@ def combine_data_with_empty_labels(layout_out, subject_label, img, i=1):
     file_to_move = Path(layout_out.root).joinpath("..", "bidsmreye", output_file.name)
 
     move_file(file_to_move, output_file)
+
+    return output_file
 
 
 def process_subject(
@@ -151,7 +158,7 @@ def process_subject(
         deepmreye_mask_name = get_deepmreye_filename(layout_in, img, "mask")
         move_file(deepmreye_mask_name, mask_name)
 
-        combine_data_with_empty_labels(layout_out, subject_label, mask_name)
+        combine_data_with_empty_labels(layout_out, mask_name)
 
 
 def prepare_data(cfg: Config) -> None:
