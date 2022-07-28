@@ -2,9 +2,9 @@
 [![Test and coverage](https://github.com/cpp-lln-lab/bidsMReye/actions/workflows/test_and_coverage.yml/badge.svg)](https://github.com/cpp-lln-lab/bidsMReye/actions/workflows/test_and_coverage.yml)
 [![codecov](https://codecov.io/gh/cpp-lln-lab/bidsMReye/branch/main/graph/badge.svg?token=G5fm2kaloM)](https://codecov.io/gh/cpp-lln-lab/bidsMReye)
 [![Documentation Status](https://readthedocs.org/projects/bidsmreye/badge/?version=latest)](https://bidsmreye.readthedocs.io/en/latest/?badge=latest)
-[![License](https://img.shields.io/badge/license-GPL3-blue.svg?style=flat-square)](./LICENSE)
+[![License](https://img.shields.io/badge/license-GPL3-blue.svg)](./LICENSE)
 ![https://github.com/psf/black](https://img.shields.io/badge/code%20style-black-000000.svg)
-[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors)
+[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg)](#contributors)
 
 # bidsMReye
 
@@ -26,76 +26,56 @@ improve their pre-trained models.
 
 ## Install
 
+Better to use the docker image but you can also build the package locally if you
+want.
+
+### Docker
+
+Pull the latest docker image:
+
+```bash
+docker pull cpplab/bidsmreye:latest
+```
+
+### Install from source
+
 Clone this repository.
 
 ```bash
 git clone git://github.com/cpp-lln-lab/bidsmreye
 ```
 
-Then install it.
+Then install the package and download the pre-trained models with:
 
 ```bash
 cd bidsMReye
-pip install .
+make install
 ```
 
-## Demo
-
-For Linux or MacOS you use `make` to run all the different steps of the demo.
-
-```bash
-make demo
-```
-
-For Windows you will have to download the data and the pre-trained weights
-manually.
-
-- data
-
-  - URL: [https://osf.io/vufjs/download](https://osf.io/vufjs/download)
-  - destination folder: tests/data/moae_fmriprep
+For Windows you will have to download the pre-trained model weights manually.
 
 - model:
   - URL: [https://osf.io/download/cqf74/](https://osf.io/download/cqf74/)
-  - destination file: models/dataset1_guided_fixations.h5
+  - destination file: `models/dataset1_guided_fixations.h5`
+
+## Usage
 
 ```bash
-├── models
-│   └── dataset1_guided_fixations.h5
-└── tests
-    └── data
-        └── moae_fmriprep
-             ├── logs
-             └── sub-01
-                 ├── anat
-                 ├── figures
-                 └── func
-```
+bidsmreye --action all \
+          bids_dir \
+          output_dir
 
-Running the different steps of the demo:
+bidsmreye --action prepare \
+          bids_dir \
+          output_dir
 
-```bash
-bids_dir="$PWD/tests/data/moae_fmriprep "
-output_dir="$PWD/outputs "
+bidsmreye --action combine \
+          bids_dir \
+          output_dir
 
-bidsmreye --space MNI152NLin6Asym \
-                --task auditory \
-                --action prepare \
-                $bids_dir \
-                $output_dir
-
-bidsmreye --space MNI152NLin6Asym \
-                --task auditory \
-                --action combine \
-                $bids_dir \
-                $output_dir
-
-bidsmreye --space MNI152NLin6Asym \
-                --task auditory \
-                --action generalize \
-                --model guided_fixations \
-                $bids_dir \
-                $output_dir
+bidsmreye --action generalize \
+          bids_dir \
+          output_dir
 ```
 
 ## Contributors ✨

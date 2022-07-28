@@ -46,7 +46,20 @@ def main(argv=sys.argv) -> None:
         Multiple participant level analyses can be run independently (in parallel)
         using the same output_dir.
         """,
-        choices=["participant"],
+        # choices=["participant"],
+        default="participant",
+    )
+    parser.add_argument(
+        "--action",
+        help="""
+        What action to perform:
+        - prepare: prepare data for analysis coregister to template,
+                   normalize and extract data
+        - combine: combine data labels and data from different runs into a single file
+        - generalize: generalize from data to give predicted labels
+        """,
+        choices=["all", "prepare", "combine", "generalize"],
+        default="all",
     )
     parser.add_argument(
         "--participant_label",
@@ -60,23 +73,22 @@ def main(argv=sys.argv) -> None:
         nargs="+",
     )
     parser.add_argument(
-        "--action",
-        help="""
-        What action to perform:
-        - prepare: prepare data for analysis coregister to template,
-                   normalize and extract data
-        - combine: combine data labels and data from different runs into a single file
-        - generalize: generalize from data to give predicted labels
-        """,
-        choices=["prepare", "combine", "generalize"],
-    )
-    parser.add_argument(
         "--task",
         help="""
         The label of the task that will be analyzed.
         The label corresponds to task-<task_label> from the BIDS spec
         so it does not include "task-").
         """,
+        nargs="+",
+    )
+    parser.add_argument(
+        "--run",
+        help="""
+        The label of the run that will be analyzed.
+        The label corresponds to run-<task_label> from the BIDS spec
+        so it does not include "run-").
+        """,
+        nargs="+",
     )
     parser.add_argument(
         "--space",
@@ -85,21 +97,47 @@ def main(argv=sys.argv) -> None:
         The label corresponds to space-<space_label> from the BIDS spec
         (so it does not include "space-").
         """,
+        nargs="+",
     )
     parser.add_argument(
         "--model",
         help="model to use",
         choices=["guided_fixations"],
+        default="guided_fixations",
     )
     parser.add_argument(
         "--verbosity",
         help="INFO, WARNING. Defaults to INFO",
         choices=["INFO", "WARNING"],
+        default="INFO",
     )
     parser.add_argument(
         "--debug",
-        help="true or false",
+        help="true or false. Defaults to False",
         choices=["true", "false"],
+        default="false",
+    )
+    parser.add_argument(
+        "--reset_database",
+        help="""
+        Resets the database of the input dataset.
+        Values: true or false. Defaults to false.
+        """,
+        choices=["true", "false"],
+        default="false",
+    )
+    parser.add_argument(
+        "--bids_filter_file",
+        help="""
+        A JSON file describing custom BIDS input filters using PyBIDS.
+        For further details, please check out TBD.
+        """,
+    )
+    parser.add_argument(
+        "--version",
+        action="version",
+        help="show program's version number and exit",
+        version=f"\nbidsMReye version {__version__}\n",
     )
 
     args = parser.parse_args(argv[1:])
@@ -113,11 +151,14 @@ def main(argv=sys.argv) -> None:
     cfg = Config(
         args.bids_dir,
         args.output_dir,
-        participant=[args.participant_label] if args.participant_label else None,
-        task=[args.task] if args.task else None,
-        space=[args.space] if args.space else None,
-        debug=args.debug == "true",
+        participant=args.participant_label or None,
+        task=args.task or None,
+        run=args.run or None,
+        space=args.space or None,
+        debug=args.debug,
         model_weights_file=model_weights_file,
+        reset_database=args.reset_database,
+        bids_filter=args.bids_filter_file,
     )
 
     log_level = "DEBUG" if cfg.debug else args.verbosity or "INFO"
@@ -138,7 +179,15 @@ def main(argv=sys.argv) -> None:
 
     if args.analysis_level == "participant":
 
-        if args.action == "prepare":
+        if args.action == "all":
+            log.info("PREPARING DATA")
+            prepare_data(cfg)
+            log.info("COMBINING DATA")
+            combine(cfg)
+            log.info("GENERALIZING")
+            generalize(cfg)
+
+        elif args.action == "prepare":
             log.info("PREPARING DATA")
             prepare_data(cfg)
 

@@ -8,11 +8,10 @@ import numpy as np  # type: ignore
 from bids import BIDSLayout  # type: ignore
 from deepmreye import preprocess  # type: ignore
 
-from bidsmreye.bidsutils import check_layout
-from bidsmreye.bidsutils import create_bidsname
-from bidsmreye.bidsutils import get_bids_filter_config
-from bidsmreye.bidsutils import get_dataset_layout
+from bidsmreye.utils import check_layout
 from bidsmreye.utils import Config
+from bidsmreye.utils import create_bidsname
+from bidsmreye.utils import get_dataset_layout
 from bidsmreye.utils import list_subjects
 from bidsmreye.utils import move_file
 from bidsmreye.utils import return_regex
@@ -21,20 +20,26 @@ log = logging.getLogger("rich")
 
 
 def process_subject(cfg: Config, layout_out: BIDSLayout, subject_label: str):
-    """_summary_.
+    """Process subject.
 
-    Args:
-        layout_out (BIDSLayout): _description_
+    :param cfg: Configuration object.
+    :type cfg: Config
 
-        subject_label (str): Can be a regular expression.
+    :param layout_out: Output dataset layout.
+    :type layout_out: BIDSLayout
+
+    :param subject_label: Can be a regular expression.
+    :type subject_label: str
     """
     log.info(f"Running subject: {subject_label}")
 
-    this_filter = get_bids_filter_config()["mask"]
+    this_filter = cfg.bids_filter["mask"]
     this_filter["suffix"] = return_regex(this_filter["suffix"])
     this_filter["task"] = return_regex(cfg.task)
     this_filter["space"] = return_regex(cfg.space)
     this_filter["subject"] = subject_label
+    if cfg.run:
+        this_filter["run"] = return_regex(cfg.run)
 
     log.debug(f"Looking for files with filter\n{this_filter}")
 
@@ -77,14 +82,16 @@ def process_subject(cfg: Config, layout_out: BIDSLayout, subject_label: str):
 
 
 def save_participant_file(layout_out: BIDSLayout, img, subj: dict):
-    """_summary_.
+    """Save participant file.
 
-    Args:
-        layout_out (BIDSLayout): _description_
+    :param layout_out: Output dataset layout.
+    :type layout_out: BIDSLayout
 
-        img (_type_): _description_
+    :param img: _description_
+    :type img: _type_
 
-        subj (dict): _description_
+    :param subj: _description_
+    :type subj: dict
     """
     output_file = create_bidsname(layout_out, Path(img), "no_label")
 
@@ -103,7 +110,11 @@ def save_participant_file(layout_out: BIDSLayout, img, subj: dict):
 
 
 def combine(cfg: Config):
-    """Add labels to dataset."""
+    """Add labels to dataset.
+
+    :param cfg: Configuration object.
+    :type cfg: Config
+    """
     layout_out = get_dataset_layout(cfg.output_folder)
     check_layout(cfg, layout_out)
 

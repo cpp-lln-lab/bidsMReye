@@ -2,9 +2,8 @@ from pathlib import Path
 
 from bids.tests import get_test_data_path
 
-from bidsmreye.bidsutils import get_dataset_layout
 from bidsmreye.generalize import convert_confounds
-from bidsmreye.utils import Config
+from bidsmreye.utils import get_dataset_layout
 
 
 def pybids_test_dataset():

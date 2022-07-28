@@ -25,5 +25,5 @@ def test_combine_smoke():
     output_location.joinpath(
         "sub-01",
         "func",
-        "sub-01_task-nback_space-MNI152NLin2009cAsym_desc-nolabel_bidsmreye.npz",
+        "sub-01_task-nback_run-01_space-MNI152NLin2009cAsym_desc-nolabel_bidsmreye.npz",
     ).unlink

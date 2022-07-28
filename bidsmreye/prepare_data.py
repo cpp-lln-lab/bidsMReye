@@ -4,19 +4,18 @@ import logging
 from bids import BIDSLayout  # type: ignore
 from deepmreye import preprocess  # type: ignore
 
-from bidsmreye.bidsutils import check_layout
-from bidsmreye.bidsutils import create_bidsname
-from bidsmreye.bidsutils import get_bids_filter_config
-from bidsmreye.bidsutils import get_dataset_layout
-from bidsmreye.bidsutils import set_dataset_description
-from bidsmreye.bidsutils import write_dataset_description
 from bidsmreye.methods import methods
+from bidsmreye.utils import check_layout
 from bidsmreye.utils import Config
+from bidsmreye.utils import create_bidsname
 from bidsmreye.utils import create_dir_if_absent
+from bidsmreye.utils import get_dataset_layout
 from bidsmreye.utils import get_deepmreye_filename
 from bidsmreye.utils import list_subjects
 from bidsmreye.utils import move_file
 from bidsmreye.utils import return_regex
+from bidsmreye.utils import set_dataset_description
+from bidsmreye.utils import write_dataset_description
 
 log = logging.getLogger("rich")
 
@@ -24,8 +23,8 @@ log = logging.getLogger("rich")
 def coregister_and_extract_data(img: str) -> None:
     """Coregister image to eye template and extract data from eye mask for one image.
 
-    Args:
-        img (str): Image to coregister
+    :param img: Image to coregister and extract data from
+    :type img: str
     """
     (
         eyemask_small,
@@ -42,23 +41,32 @@ def coregister_and_extract_data(img: str) -> None:
     )
 
 
-def preprocess_subject(
+def process_subject(
     cfg: Config, layout_in: BIDSLayout, layout_out: BIDSLayout, subject_label: str
 ) -> None:
     """Run coregistration and extract data for one subject.
 
-    Args:
-        layout_in (BIDSLayout): Layout input dataset.
-        layout_out (BIDSLayout): Layout output dataset.
-        subject_label (str): Can be a regular expression.
+    :param cfg: Configuration object.
+    :type cfg: Config
+
+    :param layout_in: Layout input dataset.
+    :type layout_in: BIDSLayout
+
+    :param layout_out: Layout output dataset.
+    :type layout_out: BIDSLayout
+
+    :param subject_label: Can be a regular expression.
+    :type subject_label: str
     """
     log.info(f"Running subject: {subject_label}")
 
-    this_filter = get_bids_filter_config()["bold"]
+    this_filter = cfg.bids_filter["bold"]
     this_filter["suffix"] = return_regex(this_filter["suffix"])
     this_filter["task"] = return_regex(cfg.task)
     this_filter["space"] = return_regex(cfg.space)
     this_filter["subject"] = subject_label
+    if cfg.run:
+        this_filter["run"] = return_regex(cfg.run)
 
     log.debug(f"Looking for files with filter\n{this_filter}")
 
@@ -88,10 +96,10 @@ def preprocess_subject(
 def prepare_data(cfg: Config) -> None:
     """Run coregistration and extract data for all subjects.
 
-    Args:
-        cfg (Config): Configuration object.
+    :param cfg: Configuration object
+    :type cfg: Config
     """
-    layout_in = get_dataset_layout(cfg.input_folder)
+    layout_in = get_dataset_layout(cfg.input_folder, use_database=True)
     check_layout(cfg, layout_in)
 
     create_dir_if_absent(cfg.output_folder)
@@ -108,4 +116,4 @@ def prepare_data(cfg: Config) -> None:
 
     for subject_label in subjects:
 
-        preprocess_subject(cfg, layout_in, layout_out, subject_label)
+        process_subject(cfg, layout_in, layout_out, subject_label)
