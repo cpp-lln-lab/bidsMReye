@@ -3,24 +3,17 @@
 import argparse
 import logging
 import sys
-from pathlib import Path
-
-from rich.logging import RichHandler
-from rich.traceback import install
 
 from . import _version
-from bidsmreye.combine import combine
+from bidsmreye.download import download
 from bidsmreye.generalize import generalize
 from bidsmreye.prepare_data import prepare_data
+from bidsmreye.utils import bidsmreye_log
 from bidsmreye.utils import Config
 
 __version__ = _version.get_versions()["version"]
 
-# let rich print the traceback
-install(show_locals=True)
-
-# log format
-FORMAT = "bidsMReye - %(asctime)s - %(levelname)s - %(message)s"
+log = bidsmreye_log(name="bidsmreye")
 
 
 def main(argv=sys.argv) -> None:
@@ -46,19 +39,20 @@ def main(argv=sys.argv) -> None:
         Multiple participant level analyses can be run independently (in parallel)
         using the same output_dir.
         """,
-        # choices=["participant"],
+        choices=["participant"],
         default="participant",
     )
     parser.add_argument(
         "--action",
         help="""
         What action to perform:
-        - prepare: prepare data for analysis coregister to template,
-                   normalize and extract data
-        - combine: combine data labels and data from different runs into a single file
+        - all:        run all steps
+        - prepare:    prepare data for analysis coregister to template,
+                      normalize and extract data
+        - combine:    combine data labels and data from different runs into a single file
         - generalize: generalize from data to give predicted labels
         """,
-        choices=["all", "prepare", "combine", "generalize"],
+        choices=["all", "prepare", "generalize"],
         default="all",
     )
     parser.add_argument(
@@ -99,11 +93,19 @@ def main(argv=sys.argv) -> None:
         """,
         nargs="+",
     )
+    # TODO make it possible to pass path to a model ?
     parser.add_argument(
         "--model",
         help="model to use",
-        choices=["guided_fixations"],
-        default="guided_fixations",
+        choices=[
+            "1_guided_fixations",
+            "2_pursuit",
+            "3_openclosed",
+            "3_pursuit",
+            "4_pursuit",
+            "5_free_viewing",
+        ],
+        default="1_guided_fixations",
     )
     parser.add_argument(
         "--verbosity",
@@ -142,11 +144,7 @@ def main(argv=sys.argv) -> None:
 
     args = parser.parse_args(argv[1:])
 
-    if args.model in {"guided_fixations", "", None}:
-        model_weights_file = Path.cwd().joinpath(
-            "models",
-            "dataset1_guided_fixations.h5",
-        )
+    model_weights_file = args.model or None
 
     cfg = Config(
         args.bids_dir,
@@ -156,47 +154,36 @@ def main(argv=sys.argv) -> None:
         run=args.run or None,
         space=args.space or None,
         debug=args.debug,
-        model_weights_file=model_weights_file,
         reset_database=args.reset_database,
+        model_weights_file=model_weights_file,
         bids_filter=args.bids_filter_file,
     )
 
-    log_level = "DEBUG" if cfg.debug else args.verbosity or "INFO"
-    logging.basicConfig(
-        level=log_level, format=FORMAT, datefmt="[%X]", handlers=[RichHandler()]
-    )
+    log_level = "DEBUG" if cfg.debug else args.verbosity
 
-    log = logging.getLogger("rich")
+    log.setLevel(log_level)
+    print(logging.getLevelName(log).upper())
 
     log.info("Running bidsmreye version %s", __version__)
 
     if cfg.debug:
         log.debug("DEBUG MODE")
 
-    if cfg.model_weights_file not in {"", None}:
-        assert Path(cfg.model_weights_file).is_file()
-        log.info(f"Using model: {cfg.model_weights_file}")
+    log.debug(f"Configuration:\n{cfg}")
+
+    if args.action in ["all", "generalize"]:
+        cfg.model_weights_file = download(cfg.model_weights_file)
 
     if args.analysis_level == "participant":
 
         if args.action == "all":
-            log.info("PREPARING DATA")
             prepare_data(cfg)
-            log.info("COMBINING DATA")
-            combine(cfg)
-            log.info("GENERALIZING")
             generalize(cfg)
 
         elif args.action == "prepare":
-            log.info("PREPARING DATA")
             prepare_data(cfg)
 
-        elif args.action == "combine":
-            log.info("COMBINING DATA")
-            combine(cfg)
-
         elif args.action == "generalize":
-            log.info("GENERALIZING")
             generalize(cfg)
 
         else:

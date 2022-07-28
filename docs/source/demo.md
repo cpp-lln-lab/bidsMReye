@@ -61,17 +61,6 @@ docker run --rm -it \
       /home/neuro/data/ \
       /home/neuro/outputs/ \
       participant \
-      --action combine
-
-
-docker run --rm -it \
-      --user "$(id -u):$(id -g)" \
-      -v $PWD/tests/data/moae_fmriprep:/home/neuro/data \
-      -v $PWD/outputs:/home/neuro/outputs \
-      bidsmreye:latest \
-      /home/neuro/data/ \
-      /home/neuro/outputs/ \
-      participant \
       --action generalize
 ```
 
@@ -90,10 +79,6 @@ bids_dir="$PWD/tests/data/moae_fmriprep "
 output_dir="$PWD/outputs "
 
 bidsmreye --action prepare \
-          $bids_dir \
-          $output_dir
-
-bidsmreye --action combine \
           $bids_dir \
           $output_dir
 

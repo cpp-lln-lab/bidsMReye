@@ -22,7 +22,7 @@ from bidsmreye.utils import list_subjects
 from bidsmreye.utils import move_file
 from bidsmreye.utils import return_regex
 
-log = logging.getLogger("rich")
+log = logging.getLogger("bidsmreye")
 
 
 def convert_confounds(layout_out: BIDSLayout, file: Union[str, Path]) -> Path:
@@ -200,6 +200,9 @@ def generalize(cfg: Config) -> None:
     :param cfg: Configuration object
     :type cfg: Config
     """
+    log.info("GENERALIZING")
+    log.info(f"Using model: {cfg.model_weights_file}")
+
     layout_out = get_dataset_layout(cfg.output_folder)
     check_layout(cfg, layout_out)
 

@@ -1,5 +1,6 @@
 recursive-include bidsmreye/config *.json
-recursive-include bidsmreye/templates/ *.bib
-recursive-include bidsmreye/templates/ *.mustache
+recursive-include bidsmreye/templates *.bib
+recursive-include bidsmreye/templates *.mustache
+recursive-include bidsmreye/models registry.txt
 include versioneer.py
 include bidsmreye/_version.py

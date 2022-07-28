@@ -6,10 +6,6 @@ from bidsmreye.generalize import convert_confounds
 from bidsmreye.utils import get_dataset_layout
 
 
-def pybids_test_dataset():
-    return Path(get_test_data_path()).joinpath("synthetic", "derivatives", "fmriprep")
-
-
 def test_convert_confounds():
 
     output_location = Path().resolve()

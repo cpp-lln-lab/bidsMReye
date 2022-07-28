@@ -27,7 +27,7 @@ BROWSER := python -c "$$BROWSER_PYSCRIPT"
 help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
-clean: clean-build clean-pyc clean-test clean-models clean-demo ## remove all build, test, coverage and Python artifacts
+clean: clean-build clean-pyc clean-test clean-models clean-demo clean-models ## remove all build, test, coverage and Python artifacts
 
 clean-build: ## remove build artifacts
 	rm -fr build/
@@ -49,10 +49,6 @@ clean-test: ## remove test and coverage artifacts
 	rm -fr .pytest_cache
 	rm -fr tests/data
 
-clean-models: ## remove pretrained models
-	rm -fr models/
-
-
 ## INSTALL
 
 install: clean models ## install the package to the active Python's site-packages
@@ -71,15 +67,24 @@ dist: clean ## builds source and wheel package
 
 
 ## PRE-TRAINED MODELS
-models: models/dataset1_guided_fixations.h5 models/dataset5_free_viewing.h5 ## gets all pretrained models from OSF
+.PHONY: models
 
+clean-modesl: ## remove pretrained models
+	rm -fr models/
+models: ## gets all pretrained models from OSF
+	bidsmreye_model --model_name all
 models/dataset1_guided_fixations.h5:
-	mkdir -p models
-	wget -q https://osf.io/download/cqf74/ -O models/dataset1_guided_fixations.h5
-
+	bidsmreye_model
+models/dataset2_pursuit.h5:
+	bidsmreye_model --model_name 2_pursuit
+models/dataset3_openclosed.h5:
+	bidsmreye_model --model_name 3_openclosed
+models/dataset3_pursuit.h5:
+	bidsmreye_model --model_name 3_pursuit
+models/dataset4_pursuit.h5:
+	bidsmreye_model --model_name 4_pursuit
 models/dataset5_free_viewing.h5:
-	mkdir -p models
-	wget -q https://osf.io/download/89nky/ -O models/dataset5_free_viewing.h5
+	bidsmreye_model --model_name 5_free_viewing
 
 
 ## STYLE
@@ -114,7 +119,7 @@ servedocs: docs ## compile the docs watching for changes
 
 ## TESTS
 
-test: models tests/data/moae_fmriprep ## run tests quickly with the default Python
+test: tests/data/moae_fmriprep ## run tests quickly with the default Python
 	python -m pytest --cov bidsmreye
 
 tests/data/moae_fmriprep: ## gets fmriprep preprocessed data of the SPM MOAE dataset from OSF
@@ -131,7 +136,7 @@ tests/data/moae_fmriprep: ## gets fmriprep preprocessed data of the SPM MOAE dat
 clean-demo:
 	rm -fr outputs/moae_fmriprep
 
-demo: clean-demo tests/data/moae_fmriprep models/dataset1_guided_fixations.h5 ## demo: runs all demo steps on MOAE dataset
+demo: clean-demo tests/data/moae_fmriprep ## demo: runs all demo steps on MOAE dataset
 	bidsmreye 	--action all \
 				--verbosity INFO \
 				--debug true \
@@ -140,7 +145,7 @@ demo: clean-demo tests/data/moae_fmriprep models/dataset1_guided_fixations.h5 ##
 				$$PWD/outputs/moae_fmriprep/derivatives \
 				participant
 
-prepare: tests/data/moae_fmriprep models/dataset1_guided_fixations.h5 ## demo: prepares the data of MOAE dataset
+prepare: tests/data/moae_fmriprep ## demo: prepares the data of MOAE dataset
 	bidsmreye 	--action prepare \
 				--verbosity INFO \
 				--debug true \
@@ -149,19 +154,9 @@ prepare: tests/data/moae_fmriprep models/dataset1_guided_fixations.h5 ## demo: p
 				$$PWD/outputs/moae_fmriprep/derivatives \
 				participant
 
-combine: ## demo: combines data and dummy labels of MOAE dataset
-	bidsmreye 	--action combine \
-				--verbosity INFO \
-				--debug true \
-				--reset_database true \
-				$$PWD/tests/data/moae_fmriprep \
-				$$PWD/outputs/moae_fmriprep/derivatives \
-				participant
-
 generalize: ## demo: predicts labels of MOAE dataset
-	bidsmreye 	--model guided_fixations \
-				--action generalize \
-				--verbosity INFO \
+	bidsmreye 	--action generalize \
+				--verbosity WARNING \
 				--debug true \
 				--reset_database true \
 				$$PWD/tests/data/moae_fmriprep \
@@ -184,16 +179,6 @@ get_ds002799: tests/data/data_ds002799
 
 ds002799_prepare: get_ds002799 models/dataset1_guided_fixations.h5
 	bidsmreye 	--action prepare \
-				--verbosity INFO \
-				$$PWD/tests/data/ds002799/derivatives/fmriprep \
-				$$PWD/outputs/ds002799/derivatives \
-				participant \
-				--participant_label 302 307 \
-				--space MNI152NLin2009cAsym T1w \
-				--run 1 2
-
-ds002799_combine:
-	bidsmreye 	--action combine \
 				--verbosity INFO \
 				$$PWD/tests/data/ds002799/derivatives/fmriprep \
 				$$PWD/outputs/ds002799/derivatives \
@@ -260,10 +245,10 @@ docker/Dockerfile_dev: ## Dockerfile for the bidsmreye docker image using local 
 	--run "mkdir -p /home/neuro/bidsMReye" \
 	--copy . /home/neuro/bidsMReye \
 	--workdir /home/neuro/bidsMReye \
- 	--run "make models" \
 	--miniconda \
 		use_env="bidsmreye" \
 		pip_install="." \
+ 	--run "make models" \
 	--copy ./docker/entrypoint.sh /neurodocker/startup.sh \
 	--run "chmod +x /neurodocker/startup.sh" \
 	--cmd bidsmreye \
@@ -277,7 +262,6 @@ docker_dev_build_no_cache: docker/Dockerfile_dev
 
 docker_demo: Docker_build clean-demo
 	make Docker_prepare_data
-	make Docker_combine
 	make Docker_generalize
 
 docker_prepare_data:
@@ -290,17 +274,6 @@ docker_prepare_data:
 				/home/neuro/outputs/ \
 				participant \
 				--action prepare
-
-docker_combine:
-	docker run --rm -it \
-				--user "$(id -u):$(id -g)" \
-				-v $$PWD/tests/data/moae_fmriprep:/home/neuro/data \
-				-v $$PWD/outputs:/home/neuro/outputs \
-				bidsmreye:latest \
-				/home/neuro/data/ \
-				/home/neuro/outputs/ \
-				participant \
-				--action combine
 
 docker_generalize:
 	docker run --rm -it \

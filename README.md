@@ -45,18 +45,12 @@ Clone this repository.
 git clone git://github.com/cpp-lln-lab/bidsmreye
 ```
 
-Then install the package and download the pre-trained models with:
+Then install the package:
 
 ```bash
 cd bidsMReye
 make install
 ```
-
-For Windows you will have to download the pre-trained model weights manually.
-
-- model:
-  - URL: [https://osf.io/download/cqf74/](https://osf.io/download/cqf74/)
-  - destination file: `models/dataset1_guided_fixations.h5`
 
 ## Usage
 
@@ -66,10 +60,6 @@ bidsmreye --action all \
           output_dir
 
 bidsmreye --action prepare \
-          bids_dir \
-          output_dir
-
-bidsmreye --action combine \
           bids_dir \
           output_dir
 
