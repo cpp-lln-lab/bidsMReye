@@ -1,8 +1,8 @@
 Pipfile
 
-models
+*.h5
 outputs
-download*
+download
 logs
 
 # Byte-compiled / optimized / DLL files

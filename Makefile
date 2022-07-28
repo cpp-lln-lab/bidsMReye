@@ -27,7 +27,7 @@ BROWSER := python -c "$$BROWSER_PYSCRIPT"
 help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
-clean: clean-build clean-pyc clean-test clean-models clean-demo ## remove all build, test, coverage and Python artifacts
+clean: clean-build clean-pyc clean-test clean-models clean-demo clean-models ## remove all build, test, coverage and Python artifacts
 
 clean-build: ## remove build artifacts
 	rm -fr build/
@@ -49,10 +49,6 @@ clean-test: ## remove test and coverage artifacts
 	rm -fr .pytest_cache
 	rm -fr tests/data
 
-clean-models: ## remove pretrained models
-	rm -fr models/
-
-
 ## INSTALL
 
 install: clean models ## install the package to the active Python's site-packages
@@ -71,15 +67,24 @@ dist: clean ## builds source and wheel package
 
 
 ## PRE-TRAINED MODELS
-models: models/dataset1_guided_fixations.h5 models/dataset5_free_viewing.h5 ## gets all pretrained models from OSF
+.PHONY: models
 
+clean-modesl: ## remove pretrained models
+	rm -fr models/
+models: ## gets all pretrained models from OSF
+	bidsmreye_model --model_name all
 models/dataset1_guided_fixations.h5:
-	mkdir -p models
-	wget -q https://osf.io/download/cqf74/ -O models/dataset1_guided_fixations.h5
-
+	bidsmreye_model
+models/dataset2_pursuit.h5:
+	bidsmreye_model --model_name 2_pursuit
+models/dataset3_openclosed.h5:
+	bidsmreye_model --model_name 3_openclosed
+models/dataset3_pursuit.h5:
+	bidsmreye_model --model_name 3_pursuit
+models/dataset4_pursuit.h5:
+	bidsmreye_model --model_name 4_pursuit
 models/dataset5_free_viewing.h5:
-	mkdir -p models
-	wget -q https://osf.io/download/89nky/ -O models/dataset5_free_viewing.h5
+	bidsmreye_model --model_name 5_free_viewing
 
 
 ## STYLE
@@ -260,10 +265,10 @@ docker/Dockerfile_dev: ## Dockerfile for the bidsmreye docker image using local 
 	--run "mkdir -p /home/neuro/bidsMReye" \
 	--copy . /home/neuro/bidsMReye \
 	--workdir /home/neuro/bidsMReye \
- 	--run "make models" \
 	--miniconda \
 		use_env="bidsmreye" \
 		pip_install="." \
+ 	--run "make models" \
 	--copy ./docker/entrypoint.sh /neurodocker/startup.sh \
 	--run "chmod +x /neurodocker/startup.sh" \
 	--cmd bidsmreye \

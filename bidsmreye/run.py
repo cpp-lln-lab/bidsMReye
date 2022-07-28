@@ -46,16 +46,17 @@ def main(argv=sys.argv) -> None:
         Multiple participant level analyses can be run independently (in parallel)
         using the same output_dir.
         """,
-        # choices=["participant"],
+        choices=["participant"],
         default="participant",
     )
     parser.add_argument(
         "--action",
         help="""
         What action to perform:
-        - prepare: prepare data for analysis coregister to template,
-                   normalize and extract data
-        - combine: combine data labels and data from different runs into a single file
+        - all:        run all steps
+        - prepare:    prepare data for analysis coregister to template,
+                      normalize and extract data
+        - combine:    combine data labels and data from different runs into a single file
         - generalize: generalize from data to give predicted labels
         """,
         choices=["all", "prepare", "combine", "generalize"],

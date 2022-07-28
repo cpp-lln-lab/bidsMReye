@@ -4,3 +4,5 @@ pybids
 rich
 attrs
 kaleido
+pooch
+tqdm
