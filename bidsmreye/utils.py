@@ -34,17 +34,14 @@ class Config:
     task: Optional[Any] = field(kw_only=True, default=None)
     run: Optional[Any] = field(kw_only=True, default=None)
     model_weights_file: Union[str, Path] = field(kw_only=True, default=None)
-    debug: Union[str, bool] = field(
-        kw_only=True,
-        default=False,
-        converter=converters.default_if_none(default=False, factory=None),
-    )
+    debug: Union[str, bool] = field(kw_only=True, default=False)
     has_GPU = False
 
     def __attrs_post_init__(self):
         """Check that output_folder exists and gets info from layout if not specified."""
         os.environ["CUDA_VISIBLE_DEVICES"] = "0" if self.has_GPU else ""
 
+        self.debug = converters.default_if_none(default=False)
         self.debug = converters.to_bool(self.debug)
 
         self.output_folder = self.output_folder.joinpath("bidsmreye")

@@ -83,7 +83,7 @@ def process_subject(cfg: Config, layout_out: BIDSLayout, subject_label: str):
 
 
 def save_participant_file(layout_out: BIDSLayout, img, subj: dict):
-    """_summary_
+    """Save participant file.
 
     :param layout_out: Output dataset layout.
     :type layout_out: BIDSLayout
