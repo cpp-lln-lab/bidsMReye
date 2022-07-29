@@ -76,36 +76,30 @@ class MuhParser(argparse.ArgumentParser):
     def _print_message(self, message: str, file: Optional[IO[str]] = None) -> None:
         rich.print(message, file=file)
 
+
 def common_parser() -> MuhParser:
     """Execute the main script."""
     parser = MuhParser(
         description="BIDS app using deepMReye to decode eye motion for fMRI time series data.",
-        epilog=f"""
-        \n- all parameters use ``snake_case``,
-        \n- most "invalid" calls simply initialize bidspm.
-
+        epilog="""
         For a more readable version of this help section,
-        see the online https://cpp-spm.readthedocs.io/en/dev/bids_app_api.html".
+        see the online https://bidsmreye.readthedocs.io/".
         """,
     )
 
-    
-    parser = argparse.ArgumentParser(
-        description=""
-    )
     parser.add_argument(
         "bids_dir",
         help="""
         The directory with the input dataset formatted according to the BIDS standard.
         """,
-                        nargs=1,
+        nargs=1,
     )
     parser.add_argument(
         "output_dir",
         help="""
         The directory where the output files will be stored.
         """,
-                        nargs=1,
+        nargs=1,
     )
     parser.add_argument(
         "analysis_level",
@@ -115,7 +109,7 @@ def common_parser() -> MuhParser:
         """,
         choices=["participant"],
         default="participant",
-                nargs=1,
+        nargs=1,
     )
     parser.add_argument(
         "--action",
@@ -127,13 +121,11 @@ def common_parser() -> MuhParser:
         - prepare:    prepare data for analysis coregister to template,
                       normalize and extract data
 
-        - combine:    combine data labels and data from different runs into a single file
-
         - generalize: generalize from data to give predicted labels
         """,
         choices=["all", "prepare", "generalize"],
         default="all",
-                nargs=1,
+        nargs=1,
     )
     parser.add_argument(
         "--participant_label",
@@ -177,8 +169,46 @@ def common_parser() -> MuhParser:
         """,
         nargs="+",
     )
-    # TODO make it possible to pass path to a model ?
     parser.add_argument(
+        "--verbosity",
+        help="INFO, WARNING.",
+        choices=["INFO", "WARNING"],
+        default="INFO",
+        nargs=1,
+    )
+    parser.add_argument(
+        "--debug",
+        help="true or false.",
+        choices=["true", "false"],
+        default="false",
+        nargs=1,
+    )
+    parser.add_argument(
+        "--reset_database",
+        help="""
+        Resets the database of the input dataset.
+        """,
+        choices=["true", "false"],
+        default="false",
+        nargs=1,
+    )
+    parser.add_argument(
+        "--bids_filter_file",
+        help="""
+        A JSON file describing custom BIDS input filters using PyBIDS.
+        For further details, please check out TBD.
+        """,
+        nargs=1,
+    )
+    parser.add_argument(
+        "--version",
+        action="version",
+        help="show program's version number and exit",
+        version=f"\nbidsMReye version {__version__}\n",
+    )
+    # TODO make it possible to pass path to a model ?
+    gen = parser.add_argument_group('generalize only arguments')
+    gen.add_argument(
         "--model",
         help="model to use",
         choices=[
@@ -190,46 +220,11 @@ def common_parser() -> MuhParser:
             "5_free_viewing",
         ],
         default="1_guided_fixations",
-    )
-    parser.add_argument(
-        "--verbosity",
-        help="INFO, WARNING.",
-        choices=["INFO", "WARNING"],
-        default="INFO",
-                        nargs=1,
-    )
-    parser.add_argument(
-        "--debug",
-        help="true or false.",
-        choices=["true", "false"],
-        default="false",
-                        nargs=1,
-    )
-    parser.add_argument(
-        "--reset_database",
-        help="""
-        Resets the database of the input dataset.
-        """,
-        choices=["true", "false"],
-        default="false",
-                        nargs=1,
-    )
-    parser.add_argument(
-        "--bids_filter_file",
-        help="""
-        A JSON file describing custom BIDS input filters using PyBIDS.
-        For further details, please check out TBD.
-        """,
-                        nargs=1,
-    )
-    parser.add_argument(
-        "--version",
-        action="version",
-        help="show program's version number and exit",
-        version=f"\nbidsMReye version {__version__}\n",
-    )
+    )    
+    
 
-    return parser    
+    return parser
+
 
 if __name__ == "__main__":
     main()
