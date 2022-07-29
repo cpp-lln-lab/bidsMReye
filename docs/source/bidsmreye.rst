@@ -4,10 +4,10 @@ bidsmreye package
 Submodules
 ----------
 
-bidsmreye.combine module
-------------------------
+bidsmreye.download module
+-------------------------
 
-.. automodule:: bidsmreye.combine
+.. automodule:: bidsmreye.download
    :members:
    :undoc-members:
    :show-inheritance:

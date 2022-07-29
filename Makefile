@@ -72,15 +72,6 @@ dist: clean ## builds source and wheel package
 clean-modesl: ## remove pretrained models
 	rm -fr models/
 
-models_docker:
-	mkdir -p models
-	wget -q https://osf.io/download/cqf74/ -O models/dataset1_guided_fixations.h5
-	wget -q https://osf.io/download/4f6m7/ -O models/dataset2_pursuit.h5
-	wget -q https://osf.io/download/8cr2j/ -O models/dataset3_openclosed.h5
-	wget -q https://osf.io/download/e89wp/ -O models/dataset3_pursuit.h5
-	wget -q https://osf.io/download/96nyp/ -O models/dataset4_pursuit.h5
-	wget -q https://osf.io/download/89nky/ -O models/dataset5_free_viewing.h5
-
 models: ## gets all pretrained models from OSF
 	bidsmreye_model --model_name all
 models/dataset1_guided_fixations.h5:
@@ -184,9 +175,9 @@ get_ds002799: tests/data/data_ds002799
 	cd tests/data/ds002799/derivatives/fmriprep && \
 	datalad get sub-30[27]/ses-*/func/*run-*preproc*bold*
 
-ds002799_prepare: get_ds002799 models/dataset1_guided_fixations.h5
+ds002799_prepare: get_ds002799
 	bidsmreye 	--action prepare \
-				--verbosity INFO \
+				--debug true \
 				$$PWD/tests/data/ds002799/derivatives/fmriprep \
 				$$PWD/outputs/ds002799/derivatives \
 				participant \
@@ -196,7 +187,7 @@ ds002799_prepare: get_ds002799 models/dataset1_guided_fixations.h5
 
 ds002799_generalize:
 	bidsmreye 	--action generalize \
-				--verbosity INFO \
+				--debug true \
 				$$PWD/tests/data/ds002799/derivatives/fmriprep \
 				$$PWD/outputs/ds002799/derivatives \
 				participant \
@@ -204,9 +195,9 @@ ds002799_generalize:
 				--space MNI152NLin2009cAsym T1w \
 				--run 1 2
 
-ds002799: clean-ds002799
+ds002799: clean-ds002799 get_ds002799
 	bidsmreye 	--action all \
-				--verbosity INFO \
+				--debug true \
 				$$PWD/tests/data/ds002799/derivatives/fmriprep \
 				$$PWD/outputs/ds002799/derivatives \
 				participant \
