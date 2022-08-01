@@ -2,8 +2,8 @@
 """Main script."""
 import argparse
 import sys
-
-from typing import Optional, IO
+from typing import IO
+from typing import Optional
 
 import rich
 
