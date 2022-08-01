@@ -92,14 +92,12 @@ def common_parser() -> MuhParser:
         help="""
         The directory with the input dataset formatted according to the BIDS standard.
         """,
-        nargs=1,
     )
     parser.add_argument(
         "output_dir",
         help="""
         The directory where the output files will be stored.
         """,
-        nargs=1,
     )
     parser.add_argument(
         "analysis_level",
@@ -108,8 +106,7 @@ def common_parser() -> MuhParser:
         using the same output_dir.
         """,
         choices=["participant"],
-        default="participant",
-        nargs=1,
+        default="participant"
     )
     parser.add_argument(
         "--action",
@@ -124,8 +121,7 @@ def common_parser() -> MuhParser:
         - generalize: generalize from data to give predicted labels
         """,
         choices=["all", "prepare", "generalize"],
-        default="all",
-        nargs=1,
+        default="all"
     )
     parser.add_argument(
         "--participant_label",
@@ -173,15 +169,13 @@ def common_parser() -> MuhParser:
         "--verbosity",
         help="INFO, WARNING.",
         choices=["INFO", "WARNING"],
-        default="INFO",
-        nargs=1,
+        default="INFO"
     )
     parser.add_argument(
         "--debug",
         help="true or false.",
         choices=["true", "false"],
-        default="false",
-        nargs=1,
+        default="false"
     )
     parser.add_argument(
         "--reset_database",
@@ -190,7 +184,6 @@ def common_parser() -> MuhParser:
         """,
         choices=["true", "false"],
         default="false",
-        nargs=1,
     )
     parser.add_argument(
         "--bids_filter_file",
@@ -198,7 +191,6 @@ def common_parser() -> MuhParser:
         A JSON file describing custom BIDS input filters using PyBIDS.
         For further details, please check out TBD.
         """,
-        nargs=1,
     )
     parser.add_argument(
         "--version",
