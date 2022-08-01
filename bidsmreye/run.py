@@ -20,7 +20,11 @@ log = bidsmreye_log(name="bidsmreye")
 
 
 def main(argv=sys.argv) -> None:
+    """Run the bids app.
 
+    :param argv: _description_, defaults to sys.argv
+    :type argv: _type_, optional
+    """
     parser = common_parser()
 
     args = parser.parse_args(argv[1:])
@@ -73,6 +77,8 @@ def main(argv=sys.argv) -> None:
 
 
 class MuhParser(argparse.ArgumentParser):
+    """Parser for the main script."""
+
     def _print_message(self, message: str, file: Optional[IO[str]] = None) -> None:
         rich.print(message, file=file)
 
@@ -106,7 +112,7 @@ def common_parser() -> MuhParser:
         using the same output_dir.
         """,
         choices=["participant"],
-        default="participant"
+        default="participant",
     )
     parser.add_argument(
         "--action",
@@ -121,7 +127,7 @@ def common_parser() -> MuhParser:
         - generalize: generalize from data to give predicted labels
         """,
         choices=["all", "prepare", "generalize"],
-        default="all"
+        default="all",
     )
     parser.add_argument(
         "--participant_label",
@@ -166,16 +172,10 @@ def common_parser() -> MuhParser:
         nargs="+",
     )
     parser.add_argument(
-        "--verbosity",
-        help="INFO, WARNING.",
-        choices=["INFO", "WARNING"],
-        default="INFO"
+        "--verbosity", help="INFO, WARNING.", choices=["INFO", "WARNING"], default="INFO"
     )
     parser.add_argument(
-        "--debug",
-        help="true or false.",
-        choices=["true", "false"],
-        default="false"
+        "--debug", help="true or false.", choices=["true", "false"], default="false"
     )
     parser.add_argument(
         "--reset_database",
@@ -199,7 +199,7 @@ def common_parser() -> MuhParser:
         version=f"\nbidsMReye version {__version__}\n",
     )
     # TODO make it possible to pass path to a model ?
-    gen = parser.add_argument_group('generalize only arguments')
+    gen = parser.add_argument_group("generalize only arguments")
     gen.add_argument(
         "--model",
         help="model to use",
@@ -212,8 +212,7 @@ def common_parser() -> MuhParser:
             "5_free_viewing",
         ],
         default="1_guided_fixations",
-    )    
-    
+    )
 
     return parser
 
