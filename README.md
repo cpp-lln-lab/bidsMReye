@@ -17,7 +17,7 @@ By default, bidsMReye uses a [pre-trained version](https://osf.io/23t5v) of [dee
 
 The pipeline automatically extracts the eyeball voxels and saves them as a python pickle file (.p). This can be used also for other multivariate pattern analyses in the absence of eye-tracking data.
 
-For more information, see the [User Recommendations](https://deepmreye.slite.com/p/channel/MUgmvViEbaATSrqt3susLZ/notes/kKdOXmLqe) and the [Frequently-Asked-Questions (FAQ)](https://deepmreye.slite.com/p/channel/MUgmvViEbaATSrqt3susLZ/notes/sargIAQ6t) page. If you have other questions, please reach out to the developer team.
+For more information, see the [User Recommendations](https://deepmreye.slite.com/p/channel/MUgmvViEbaATSrqt3susLZ/notes/kKdOXmLqe). If you have other questions, please reach out to the developer team.
 
 ## Install
 
