@@ -13,7 +13,7 @@ BIDS app for decoding gaze position from the eyeball MR-signal using [deepMReye]
 
 To be used on preprocessed BIDS derivatives (e.g. [fMRIprep](https://github.com/nipreps/fmriprep) outputs). No eye-tracking data required.
 
-By default, bidsMReye uses a [pre-trained version](https://osf.io/23t5v) of [deepMReye](https://github.com/DeepMReye/DeepMReye) trained on 5 datasets incl. guided fixations ([2](https://doi.org/10.1038/sdata.2017.181)), smooth pursuit ([3](https://doi.org/10.1016/j.neuroimage.2018.04.012),[4](https://doi.org/10.1101/2021.08.03.454928),[5](https://doi.org/10.1038/s41593-017-0050-8)) & free viewing ([6](https://doi.org/10.1038/s41593-017-0049-1)). Other pretrained versions are optional. Dedicated model training is recommended.
+By default, bidsMReye uses a [pre-trained version](https://osf.io/23t5v) of [deepMReye](https://github.com/DeepMReye/DeepMReye) trained on 5 datasets incl. guided fixations ([2](https://doi.org/10.1038/sdata.2017.181)), smooth pursuit ([3](https://doi.org/10.1016/j.neuroimage.2018.04.012),[4](https://doi.org/10.1101/2021.08.03.454928),[5](https://doi.org/10.1038/s41593-017-0050-8)) and free viewing ([6](https://doi.org/10.1038/s41593-017-0049-1)). Other pretrained versions are optional. Dedicated model training is recommended.
 
 The pipeline automatically extracts the eyeball voxels and saves them as a python pickle file (.p). This can be used also for other multivariate pattern analyses in the absence of eye-tracking data.
 
