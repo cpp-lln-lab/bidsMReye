@@ -5,24 +5,19 @@
 [![License](https://img.shields.io/badge/license-GPL3-blue.svg)](./LICENSE)
 ![https://github.com/psf/black](https://img.shields.io/badge/code%20style-black-000000.svg)
 [![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg)](#contributors)
+[![Paper_link](https://img.shields.io/badge/DOI-10.1038%2Fs41593--021--00947--w-blue)](https://doi.org/10.1038/s41593-021-00947-w)
 
 # bidsMReye
 
-BIDS app using [deepMReye](https://github.com/DeepMReye/DeepMReye) to decode eye
-motion for fMRI time series data.
+BIDS app for decoding gaze position from the eyeball MR-signal using [deepMReye](https://github.com/DeepMReye/DeepMReye) ([1](https://doi.org/10.1038/s41593-021-00947-w)).
 
-To be used on preprocessed BIDS derivatives (like those from fMRIprep), to
-predict eye movements from the bold data when no eye movement data are
-available.
+To be used on preprocessed BIDS derivatives (e.g. [fMRIprep](https://github.com/nipreps/fmriprep) outputs). No eye-tracking data required.
 
-By default it uses the [deepMReye](https://github.com/DeepMReye/DeepMReye)
-[pre-trained "fixation" model](https://osf.io/cqf74).
+By default, bidsMReye uses a [pre-trained version](https://osf.io/23t5v) of [deepMReye](https://github.com/DeepMReye/DeepMReye) trained on 5 datasets incl. guided fixations ([2](https://doi.org/10.1038/sdata.2017.181)), smooth pursuit ([3](https://doi.org/10.1016/j.neuroimage.2018.04.012),[4](https://doi.org/10.1101/2021.08.03.454928),[5](https://doi.org/10.1038/s41593-017-0050-8)) and free viewing ([6](https://doi.org/10.1038/s41593-017-0049-1)). Other pretrained versions are optional. Dedicated model training is recommended.
 
-The first part of the pipeline can however be used to extract data, irrespective
-of the presence of eye movement labels and could thus be usefull to share
-anonimysed subject data to the
-[deepMReye](https://github.com/DeepMReye/DeepMReye) dev team to allow them to
-improve their pre-trained models.
+The pipeline automatically extracts the eyeball voxels and saves them as a python pickle file. This can be used also for other multivariate pattern analyses in the absence of eye-tracking data. Decoded gaze positions allow computing eye movements.
+
+For more information, see the [User Recommendations](https://deepmreye.slite.com/p/channel/MUgmvViEbaATSrqt3susLZ/notes/kKdOXmLqe). If you have other questions, please reach out to the developer team.
 
 ## Install
 
@@ -91,3 +86,5 @@ Thanks goes to these wonderful people
 This project follows the
 [all-contributors](https://github.com/all-contributors/all-contributors)
 specification. Contributions of any kind welcome!
+
+If you train [deepMReye](https://github.com/DeepMReye/DeepMReye), or if you have eye-tracking training labels and the extracted eyeball voxels, consider sharing it to contribute to the [pretrained model pool](https://osf.io/mrhk9/).
