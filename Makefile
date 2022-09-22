@@ -47,15 +47,16 @@ clean-test: ## remove test and coverage artifacts
 	rm -f .coverage
 	rm -fr htmlcov/
 	rm -fr .pytest_cache
-	rm -fr tests/data
 
 ## INSTALL
 
-install: clean models ## install the package to the active Python's site-packages
+install: clean  ## install the package to the active Python's site-packages
 	pip install .
+	make models
 
-install_dev: clean models ## install the package and development dependencies to the active Python's site-packages
+install_dev: clean ## install the package and development dependencies to the active Python's site-packages
 	pip install -e .[dev]
+	make models
 
 release: dist ## package and upload a release
 	twine upload dist/*
@@ -69,7 +70,7 @@ dist: clean ## builds source and wheel package
 ## PRE-TRAINED MODELS
 .PHONY: models
 
-clean-modesl: ## remove pretrained models
+clean-models: ## remove pretrained models
 	rm -fr models/
 
 models: ## gets all pretrained models from OSF
