@@ -136,13 +136,13 @@ class Config:
             value = layout_in.get_subjects()
         elif attribute == "task":
             value = layout_in.get_tasks()
-        elif attribute in ["space", "run"]:
+        elif attribute in {"space", "run"}:
             value = layout_in.get(return_type="id", target=attribute, datatype="func")
 
         self.listify(attribute)
 
         # convert all run values to integers
-        if attribute in ["run"]:
+        if attribute in {"run"}:
             for i, j in enumerate(value):
                 value[i] = int(j)
             tmp = [int(j) for j in getattr(self, attribute)]
