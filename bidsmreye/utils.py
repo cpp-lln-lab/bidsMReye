@@ -1,4 +1,6 @@
 """TODO."""
+from __future__ import annotations
+
 import json
 import logging
 import os
@@ -7,20 +9,18 @@ import shutil
 import warnings
 from pathlib import Path
 from typing import Any
-from typing import Optional
-from typing import Union
 
 from attrs import converters
 from attrs import define
 from attrs import field
-from bids import BIDSLayout  # type: ignore
+from bids import BIDSLayout
 from rich.logging import RichHandler
 from rich.traceback import install
 
 log = logging.getLogger("bidsmreye")
 
 
-def bidsmreye_log(name=None):
+def bidsmreye_log(name: str | None = None) -> logging.Logger:
     """Create log.
 
     :param name: _description_, defaults to None
@@ -57,35 +57,37 @@ class Config:
     :rtype: _type_
     """
 
-    input_folder: str = field(default=None, converter=Path)
+    input_folder = field(default=None, converter=Path)
 
     @input_folder.validator
-    def _check_input_folder(self, attribute, value):
+    def _check_input_folder(self, attribute: str, value: Path) -> None:
         if not value.is_dir:
             raise ValueError(f"Input_folder must be an existing directory:\n{value}.")
 
-    output_folder: str = field(default=None, converter=Path)
-    participant: Optional[Any] = field(kw_only=True, default=None)
-    space: Optional[Any] = field(kw_only=True, default=None)
-    task: Optional[Any] = field(kw_only=True, default=None)
-    run: Optional[Any] = field(kw_only=True, default=None)
-    model_weights_file = field(kw_only=True, default=None)
-    debug: Union[str, bool] = field(kw_only=True, default=None)
-    reset_database: Union[str, bool] = field(kw_only=True, default=None)
-    bids_filter = field(kw_only=True, default=None)
+    output_folder: Path = field(default=None, converter=Path)
+    participant: Any | None = field(kw_only=True, default=None)
+    space: Any | None = field(kw_only=True, default=None)
+    task: Any | None = field(kw_only=True, default=None)
+    run: Any | None = field(kw_only=True, default=None)
+    model_weights_file: str | Path | None = field(kw_only=True, default=None)
+    debug: str | bool | None = field(kw_only=True, default=None)
+    reset_database: str | bool | None = field(kw_only=True, default=None)
+    bids_filter: Any = field(kw_only=True, default=None)
     has_GPU = False
 
-    def __attrs_post_init__(self):
+    def __attrs_post_init__(self) -> None:
         """Check that output_folder exists and gets info from layout if not specified."""
         os.environ["CUDA_VISIBLE_DEVICES"] = "0" if self.has_GPU else ""
 
         if not self.debug:
             self.debug = False
-        self.debug = converters.to_bool(self.debug)
+        if not isinstance(self.debug, (bool)):
+            self.debug = converters.to_bool(self.debug)
 
         if not self.reset_database:
             self.reset_database = False
-        self.reset_database = converters.to_bool(self.reset_database)
+        if not isinstance(self.reset_database, (bool)):
+            self.reset_database = converters.to_bool(self.reset_database)
 
         if not self.run:
             self.run = []
@@ -116,7 +118,7 @@ class Config:
         self.check_argument(attribute="run", layout_in=layout_in)
         self.check_argument(attribute="space", layout_in=layout_in)
 
-    def check_argument(self, attribute, layout_in: BIDSLayout):
+    def check_argument(self, attribute: str, layout_in: BIDSLayout) -> Config:
         """Check an attribute value compared to a the input dataset content.
 
         :param attribute:
@@ -134,13 +136,13 @@ class Config:
             value = layout_in.get_subjects()
         elif attribute == "task":
             value = layout_in.get_tasks()
-        elif attribute in ["space", "run"]:
+        elif attribute in {"space", "run"}:
             value = layout_in.get(return_type="id", target=attribute, datatype="func")
 
         self.listify(attribute)
 
         # convert all run values to integers
-        if attribute in ["run"]:
+        if attribute in {"run"}:
             for i, j in enumerate(value):
                 value[i] = int(j)
             tmp = [int(j) for j in getattr(self, attribute)]
@@ -163,7 +165,7 @@ class Config:
 
         return self
 
-    def listify(self, attribute):
+    def listify(self, attribute: str) -> Config:
         """Convert attribute to list if not already."""
         if getattr(self, attribute) and not isinstance(getattr(self, attribute), list):
             setattr(self, attribute, [getattr(self, attribute)])
@@ -188,7 +190,7 @@ def move_file(input: Path, output: Path) -> None:
     input.unlink()
 
 
-def create_dir_if_absent(output_path: Union[str, Path]) -> None:
+def create_dir_if_absent(output_path: str | Path) -> None:
     """Create a path if it does not exist.
 
     :param output_path:
@@ -213,7 +215,7 @@ def create_dir_for_file(file: Path) -> None:
     # TODO refactor with create_dir_if_absent
 
 
-def return_regex(value: Union[str, Optional[list]]) -> Optional[str]:
+def return_regex(value: str | list[str] | None) -> str | None:
     """Return the regular expression for a string or a list of strings.
 
     :param value:
@@ -237,7 +239,7 @@ def return_regex(value: Union[str, Optional[list]]) -> Optional[str]:
     return value
 
 
-def list_subjects(cfg: Config, layout: BIDSLayout) -> list:
+def list_subjects(cfg: Config, layout: BIDSLayout) -> list[str]:
     """List subject in a BIDS dataset for a given Config.
 
     :param cfg: Configuration object
@@ -265,7 +267,9 @@ def list_subjects(cfg: Config, layout: BIDSLayout) -> list:
     return subjects
 
 
-def get_deepmreye_filename(layout: BIDSLayout, img: str, filetype: str = None) -> Path:
+def get_deepmreye_filename(
+    layout: BIDSLayout, img: str, filetype: str | None = None
+) -> Path:
     """Get deepmreye filename.
 
     :param layout: BIDSLayout of the dataset.
@@ -299,7 +303,7 @@ def get_deepmreye_filename(layout: BIDSLayout, img: str, filetype: str = None) -
     return Path(filefolder).resolve()
 
 
-def return_deepmreye_output_filename(filename: str, filetype: str = None) -> str:
+def return_deepmreye_output_filename(filename: str, filetype: str | None = None) -> str:
     """Return deepmreye output filename.
 
     :param filename:
@@ -322,8 +326,8 @@ def return_deepmreye_output_filename(filename: str, filetype: str = None) -> str
 
 
 def get_dataset_layout(
-    dataset_path: Union[str, Path],
-    config: Optional[dict] = None,
+    dataset_path: str | Path,
+    config: dict[str, str] | None = None,
     use_database: bool = False,
 ) -> BIDSLayout:
     """Return a BIDSLayout object for the dataset at the given path.
@@ -391,7 +395,7 @@ def set_dataset_description(layout: BIDSLayout, is_derivative: bool = True) -> B
     :return: Updated BIDSLayout of the dataset
     :rtype: BIDSLayout
     """
-    data = {
+    data: dict[str, Any] = {
         "Name": "dataset name",
         "BIDSVersion": "1.6.0",
         "DatasetType": "raw",
@@ -404,7 +408,7 @@ def set_dataset_description(layout: BIDSLayout, is_derivative: bool = True) -> B
         "ReferencesAndLinks": ["", ""],
         "DatasetDOI": "doi:",
         "HEDVersion": "",
-    }  # type: dict
+    }
 
     if is_derivative:
         data["GeneratedBy"] = [
@@ -447,7 +451,7 @@ def init_derivatives_layout(output_location: Path) -> BIDSLayout:
     return layout_out
 
 
-def get_bidsname_config(config_file: Path = None) -> dict:
+def get_bidsname_config(config_file: Path | None = None) -> dict[str, str]:
     """Load configuration for naming output BIDS files.
 
     :param config_file: Defaults to None
@@ -464,7 +468,7 @@ def get_bidsname_config(config_file: Path = None) -> dict:
     return get_config(config_file, default)
 
 
-def get_pybids_config(config_file: Path = None) -> dict:
+def get_pybids_config(config_file: Path | None = None) -> dict[str, str]:
     """Load pybids configuration.
 
     :param config_file: Defaults to None
@@ -480,7 +484,7 @@ def get_pybids_config(config_file: Path = None) -> dict:
     return get_config(config_file, default)
 
 
-def get_bids_filter_config(config_file: Path = None) -> dict:
+def get_bids_filter_config(config_file: Path | None = None) -> dict[str, Any]:
     """Load the bids filter file config.
 
     :param config_file: Config to load. Defaults to None.
@@ -493,7 +497,7 @@ def get_bids_filter_config(config_file: Path = None) -> dict:
     return get_config(config_file, default)
 
 
-def get_config(config_file: Path = None, default: str = "") -> dict:
+def get_config(config_file: Path | None = None, default: str = "") -> dict[str, str]:
     """Load a config stored in a JSON.
 
     :param config_file: File to load. Defaults to None.
@@ -515,12 +519,12 @@ def get_config(config_file: Path = None, default: str = "") -> dict:
     if config_file is None or not Path(config_file).exists():
         raise FileNotFoundError(f"Config file {config_file} not found")
 
-    with open(config_file, "r") as ff:
+    with open(config_file) as ff:
         return json.load(ff)
 
 
 def create_bidsname(
-    layout: BIDSLayout, filename: Union[dict, str, Path], filetype: str
+    layout: BIDSLayout, filename: dict[str, str] | str | Path, filetype: str
 ) -> Path:
     """Return a BIDS valid filename for layout and a filename or a dict of BIDS entities.
 

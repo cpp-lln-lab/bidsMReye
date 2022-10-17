@@ -1,15 +1,17 @@
 """TODO."""
+from __future__ import annotations
+
 import logging
 import warnings
 from pathlib import Path
-from typing import Union
+from typing import Any
 
-import numpy as np  # type: ignore
-import pandas as pd  # type: ignore
-from bids import BIDSLayout  # type: ignore
-from deepmreye import analyse  # type: ignore
+import numpy as np
+import pandas as pd
+from bids import BIDSLayout
+from deepmreye import analyse
 from deepmreye import train
-from deepmreye.util import data_generator  # type: ignore
+from deepmreye.util import data_generator
 from deepmreye.util import model_opts
 from rich import print
 
@@ -25,7 +27,7 @@ from bidsmreye.utils import return_regex
 log = logging.getLogger("bidsmreye")
 
 
-def convert_confounds(layout_out: BIDSLayout, file: Union[str, Path]) -> Path:
+def convert_confounds(layout_out: BIDSLayout, file: str | Path) -> Path:
     """Convert numpy output to TSV.
 
     :param layout_out: pybids layout to of the dataset to act on.
@@ -67,7 +69,9 @@ def convert_confounds(layout_out: BIDSLayout, file: Union[str, Path]) -> Path:
     return confound_name
 
 
-def create_and_save_figure(layout_out: BIDSLayout, file: str, evaluation, scores):
+def create_and_save_figure(
+    layout_out: BIDSLayout, file: str, evaluation: Any, scores: Any
+) -> None:
     """Generate a figure for the eye motion timeseries.
 
     :param layout_out: Output dataset layout.
@@ -97,7 +101,7 @@ def create_and_save_figure(layout_out: BIDSLayout, file: str, evaluation, scores
     fig.write_image(confound_svg)
 
 
-def create_confounds_tsv(layout_out: BIDSLayout, file: str, subject_label: str):
+def create_confounds_tsv(layout_out: BIDSLayout, file: str, subject_label: str) -> None:
     """Generate a TSV file for the eye motion timeseries.
 
     :param layout_out:
@@ -123,7 +127,7 @@ def create_confounds_tsv(layout_out: BIDSLayout, file: str, subject_label: str):
     convert_confounds(layout_out, file)
 
 
-def process_subject(cfg: Config, layout_out: BIDSLayout, subject_label: str):
+def process_subject(cfg: Config, layout_out: BIDSLayout, subject_label: str) -> None:
     """Run generalize for one subject.
 
     :param cfg: Configuration object

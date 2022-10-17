@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from pathlib import Path
 
 from bidsmreye.prepare_data import combine_data_with_empty_labels

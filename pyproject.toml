@@ -2,12 +2,5 @@
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
-[tool.pytest.ini_options]
-minversion = "6.0"
-addopts = "-ra -vv"
-testpaths = [
-    "tests",
-]
-
 [tool.black]
 line-length = 90

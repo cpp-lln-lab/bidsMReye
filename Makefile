@@ -122,7 +122,7 @@ servedocs: docs ## compile the docs watching for changes
 ## TESTS
 
 test: tests/data/moae_fmriprep ## run tests quickly with the default Python
-	python -m pytest --cov bidsmreye
+	python -m pytest
 
 tests/data/moae_fmriprep: ## gets fmriprep preprocessed data of the SPM MOAE dataset from OSF
 	mkdir -p tests/data

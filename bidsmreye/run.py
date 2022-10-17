@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 """Main script."""
+from __future__ import annotations
+
 import argparse
 import sys
+from typing import Any
 from typing import IO
-from typing import Optional
 
 import rich
 
@@ -19,7 +21,7 @@ __version__ = _version.get_versions()["version"]
 log = bidsmreye_log(name="bidsmreye")
 
 
-def main(argv=sys.argv) -> None:
+def main(argv: Any = sys.argv) -> None:
     """Run the bids app.
 
     :param argv: _description_, defaults to sys.argv
@@ -35,14 +37,14 @@ def main(argv=sys.argv) -> None:
         args.bids_dir,
         args.output_dir,
         participant=args.participant_label or None,
+        space=args.space or None,
         task=args.task or None,
         run=args.run or None,
-        space=args.space or None,
         debug=args.debug,
-        reset_database=args.reset_database,
         model_weights_file=model_weights_file,
+        reset_database=args.reset_database,
         bids_filter=args.bids_filter_file,
-    )
+    )  # type: ignore
 
     log_level = "DEBUG" if cfg.debug else args.verbosity
 
@@ -79,7 +81,7 @@ def main(argv=sys.argv) -> None:
 class MuhParser(argparse.ArgumentParser):
     """Parser for the main script."""
 
-    def _print_message(self, message: str, file: Optional[IO[str]] = None) -> None:
+    def _print_message(self, message: str, file: IO[str] | None = None) -> None:
         rich.print(message, file=file)
 
 
