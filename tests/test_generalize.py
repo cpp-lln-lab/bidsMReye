@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from pathlib import Path
 
 from bids.tests import get_test_data_path

@@ -1,9 +1,11 @@
 """Download the models from OSF."""
+from __future__ import annotations
+
 import argparse
 from pathlib import Path
 
-import pkg_resources  # type: ignore
-import pooch  # type: ignore
+import pkg_resources
+import pooch
 
 from bidsmreye.utils import bidsmreye_log
 from bidsmreye.utils import move_file
@@ -11,7 +13,7 @@ from bidsmreye.utils import move_file
 log = bidsmreye_log(name="bidsmreye")
 
 
-def main():
+def main() -> None:
     """Download the models from OSF.
 
     :return: _description_
@@ -47,7 +49,9 @@ def main():
     download(model_name=args.model_name, output_dir=args.output_dir)
 
 
-def download(model_name: str = None, output_dir: Path = None) -> Path:
+def download(
+    model_name: str | Path | None = None, output_dir: Path | None = None
+) -> Path:
     """Download the models from OSF.
 
     :param model_name: _description_, defaults to None
@@ -94,7 +98,7 @@ def download(model_name: str = None, output_dir: Path = None) -> Path:
 
     if not output_file.is_file():
 
-        fname = POOCH.fetch(OSF_ID[model_name], progressbar=True)
+        fname = POOCH.fetch(OSF_ID[model_name], progressbar=True)  # type: ignore
         move_file(Path(fname), output_file)
 
     else:

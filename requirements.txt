@@ -1,4 +1,4 @@
-deepmreye @ git+https://github.com/DeepMReye/DeepMReye.git
+deepmreye @ git+https://github.com/Remi-Gau/DeepMReye.git@python310
 chevron
 pybids
 rich

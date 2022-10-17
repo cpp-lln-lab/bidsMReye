@@ -1,11 +1,14 @@
 """Run coregistration and extract data."""
+from __future__ import annotations
+
 import logging
 import pickle
 from pathlib import Path
+from typing import Any
 
-import numpy as np  # type: ignore
-from bids import BIDSLayout  # type: ignore
-from deepmreye import preprocess  # type: ignore
+import numpy as np
+from bids import BIDSLayout
+from deepmreye import preprocess
 
 from bidsmreye.methods import methods
 from bidsmreye.utils import check_layout
@@ -56,7 +59,7 @@ def coregister_and_extract_data(img: str) -> None:
     )
 
 
-def combine_data_with_empty_labels(layout_out, img, i=1):
+def combine_data_with_empty_labels(layout_out: BIDSLayout, img: Path, i: int = 1) -> Path:
     """Combine data with empty labels.
 
     :param layout_out: _description_
@@ -84,7 +87,7 @@ def combine_data_with_empty_labels(layout_out, img, i=1):
     entities = layout_out.parse_file_entities(img)
 
     # Store for each runs
-    subj = {"data": [], "labels": [], "ids": []}  # type: dict
+    subj: dict[str, list[Any]] = {"data": [], "labels": [], "ids": []}
     subj["data"].append(data)
     subj["labels"].append(labels)
     subj["ids"].append(([entities["subject"]] * labels.shape[0], [i] * labels.shape[0]))
