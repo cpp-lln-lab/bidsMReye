@@ -215,7 +215,7 @@ docker/Dockerfile: ## Dockerfile for the bidsmreye docker image
 	--base debian:stretch-slim \
 	--pkg-manager apt \
 	--install "git wget" \
-	--run "mkdir -p /home/neuro/bidsMReye" \
+	--run "mkdir -p /home/neuro/bidsMReye/models" \
 	--workdir /home/neuro/bidsMReye \
  	--run "wget -q https://osf.io/download/cqf74/ -O models/dataset1_guided_fixations.h5" \
 	--run "wget -q https://osf.io/download/4f6m7/ -O models/dataset2_pursuit.h5" \

@@ -9,22 +9,44 @@
 
 # bidsMReye
 
-BIDS app for decoding gaze position from the eyeball MR-signal using [deepMReye](https://github.com/DeepMReye/DeepMReye) ([1](https://doi.org/10.1038/s41593-021-00947-w)).
+BIDS app for decoding gaze position from the eyeball MR-signal using
+[deepMReye](https://github.com/DeepMReye/DeepMReye)
+([1](https://doi.org/10.1038/s41593-021-00947-w)).
 
-To be used on preprocessed BIDS derivatives (e.g. [fMRIprep](https://github.com/nipreps/fmriprep) outputs). No eye-tracking data required.
+To be used on preprocessed BIDS derivatives (e.g.
+[fMRIprep](https://github.com/nipreps/fmriprep) outputs). No eye-tracking data
+required.
 
-By default, bidsMReye uses a [pre-trained version](https://osf.io/23t5v) of [deepMReye](https://github.com/DeepMReye/DeepMReye) trained on 5 datasets incl. guided fixations ([2](https://doi.org/10.1038/sdata.2017.181)), smooth pursuit ([3](https://doi.org/10.1016/j.neuroimage.2018.04.012),[4](https://doi.org/10.1101/2021.08.03.454928),[5](https://doi.org/10.1038/s41593-017-0050-8)) and free viewing ([6](https://doi.org/10.1038/s41593-017-0049-1)). Other pretrained versions are optional. Dedicated model training is recommended.
+By default, bidsMReye uses a [pre-trained version](https://osf.io/23t5v) of
+[deepMReye](https://github.com/DeepMReye/DeepMReye) trained on 5 datasets incl.
+guided fixations ([2](https://doi.org/10.1038/sdata.2017.181)), smooth pursuit
+([3](https://doi.org/10.1016/j.neuroimage.2018.04.012),[4](https://doi.org/10.1101/2021.08.03.454928),[5](https://doi.org/10.1038/s41593-017-0050-8))
+and free viewing ([6](https://doi.org/10.1038/s41593-017-0049-1)). Other
+pretrained versions are optional. Dedicated model training is recommended.
 
-The pipeline automatically extracts the eyeball voxels and saves them as a python pickle file. This can be used also for other multivariate pattern analyses in the absence of eye-tracking data. Decoded gaze positions allow computing eye movements.
+The pipeline automatically extracts the eyeball voxels and saves them as a
+python pickle file. This can be used also for other multivariate pattern
+analyses in the absence of eye-tracking data. Decoded gaze positions allow
+computing eye movements.
 
-For more information, see the [User Recommendations](https://deepmreye.slite.com/p/channel/MUgmvViEbaATSrqt3susLZ/notes/kKdOXmLqe). If you have other questions, please reach out to the developer team.
+For more information, see the
+[User Recommendations](https://deepmreye.slite.com/p/channel/MUgmvViEbaATSrqt3susLZ/notes/kKdOXmLqe).
+If you have other questions, please reach out to the developer team.
 
 ## Install
 
-Better to use the docker image but you can also build the package locally if you
-want.
+Better to use the docker image as there are known install issues of deepmreye on
+Apple M1 for example but you can also build the package locally if you want.
 
 ### Docker
+
+#### Build
+
+```bash
+docker build --tag cpplab/bidsmreye:latest --file docker/Dockerfile .
+```
+
+#### Pull (work in progress)
 
 Pull the latest docker image:
 
@@ -49,19 +71,37 @@ make install
 
 ## Usage
 
+### CLI
+
+Type the following for more information:
+
 ```bash
-bidsmreye --action all \
-          bids_dir \
-          output_dir
+bidsmreye --help
+```
 
-bidsmreye --action prepare \
-          bids_dir \
-          output_dir
+`--action prepapre` means that bidsmreye will extract the data coming from the
+eyes from the fMRI images.
 
+```bash
 bidsmreye --action generalize \
           bids_dir \
           output_dir
 ```
+
+`--action generalize` means that the extracted data will be used as input and
+that bidsmeye will use it to predict what were the eye movements of your
+participants.
+
+```bash
+# all does "prepare" then "generalize"
+bidsmreye --action all \
+          bids_dir \
+          output_dir
+```
+
+## Demo
+
+Please look up the [documentation](https://bidsmreye.readthedocs.io/en/latest/demo.html)
 
 ## Contributors ✨
 
@@ -87,4 +127,6 @@ This project follows the
 [all-contributors](https://github.com/all-contributors/all-contributors)
 specification. Contributions of any kind welcome!
 
-If you train [deepMReye](https://github.com/DeepMReye/DeepMReye), or if you have eye-tracking training labels and the extracted eyeball voxels, consider sharing it to contribute to the [pretrained model pool](https://osf.io/mrhk9/).
+If you train [deepMReye](https://github.com/DeepMReye/DeepMReye), or if you have
+eye-tracking training labels and the extracted eyeball voxels, consider sharing
+it to contribute to the [pretrained model pool](https://osf.io/mrhk9/).
