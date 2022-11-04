@@ -236,7 +236,7 @@ docker/Dockerfile: ## Dockerfile for the bidsmreye docker image
 docker_build: docker/Dockerfile
 	docker build --tag cpplab/bidsmreye:latest --file docker/Dockerfile .
 
-docker/Dockerfile_dev: ## Dockerfile for the bidsmreye docker image using local pacakge
+docker/Dockerfile_dev: ## Dockerfile for the bidsmreye docker image using local package
 	docker run --rm repronim/neurodocker:0.7.0 generate docker \
 	--base debian:stretch-slim \
 	--pkg-manager apt \

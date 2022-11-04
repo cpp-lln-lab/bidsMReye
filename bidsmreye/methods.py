@@ -18,7 +18,7 @@ def methods(output_dir: str | Path = Path(".")) -> Path:
     :param output_dir: Defaults to Path(".")
     :type  output_dir: Union[str, Path], optional
 
-    :return: Outout file name.
+    :return: Output file name.
     :rtype: Path
     """
     if isinstance(output_dir, str):
