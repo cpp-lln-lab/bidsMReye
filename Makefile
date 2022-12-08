@@ -50,10 +50,6 @@ clean-test: ## remove test and coverage artifacts
 
 ## INSTALL
 
-install: clean  ## install the package to the active Python's site-packages
-	pip install .
-	make models
-
 install_dev: clean ## install the package and development dependencies to the active Python's site-packages
 	pip install -e .[dev]
 	make models

@@ -33,10 +33,14 @@ For more information, see the
 [User Recommendations](https://deepmreye.slite.com/p/channel/MUgmvViEbaATSrqt3susLZ/notes/kKdOXmLqe).
 If you have other questions, please reach out to the developer team.
 
+## Requirements
+
+At the moment bidsmreye only supports python 3.8 and 3.9.
+
 ## Install
 
 Better to use the docker image as there are known install issues of deepmreye on
-Apple M1 for example but you can also build the package locally if you want.
+Apple M1 for example but you can also ge the package from pypi if you want.
 
 ### Docker
 
@@ -54,7 +58,13 @@ Pull the latest docker image:
 docker pull cpplab/bidsmreye:latest
 ```
 
-### Install from source
+### Python package
+
+```bash
+pip install bidsmreye
+```
+
+### Dev install
 
 Clone this repository.
 
@@ -66,7 +76,7 @@ Then install the package:
 
 ```bash
 cd bidsMReye
-make install
+make install_dev
 ```
 
 ## Usage
@@ -83,7 +93,7 @@ bidsmreye --help
 eyes from the fMRI images.
 
 ```bash
-bidsmreye --action generalize \
+bidsmreye --action prepapre \
           bids_dir \
           output_dir
 ```
@@ -93,7 +103,14 @@ that bidsmeye will use it to predict what were the eye movements of your
 participants.
 
 ```bash
-# all does "prepare" then "generalize"
+bidsmreye --action generalize \
+          bids_dir \
+          output_dir
+```
+
+"all" does "prepare" then "generalize".
+
+```bash
 bidsmreye --action all \
           bids_dir \
           output_dir
