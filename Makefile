@@ -50,10 +50,6 @@ clean-test: ## remove test and coverage artifacts
 
 ## INSTALL
 
-install: clean  ## install the package to the active Python's site-packages
-	pip install .
-	make models
-
 install_dev: clean ## install the package and development dependencies to the active Python's site-packages
 	pip install -e .[dev]
 	make models
@@ -215,7 +211,7 @@ docker/Dockerfile: ## Dockerfile for the bidsmreye docker image
 	--base debian:stretch-slim \
 	--pkg-manager apt \
 	--install "git wget" \
-	--run "mkdir -p /home/neuro/bidsMReye" \
+	--run "mkdir -p /home/neuro/bidsMReye/models" \
 	--workdir /home/neuro/bidsMReye \
  	--run "wget -q https://osf.io/download/cqf74/ -O models/dataset1_guided_fixations.h5" \
 	--run "wget -q https://osf.io/download/4f6m7/ -O models/dataset2_pursuit.h5" \
@@ -236,7 +232,7 @@ docker/Dockerfile: ## Dockerfile for the bidsmreye docker image
 docker_build: docker/Dockerfile
 	docker build --tag cpplab/bidsmreye:latest --file docker/Dockerfile .
 
-docker/Dockerfile_dev: ## Dockerfile for the bidsmreye docker image using local pacakge
+docker/Dockerfile_dev: ## Dockerfile for the bidsmreye docker image using local package
 	docker run --rm repronim/neurodocker:0.7.0 generate docker \
 	--base debian:stretch-slim \
 	--pkg-manager apt \

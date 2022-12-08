@@ -60,9 +60,9 @@
             "type": "String",
             "list": false,
             "value-choices": [
-                "genT1map",
-                "skullstrip",
-                "segment"
+                "prepare",
+                "genralize",
+                "all"
             ],
             "optional": false,
             "command-line-flag": "--action"

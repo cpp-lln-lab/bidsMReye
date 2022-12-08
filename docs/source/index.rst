@@ -6,7 +6,6 @@ Welcome to bidsMReye's documentation!
    :caption: Contents:
 
    readme
-   installation
    demo
    usage_notes
    modules

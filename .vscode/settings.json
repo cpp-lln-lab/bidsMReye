@@ -1,14 +1,15 @@
 {
-    "makefile.extensionOutputFolder": "./.vscode",
-    "cSpell.words": [
-        "bidsmreye",
-        "bidsname",
-        "bidsutils",
-        "coregister",
-        "coregistration",
-        "eyemask",
-        "filefolder"
-    ],
-    "autoDocstring.docstringFormat": "sphinx",
-    "esbonio.sphinx.confDir": ""
+  "makefile.extensionOutputFolder": "./.vscode",
+  "cSpell.words": [
+    "bidsmreye",
+    "bidsname",
+    "bidsutils",
+    "coregister",
+    "coregistration",
+    "eyemask",
+    "filefolder"
+  ],
+  "autoDocstring.docstringFormat": "sphinx",
+  "esbonio.sphinx.confDir": "",
+  "githubPullRequests.ignoredPullRequestBranches": ["main"]
 }

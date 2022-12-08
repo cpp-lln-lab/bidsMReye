@@ -39,25 +39,24 @@ For Linux or MacOS you can use `make` to get run all the steps of the demo.
 make docker_demo
 ```
 
-This will run the different steps of the demo:
+```bash
+docker run --rm -it \
+      --user "$(id -u):$(id -g)" \
+      -v $PWD/tests/data/moae_fmriprep:/home/neuro/data \
+      -v $PWD/outputs/moae_fmriprep/derivatives:/home/neuro/outputs/ \
+      cpplab/bidsmreye:latest \
+      /home/neuro/data/ \
+      /home/neuro/outputs/ \
+      participant \
+      --action prepare
+```
 
 ```bash
 docker run --rm -it \
       --user "$(id -u):$(id -g)" \
       -v $PWD/tests/data/moae_fmriprep:/home/neuro/data \
-      -v $PWD/outputs:/home/neuro/outputs \
-      bidsmreye:latest \
-      /home/neuro/data/ \
-      /home/neuro/outputs/ \
-      participant \
-      --action prepare
-
-
-docker run --rm -it \
-      --user "$(id -u):$(id -g)" \
-      -v $PWD/tests/data/moae_fmriprep:/home/neuro/data \
-      -v $PWD/outputs:/home/neuro/outputs \
-      bidsmreye:latest \
+      -v $PWD/outputs/moae_fmriprep/derivatives:/home/neuro/outputs/ \
+      cpplab/bidsmreye:latest \
       /home/neuro/data/ \
       /home/neuro/outputs/ \
       participant \

@@ -1,8 +1,0 @@
-deepmreye @ git+https://github.com/Remi-Gau/DeepMReye.git@python310
-chevron
-pybids
-rich
-attrs
-kaleido
-pooch
-tqdm

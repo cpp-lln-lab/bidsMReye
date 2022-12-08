@@ -6,14 +6,18 @@ on:
   pull_request:
     branches: [ "*" ]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test_and_coverage:
 
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest]
-        python-version: ['3.8', '3.9']
+        os: [ubuntu-latest, macOS-latest] # windows-latest: does not work because antspyx is not available for windows
+        python-version: ["3.8", "3.9", "3.10"] # '3.11' : some dependencies are not yet available for python 3.11
 
     steps:
 
