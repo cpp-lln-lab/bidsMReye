@@ -61,7 +61,7 @@ class Config:
 
     @input_folder.validator
     def _check_input_folder(self, attribute: str, value: Path) -> None:
-        if not value.is_dir:
+        if not value.is_dir:  # type: ignore
             raise ValueError(f"Input_folder must be an existing directory:\n{value}.")
 
     output_folder: Path = field(default=None, converter=Path)
