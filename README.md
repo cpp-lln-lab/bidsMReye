@@ -39,8 +39,8 @@ At the moment bidsmreye only supports python 3.8 and 3.9.
 
 ## Install
 
-Better to use the docker image as there are known install issues of deepmreye on
-Apple M1 for example but you can also ge the package from pypi if you want.
+Better to use the docker image as there are known install issues of deepmreye
+on Apple M1 for example.
 
 ### Docker
 
@@ -60,8 +60,41 @@ docker pull cpplab/bidsmreye:latest
 
 ### Python package
 
+You can also get the package from pypi if you want.
+
 ```bash
 pip install bidsmreye
+```
+
+#### Conda installation
+
+**NOT TESTED YET**
+
+To encapsulate bidsMReye in a virtual environment install with the following commands:
+
+```bash
+conda create --name bidsmreye python=3.9
+conda activate bidsmreye
+pip install bidsmreye
+```
+
+The tensorflow dependency supports both CPU and GPU instructions.
+
+Note that you might need to install cudnn first
+
+```bash
+conda install -c conda-forge cudnn
+```
+
+If installation of [ANTsPy](https://github.com/ANTsX/ANTsPy) fails try to manually install it via:
+
+<!-- may help on windows ? -->
+
+```bash
+git clone https://github.com/ANTsX/ANTsPy
+cd ANTsPy
+pip install CMake
+python3 setup.py install
 ```
 
 ### Dev install
