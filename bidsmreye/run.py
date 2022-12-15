@@ -174,7 +174,10 @@ def common_parser() -> MuhParser:
         nargs="+",
     )
     parser.add_argument(
-        "--verbosity", help="INFO, WARNING.", choices=["INFO", "WARNING"], default="INFO"
+        "--verbosity",
+        help="ERROR, INFO, WARNING, DEBUG",
+        choices=["ERROR", "INFO", "WARNING", "DEBUG"],
+        default="INFO",
     )
     parser.add_argument(
         "--debug", help="true or false.", choices=["true", "false"], default="false"
@@ -212,8 +215,10 @@ def common_parser() -> MuhParser:
             "3_pursuit",
             "4_pursuit",
             "5_free_viewing",
+            "6_1-to-5",
+            "7_1-to-6",
         ],
-        default="1_guided_fixations",
+        default="7_1-to-6",
     )
 
     return parser
