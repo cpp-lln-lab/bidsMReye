@@ -136,13 +136,14 @@ clean-demo:
 
 demo: clean-demo tests/data/moae_fmriprep ## demo: runs all demo steps on MOAE dataset
 	bidsmreye 	--action all \
+				-vv \
 				$$PWD/tests/data/moae_fmriprep \
 				$$PWD/outputs/moae_fmriprep/derivatives \
 				participant
 
 prepare: tests/data/moae_fmriprep ## demo: prepares the data of MOAE dataset
 	bidsmreye 	--action prepare \
-				--verbosity INFO \
+				-vv \
 				--debug true \
 				--reset_database true \
 				$$PWD/tests/data/moae_fmriprep \
@@ -151,7 +152,7 @@ prepare: tests/data/moae_fmriprep ## demo: prepares the data of MOAE dataset
 
 generalize: ## demo: predicts labels of MOAE dataset
 	bidsmreye 	--action generalize \
-				--verbosity WARNING \
+				-vv \
 				--debug true \
 				--reset_database true \
 				$$PWD/tests/data/moae_fmriprep \

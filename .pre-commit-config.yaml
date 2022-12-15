@@ -41,7 +41,7 @@ repos:
         rev: 'v0.991'
         hooks:
         -   id: mypy
-            additional_dependencies: [types-all]
+            additional_dependencies: [types-all, pydantic]
             files: bidsmreye
             args: ["--config-file", "setup.cfg"]
 

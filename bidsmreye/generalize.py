@@ -147,6 +147,8 @@ def process_subject(cfg: Config, layout_out: BIDSLayout, subject_label: str) -> 
     if cfg.run:
         this_filter["run"] = return_regex(cfg.run)
 
+    log.info(f"Running subject: {subject_label}")
+
     log.debug(f"Looking for files with filter\n{this_filter}")
 
     data = layout_out.get(
@@ -155,7 +157,8 @@ def process_subject(cfg: Config, layout_out: BIDSLayout, subject_label: str) -> 
         **this_filter,
     )
 
-    log.debug(f"Found files\n{data}")
+    to_print = [str(Path(x).relative_to(layout_out.root)) for x in data]
+    log.debug(f"Found files\n{to_print}")
 
     for file in data:
 

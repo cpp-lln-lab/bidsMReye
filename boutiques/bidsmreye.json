@@ -61,7 +61,7 @@
             "list": false,
             "value-choices": [
                 "prepare",
-                "genralize",
+                "generalize",
                 "all"
             ],
             "optional": false,
