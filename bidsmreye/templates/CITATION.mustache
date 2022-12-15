@@ -6,4 +6,22 @@ to decode eye motion for fMRI time series data.
 
 ### data extraction
 
+All imaging data underwent co-registration conducted
+using Advanced Normalization Tools (ANTs, RRID:SCR_004757) within Python (ANTsPy).
+First, each participant's mean EPI was non-linearly co-registered
+to an average template.
+Second, we co-registered all voxels within a bounding box that included the eyes
+to a preselected bounding box in our group template to further improve the fit.
+
+Each voxel within those bounding box underwent two normalization steps.
+First, the across-run median signal intensity was subtracted
+from each voxel and sample
+and was divided by the median absolute deviation over time (temporal normalization).
+Second, for each sample, the mean across all voxels
+within the eye masks was subtracted and divided by the standard deviation
+across voxels (spatial normalization).
+
 ### eyemotion decoding
+
+Voxels time series were used as inputs for generalization decoding
+using using the the pre-trained model {{model}} from deepMReye ({{model_url}}).

@@ -135,29 +135,29 @@ clean-demo:
 	rm -fr outputs/moae_fmriprep
 
 demo: clean-demo tests/data/moae_fmriprep ## demo: runs all demo steps on MOAE dataset
-	bidsmreye 	--action all \
-				-vv \
-				$$PWD/tests/data/moae_fmriprep \
+	bidsmreye	$$PWD/tests/data/moae_fmriprep \
 				$$PWD/outputs/moae_fmriprep/derivatives \
-				participant
+				participant \
+				--action all \
+				-vv \
 
 prepare: tests/data/moae_fmriprep ## demo: prepares the data of MOAE dataset
-	bidsmreye 	--action prepare \
-				-vv \
-				--debug true \
-				--reset_database true \
-				$$PWD/tests/data/moae_fmriprep \
+	bidsmreye 	$$PWD/tests/data/moae_fmriprep \
 				$$PWD/outputs/moae_fmriprep/derivatives \
-				participant
+				participant \
+				--action prepare \
+				-vv \
+				--debug \
+				--reset_database
 
 generalize: ## demo: predicts labels of MOAE dataset
-	bidsmreye 	--action generalize \
-				-vv \
-				--debug true \
-				--reset_database true \
-				$$PWD/tests/data/moae_fmriprep \
+	bidsmreye 	$$PWD/tests/data/moae_fmriprep \
 				$$PWD/outputs/moae_fmriprep/derivatives \
-				participant
+				participant \
+				--action generalize \
+				-vv \
+				--debug \
+				--reset_database
 
 
 ## Openneuro data
@@ -174,35 +174,37 @@ get_ds002799: tests/data/data_ds002799
 	datalad get sub-30[27]/ses-*/func/*run-*preproc*bold*
 
 ds002799_prepare: get_ds002799
-	bidsmreye 	--action prepare \
-				--debug true \
-				$$PWD/tests/data/ds002799/derivatives/fmriprep \
+	bidsmreye 	$$PWD/tests/data/ds002799/derivatives/fmriprep \
 				$$PWD/outputs/ds002799/derivatives \
 				participant \
+				--action prepare \
+				--debug \
 				--participant_label 302 307 \
 				--space MNI152NLin2009cAsym T1w \
 				--run 1 2
+
 
 ds002799_generalize:
-	bidsmreye 	--action generalize \
-				--debug true \
-				$$PWD/tests/data/ds002799/derivatives/fmriprep \
+	bidsmreye 	$$PWD/tests/data/ds002799/derivatives/fmriprep \
 				$$PWD/outputs/ds002799/derivatives \
 				participant \
+				--action generalize \
+				--debug \
 				--participant_label 302 307 \
 				--space MNI152NLin2009cAsym T1w \
 				--run 1 2
+
 
 ds002799: clean-ds002799 get_ds002799
-	bidsmreye 	--action all \
-				--debug true \
-				$$PWD/tests/data/ds002799/derivatives/fmriprep \
+	bidsmreye	$$PWD/tests/data/ds002799/derivatives/fmriprep \
 				$$PWD/outputs/ds002799/derivatives \
 				participant \
+				--action all \
+				--debug \
 				--participant_label 302 307 \
 				--space MNI152NLin2009cAsym T1w \
-				--run 1 2
-
+				--run 1 2 \
+				-vv
 
 ## DOCKER
 .PHONY: docker/Dockerfile docker/Dockerfile_dev
@@ -277,8 +279,8 @@ docker_prepare_data:
 				/home/neuro/outputs/ \
 				participant \
 				--action prepare \
-				--debug true \
-				--reset_database true
+				--debug \
+				--reset_database
 
 docker_generalize:
 	docker run --rm -it \
