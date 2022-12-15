@@ -177,6 +177,7 @@ def prepare_data(cfg: Config) -> None:
 
     create_dir_if_absent(cfg.output_folder)
     layout_out = get_dataset_layout(cfg.output_folder)
+    # TODO add readme and license
     layout_out = set_dataset_description(layout_out)
     layout_out.dataset_description["DatasetType"] = "derivative"
     layout_out.dataset_description["GeneratedBy"][0]["Name"] = "bidsmreye"

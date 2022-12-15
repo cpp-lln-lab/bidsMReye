@@ -17,7 +17,11 @@ from bids import BIDSLayout
 from rich.logging import RichHandler
 from rich.traceback import install
 
+from . import _version
+
 log = logging.getLogger("bidsmreye")
+
+__version__ = _version.get_versions()["version"]
 
 
 def bidsmreye_log(name: str | None = None) -> logging.Logger:
@@ -32,7 +36,7 @@ def bidsmreye_log(name: str | None = None) -> logging.Logger:
     # let rich print the traceback
     install(show_locals=True)
 
-    FORMAT = "bidsMReye - %(asctime)s - %(levelname)s - %(message)s"
+    FORMAT = "bidsMReye - %(asctime)s - %(message)s"
 
     log_level = "INFO"
 
@@ -397,27 +401,29 @@ def set_dataset_description(layout: BIDSLayout, is_derivative: bool = True) -> B
     """
     data: dict[str, Any] = {
         "Name": "dataset name",
-        "BIDSVersion": "1.6.0",
+        "BIDSVersion": "1.7.0",
         "DatasetType": "raw",
-        "License": "",
+        "License": "CCO",
         "Authors": ["", ""],
         "Acknowledgements": "Special thanks to ",
-        "HowToAcknowledge": "Please cite this paper: ",
+        "HowToAcknowledge": """Please cite this paper: Frey, M., Nau, M. & Doeller, C.F.
+Magnetic resonance-based eye tracking using deep neural networks.
+Nat Neurosci 24, 1772-1779 (2021).
+https://doi.org/10.1038/s41593-021-00947-w""",
         "Funding": ["", ""],
         "EthicsApprovals": [""],
-        "ReferencesAndLinks": ["", ""],
+        "ReferencesAndLinks": ["https://doi.org/10.1038/s41593-021-00947-w", ""],
         "DatasetDOI": "doi:",
-        "HEDVersion": "",
     }
 
     if is_derivative:
         data["GeneratedBy"] = [
             {
-                "Name": "",
-                "Version": "",
+                "Name": "bidsMReye",
+                "Version": __version__,
                 "Container": {"Type": "", "Tag": ""},
                 "Description": "",
-                "CodeURL": "",
+                "CodeURL": "https://github.com/cpp-lln-lab/bidsMReye.git",
             },
         ]
 

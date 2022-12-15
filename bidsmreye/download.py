@@ -64,7 +64,7 @@ def download(
     :rtype: Path
     """
     if not model_name:
-        model_name = "1_guided_fixations"
+        model_name = "7_1-to-6"
 
     if not output_dir:
         output_dir = Path.cwd().joinpath("models")
@@ -76,6 +76,8 @@ def download(
         "3_pursuit": "e89wp",
         "4_pursuit": "96nyp",
         "5_free_viewing": "89nky",
+        "6_1-to-5": "datasets_1to5.h5",
+        "7_1-to-6": "datasets_1to5.h5",
     }
 
     if model_name == "all":
