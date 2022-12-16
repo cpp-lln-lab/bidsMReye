@@ -1,7 +1,6 @@
 """TODO."""
 from __future__ import annotations
 
-import json
 import logging
 import os
 import warnings
@@ -17,6 +16,7 @@ from deepmreye.util import data_generator
 from deepmreye.util import model_opts
 from rich import print
 
+from bidsmreye.utils import add_sidecar_in_root
 from bidsmreye.utils import check_layout
 from bidsmreye.utils import Config
 from bidsmreye.utils import create_bidsname
@@ -27,24 +27,6 @@ from bidsmreye.utils import move_file
 from bidsmreye.utils import return_regex
 
 log = logging.getLogger("bidsmreye")
-
-
-def create_sidecar(
-    layout: BIDSLayout, filename: str, SamplingFrequency: float | None = None
-) -> None:
-    """Create sidecar for the eye motion timeseries."""
-    if SamplingFrequency is None:
-        SamplingFrequency = 0
-    content = {
-        "SamplingFrequency": SamplingFrequency,
-        "StartTime": 0,
-        "SampleCoordinateUnit": "degrees",
-        "EnvironmentCoordinates": "center",
-        "SampleCoordinateSystem": "gaze-on-screen",
-        "RecordedEye": "both",
-    }
-    sidecar_name = create_bidsname(layout, filename, "confounds_json")
-    json.dump(content, open(sidecar_name, "w"), indent=4)
 
 
 def convert_confounds(layout_out: BIDSLayout, file: str | Path) -> Path:
@@ -139,7 +121,6 @@ def create_confounds_tsv(layout_out: BIDSLayout, file: str, subject_label: str) 
     :type subject_label: str
     """
     confound_numpy = create_bidsname(layout_out, file, "confounds_numpy")
-    create_sidecar(layout_out, file)
 
     source_file = Path(layout_out.root).joinpath(
         f"sub-{subject_label}", "results_tmp.npy"
@@ -238,6 +219,8 @@ def generalize(cfg: Config) -> None:
 
     layout_out = get_dataset_layout(cfg.output_folder)
     check_layout(cfg, layout_out)
+
+    add_sidecar_in_root(layout_out)
 
     subjects = list_subjects(cfg, layout_out)
 

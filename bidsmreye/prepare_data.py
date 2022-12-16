@@ -17,6 +17,7 @@ from bidsmreye.utils import config_to_dict
 from bidsmreye.utils import copy_license
 from bidsmreye.utils import create_bidsname
 from bidsmreye.utils import create_dir_if_absent
+from bidsmreye.utils import create_sidecar
 from bidsmreye.utils import get_dataset_layout
 from bidsmreye.utils import get_deepmreye_filename
 from bidsmreye.utils import list_subjects
@@ -161,6 +162,8 @@ def process_subject(
         mask_name = create_bidsname(layout_out, img, "mask")
         deepmreye_mask_name = get_deepmreye_filename(layout_in, img, "mask")
         move_file(deepmreye_mask_name, mask_name)
+
+        create_sidecar(layout_out, img)
 
         combine_data_with_empty_labels(layout_out, mask_name)
 

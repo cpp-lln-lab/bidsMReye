@@ -55,6 +55,31 @@ def copy_license(output_dir: Path) -> Path:
     return output_file
 
 
+def add_sidecar_in_root(layout_out: BIDSLayout) -> None:
+    content = {
+        "StartTime": 0,
+        "SampleCoordinateUnit": "degrees",
+        "EnvironmentCoordinates": "center",
+        "SampleCoordinateSystem": "gaze-on-screen",
+        "RecordedEye": "both",
+    }
+    sidecar_name = Path(layout_out.root).joinpath("desc-bidsmreye_eyetrack.json")
+    json.dump(content, open(sidecar_name, "w"), indent=4)
+
+
+def create_sidecar(
+    layout: BIDSLayout, filename: str, SamplingFrequency: float | None = None
+) -> None:
+    """Create sidecar for the eye motion timeseries."""
+    if SamplingFrequency is None:
+        SamplingFrequency = 0
+    content = {
+        "SamplingFrequency": SamplingFrequency,
+    }
+    sidecar_name = create_bidsname(layout, filename, "confounds_json")
+    json.dump(content, open(sidecar_name, "w"), indent=4)
+
+
 def available_models() -> list[str]:
     """Return a list of available models."""
     return [
