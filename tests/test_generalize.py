@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import shutil
 from pathlib import Path
 
 from bidsmreye.generalize import convert_confounds
@@ -18,9 +19,12 @@ def test_convert_confounds():
         "func",
         "sub-01_task-nback_space-MNI152NLin2009cAsym_desc-bidsmreye_confounds.npy",
     )
+    shutil.copy(file, file.with_suffix(".bak"))
 
     confound_name = convert_confounds(layout_out, file)
 
     assert confound_name.is_file()
 
     confound_name.unlink()
+    shutil.copy(file.with_suffix(".bak"), file)
+    file.with_suffix(".bak").unlink()

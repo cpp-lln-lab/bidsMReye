@@ -1,7 +1,9 @@
 """TODO."""
 from __future__ import annotations
 
+import json
 import logging
+import os
 import warnings
 from pathlib import Path
 from typing import Any
@@ -25,6 +27,24 @@ from bidsmreye.utils import move_file
 from bidsmreye.utils import return_regex
 
 log = logging.getLogger("bidsmreye")
+
+
+def create_sidecar(
+    layout: BIDSLayout, filename: str, SamplingFrequency: float | None = None
+) -> None:
+    """Create sidecar for the eye motion timeseries."""
+    if SamplingFrequency is None:
+        SamplingFrequency = 0
+    content = {
+        "SamplingFrequency": SamplingFrequency,
+        "StartTime": 0,
+        "SampleCoordinateUnit": "degrees",
+        "EnvironmentCoordinates": "center",
+        "SampleCoordinateSystem": "gaze-on-screen",
+        "RecordedEye": "both",
+    }
+    sidecar_name = create_bidsname(layout, filename, "confounds_json")
+    json.dump(content, open(sidecar_name, "w"), indent=4)
 
 
 def convert_confounds(layout_out: BIDSLayout, file: str | Path) -> Path:
@@ -63,8 +83,13 @@ def convert_confounds(layout_out: BIDSLayout, file: str | Path) -> Path:
         log.info(f"Saving to {confound_name}")
 
         pd.DataFrame(this_pred).to_csv(
-            confound_name, sep="\t", header=["x_position", "y_position"], index=None
+            confound_name,
+            sep="\t",
+            header=["eye1_x_coordinate", "eye1_y_coordinate"],
+            index=None,
         )
+
+    os.remove(confound_numpy)
 
     return confound_name
 
@@ -114,6 +139,7 @@ def create_confounds_tsv(layout_out: BIDSLayout, file: str, subject_label: str) 
     :type subject_label: str
     """
     confound_numpy = create_bidsname(layout_out, file, "confounds_numpy")
+    create_sidecar(layout_out, file)
 
     source_file = Path(layout_out.root).joinpath(
         f"sub-{subject_label}", "results_tmp.npy"
