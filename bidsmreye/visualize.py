@@ -6,11 +6,11 @@ import pandas as pd
 import plotly.graph_objs as go
 from plotly.subplots import make_subplots
 
-opacity = 1
-line_width = 3
-font_size = dict(size=14)
-grid_color = "rgb(240,240,240)"
-line_color = "rgb(0, 150, 175)"
+OPACITY = 1
+LINE_WIDTH = 3
+FONT_SIZE = dict(size=14)
+GRID_COLOR = "white"
+LINE_COLOR = "rgb(0, 150, 175)"
 
 
 def value_range(X: pd.Series) -> list[float]:
@@ -43,15 +43,26 @@ def visualize_eye_gaze_data(
     time_stamps = eye_gaze_data["eye_timestamp"]
     X = eye_gaze_data["eye1_x_coordinate"]
     Y = eye_gaze_data["eye1_y_coordinate"]
+    displacement = eye_gaze_data["displacement"]
 
     # Plot input signal together with split output signal (X & Y)
     plot_time_series(fig, X, time_stamps, title_text="X", row=1, col=1)
     plot_time_series(fig, Y, time_stamps, title_text="Y", row=2, col=1)
-    fig.update_xaxes(
-        row=2,
+    plot_time_series(
+        fig,
+        displacement,
+        time_stamps,
+        title_text="displacement",
+        row=3,
         col=1,
-        title=dict(text="Time (s)", standoff=16, font=font_size),
-        tickfont=font_size,
+        plotting_range=[-0.1, displacement.max() + 0.1],
+        line_color="grey",
+    )
+    fig.update_xaxes(
+        row=3,
+        col=1,
+        title=dict(text="Time (s)", standoff=16, font=FONT_SIZE),
+        tickfont=FONT_SIZE,
     )
 
     plot_heat_map(fig, X, Y)
@@ -66,15 +77,19 @@ def plot_time_series(
     title_text: str,
     row: int,
     col: int,
+    plotting_range: list[float] | None = None,
+    line_color: str = LINE_COLOR,
 ) -> None:
+    if plotting_range is None:
+        plotting_range = value_range(series)
     fig.add_trace(
         go.Scatter(
             x=time_range(time_stamps),
             y=[0, 0],
             mode="lines",
             line_color="black",
-            opacity=opacity,
-            line_width=line_width - 1,
+            opacity=OPACITY,
+            line_width=LINE_WIDTH - 1,
         ),
         row=row,
         col=col,
@@ -85,21 +100,21 @@ def plot_time_series(
             y=series,
             mode="lines",
             line_color=line_color,
-            opacity=opacity,
-            line_width=line_width,
+            opacity=OPACITY,
+            line_width=LINE_WIDTH,
         ),
         row=row,
         col=col,
     )
-    fig.update_xaxes(range=time_range(time_stamps), row=row, col=col, tickfont=font_size)
+    fig.update_xaxes(range=time_range(time_stamps), row=row, col=col, tickfont=FONT_SIZE)
     fig.update_yaxes(
-        range=value_range(series),
+        range=plotting_range,
         row=row,
         col=col,
-        gridcolor=grid_color,
+        gridcolor=GRID_COLOR,
         ticksuffix="°",
-        title=dict(text=title_text, standoff=0, font=font_size),
-        tickfont=font_size,
+        title=dict(text=title_text, standoff=0, font=FONT_SIZE),
+        tickfont=FONT_SIZE,
     )
 
     fig.update_layout(showlegend=False)
@@ -122,7 +137,7 @@ def plot_heat_map(fig: Any, X: pd.Series, Y: pd.Series) -> None:
             y=[0, 0],
             mode="lines",
             line_color="black",
-            opacity=opacity,
+            opacity=OPACITY,
             line_width=1,
         ),
         row=1,
@@ -134,7 +149,7 @@ def plot_heat_map(fig: Any, X: pd.Series, Y: pd.Series) -> None:
             y=y_range,
             mode="lines",
             line_color="black",
-            opacity=opacity,
+            opacity=OPACITY,
             line_width=1,
         ),
         row=1,
@@ -156,16 +171,16 @@ def plot_heat_map(fig: Any, X: pd.Series, Y: pd.Series) -> None:
         col=3,
         range=value_range(X),
         ticksuffix="°",
-        title=dict(text="X", standoff=16, font=font_size),
-        tickfont=font_size,
+        title=dict(text="X", standoff=16, font=FONT_SIZE),
+        tickfont=FONT_SIZE,
     )
     fig.update_yaxes(
         row=1,
         col=3,
         range=value_range(Y),
         ticksuffix="°",
-        title=dict(text="Y", standoff=16, font=font_size),
-        tickfont=font_size,
+        title=dict(text="Y", standoff=16, font=FONT_SIZE),
+        tickfont=FONT_SIZE,
     )
 
     fig.update_layout(showlegend=False)

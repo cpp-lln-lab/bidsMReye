@@ -5,6 +5,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from bidsmreye.quality_control import compute_displacement
+from bidsmreye.quality_control import compute_robust_outliers
 from bidsmreye.visualize import visualize_eye_gaze_data
 
 
@@ -25,6 +27,11 @@ def test_perform_quality_control():
         "eye1_y_coordinate": np.random.randn(200),
     }
     df = pd.DataFrame(data)
+    df["displacement"] = compute_displacement(
+        df["eye1_x_coordinate"], df["eye1_y_coordinate"]
+    )
+    df["outliers"] = compute_robust_outliers(df["displacement"])
+
     df.to_csv(confounds_tsv, sep="\t", index=False)
 
     eye_gaze_data = pd.read_csv(confounds_tsv, sep="\t")

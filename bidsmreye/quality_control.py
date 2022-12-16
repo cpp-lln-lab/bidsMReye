@@ -8,6 +8,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from bids import BIDSLayout  # type: ignore
+from scipy.stats.distributions import chi2
 
 from bidsmreye.utils import check_layout
 from bidsmreye.utils import Config
@@ -17,6 +18,13 @@ from bidsmreye.utils import list_subjects
 from bidsmreye.utils import set_this_filter
 
 log = logging.getLogger("bidsmreye")
+
+
+def compute_displacement(x: pd.Series, y: pd.Series) -> pd.Series:
+
+    displacement = np.sqrt((x.diff() ** 2) + (y.diff() ** 2))
+
+    return displacement
 
 
 def perform_quality_control(layout: BIDSLayout, confounds_tsv: str | Path) -> None:
@@ -95,3 +103,106 @@ def qc_subject(cfg: Config, layout_out: BIDSLayout, subject_label: str) -> None:
     for file in data:
 
         perform_quality_control(layout_out, file)
+
+
+def compute_robust_outliers(
+    time_series: pd.Series, outlier_type: str | None = None
+) -> list[int] | type[NotImplementedError]:
+    """Compute robust ouliers of a time series using S-outliers or Carling's k.
+
+    :param series: Series to compute the outliers on.
+    :type series: pd.Series
+
+    :param outlier_type: Default to 'S-outliers'.
+    :type outlier_type: str
+
+    :return: Series of booleans indicating the outliers.
+    :rtype: pd.Series
+
+    Adapted from spmup:
+    https://github.com/CPernet/spmup/blob/master/QA/spmup_comp_robust_outliers.m
+
+    S-outliers is the default options, it is independent of a measure of
+    centrality as this is based on the median of pair-wise distances. This is
+    a very sensitive measures, i.e. it has a relatively high false positive
+    rates. As such it is a great detection tools.
+
+    The adjusted Carling's box-plot rule can also be used, and derived from
+    the median of the data: outliers are outside the bound of median +/- k*IQR,
+    with k = (17.63*n-23.64)/(7.74*n-3.71). This is a more specific measure,
+    as such it is 'better' than S-outliers to regress-out, removing bad data
+    points (assuming we don't want to 'remove' too many).
+
+    References:
+
+    - Rousseeuw, P. J., and Croux, C. (1993). Alternatives to the the median
+    absolute deviation. J. Am. Stat. Assoc. 88, 1273-1263.
+    <https://www.tandfonline.com/doi/abs/10.1080/01621459.1993.10476408>
+
+    - Carling, K. (2000). Resistant outlier rules and the non-Gaussian case.
+    Stat. Data Anal. 33, 249:258.
+    <http://www.sciencedirect.com/science/article/pii/S0167947399000572>
+
+    - Hoaglin, D.C., Iglewicz, B. (1987) Fine-tuning some resistant rules for
+    outlier labelling. J. Amer. Statist. Assoc., 82 , 1147:1149
+    <http://www.tandfonline.com/doi/abs/10.1080/01621459.1986.10478363>
+    """
+
+    if outlier_type is None:
+        outlier_type = "S-outliers"
+
+    if outlier_type == "S-outliers":
+
+        k = np.sqrt(chi2.ppf(0.975, df=1))
+
+        distance = []
+        for i in range(len(time_series)):
+
+            if time_series[i] == np.nan:
+                distance.append(False)
+                continue
+
+            this_timepoint = time_series[i]
+
+            # all but current data point
+            indices = list(range(len(time_series)))
+            indices.pop(i)
+
+            tmp = time_series[indices]
+            tmp.dropna(inplace=True)
+
+            # median of all pair-wise distances
+            distance.append(np.median(abs(this_timepoint - tmp)))
+
+        # get the S estimator
+        # consistency factor c = 1.1926;
+        Sn = 1.1926 * np.median(distance)
+
+        # get the outliers in a normal distribution
+        # no scaling needed as S estimates already std(data)
+        outliers = (distance / Sn) > k
+
+        return [int(x) for x in outliers]
+
+    elif outlier_type == "Carling":
+
+        return NotImplementedError
+
+        # #  interquartile range
+        # nb_timepoints = len(time_series)
+        # y = sorted(time_series)
+        # j = math.floor(nb_timepoints / 4 + 5 / 12)
+        # g = (nb_timepoints / 4) - j + (5 / 12)
+        # k = nb_timepoints - j + 1
+
+    else:
+        raise ValueError(f"Unknown outlier_type: {outlier_type}")
+
+    #     ql     = (1-g).*y(j,:) + g.*y(j+1,:); % lower quartiles
+    #     qu     = (1-g).*y(k,:) + g.*y(k-1,:); % higher quartiles
+    #     values = qu-ql;                       % inter-quartiles range
+
+    #     % robust outliers
+    #     M = median(time_series);
+    #     k = (17.63*n-23.64)/(7.74*n-3.71); % Carling's k
+    #     outliers = time_series<(M-k*values) | time_series>(M+k*values);
