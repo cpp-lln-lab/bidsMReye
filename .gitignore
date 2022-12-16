@@ -3,6 +3,7 @@ Pipfile
 *.h5
 outputs
 download
+tmp
 logs
 
 # Byte-compiled / optimized / DLL files
