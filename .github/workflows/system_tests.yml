@@ -1,4 +1,4 @@
-name: Test ds002799
+name: system tests
 
 on:
   push:
@@ -11,13 +11,14 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  test_demo:
+  system_test:
 
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
+
     strategy:
       matrix:
-        os: [ubuntu-latest]
-        python-version: ['3.9']
+        python-version: ["3.9"]
+        dataset: ["demo", "ds002799"]
 
     steps:
 
@@ -30,20 +31,19 @@ jobs:
         python-version: ${{ matrix.python-version }}
 
     - name: Install dependencies
-      shell: bash -l {0}
       run: |
         sudo apt-get update -y
         sudo apt-get install -y git-annex
         python -m pip install --upgrade pip setuptools
         pip install datalad
 
-    - name: Datalad WTF
-      run: |
-        datalad wtf
-
     - name: Install bidsmreye
       run: |
         pip install .
 
-    - name: Run ds002799
-      run: make ds002799
+    - name: Datalad WTF
+      run: |
+        datalad wtf
+
+    - name: Run ${{ matrix.dataset }}
+      run: make ${{ matrix.dataset }}
