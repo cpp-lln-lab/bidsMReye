@@ -1,13 +1,3 @@
-- [CONTRIBUTING](#contributing)
-    - [Types of Contributions](#types-of-contributions)
-        - [Report Bugs](#report-bugs)
-        - [Fix Bugs](#fix-bugs)
-        - [Implement Features](#implement-features)
-        - [Write Documentation](#write-documentation)
-        - [Submit Feedback](#submit-feedback)
-    - [Get Started!](#get-started)
-    - [Pull Request Guidelines](#pull-request-guidelines)
-
 # CONTRIBUTING
 
 Contributions are welcome, and they are greatly appreciated! Every little bit
@@ -63,7 +53,7 @@ Ready to contribute? Here's how to set up `bidsmreye` for local development.
 2. Clone your fork locally:
 
 ```bash
-git clone git@github.com:your_name_here/bidsmreye.git
+git clone git@github.com:your_github_username_here/bidsmreye.git
 ```
 
 3. Install your local copy into a virtualenv. Assuming you have
@@ -110,9 +100,9 @@ git push origin name-of-your-bugfix-or-feature
 Before you submit a pull request, check that it meets these guidelines:
 
 1. The pull request should include tests.
-2. If the pull request adds functionality, the docs should be updated. Put your
-   new functionality into a function with a docstring, and add the feature to
-   the list in README.rst.
-3. The pull request should work for Python 3.8, and for PyPy. Check
-   https://github.com/cpp-lln-lab/bidsMReye/actions and make sure that the
-   tests pass for all supported Python versions.
+2. If the pull request adds functionality, the docs should be updated.
+   Put your new functionality into a function with a docstring,
+   and add the feature to the list in README.md.
+4. The pull request should work for Python 3.8, and for PyPy.
+   Check https://github.com/cpp-lln-lab/bidsMReye/actions
+   and make sure that the tests pass for all supported Python versions.
