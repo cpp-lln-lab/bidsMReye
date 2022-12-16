@@ -10,6 +10,7 @@ import warnings
 from pathlib import Path
 from typing import Any
 
+from attrs import asdict
 from attrs import converters
 from attrs import define
 from attrs import field
@@ -225,6 +226,22 @@ class Config:
             setattr(self, attribute, [getattr(self, attribute)])
 
         return self
+
+
+def config_to_dict(cfg: Config) -> dict[str, Any]:
+    """Convert a config to a dictionary.
+
+    :param cfg:
+    :type cfg: _type_
+
+    :return:
+    :rtype: _type_
+    """
+    dict_cfg = asdict(cfg)
+    for key, value in dict_cfg.items():
+        if isinstance(value, Path):
+            dict_cfg[key] = str(value)
+    return dict_cfg
 
 
 def move_file(input: Path, output: Path) -> None:

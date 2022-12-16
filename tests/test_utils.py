@@ -7,6 +7,7 @@ import pytest
 from bids.tests import get_test_data_path
 
 from bidsmreye.utils import Config
+from bidsmreye.utils import config_to_dict
 from bidsmreye.utils import copy_license
 from bidsmreye.utils import create_bidsname
 from bidsmreye.utils import get_bidsname_config
@@ -37,6 +38,14 @@ def test_Config():
     assert sorted(cfg.participant) == ["01", "02", "03", "04", "05"]
     assert sorted(cfg.task) == ["nback", "rest"]
     assert sorted(cfg.space) == ["MNI152NLin2009cAsym", "T1w"]
+
+
+def test_config_to_dict_smoke():
+    cfg = Config(
+        pybids_test_dataset(),
+        Path(__file__).parent.joinpath("data"),
+    )
+    cfg_dict = config_to_dict(cfg)
 
 
 def test_Config_task_omit_missing_values():

@@ -223,3 +223,8 @@ def common_parser() -> MuhParser:
     )
 
     return parser
+
+
+def args_to_dict(args: argparse.Namespace) -> dict[str, Any]:
+    """Converts a argparse.Namespace object to a dictionary."""
+    return vars(args)

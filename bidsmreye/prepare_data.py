@@ -13,6 +13,7 @@ from deepmreye import preprocess
 from bidsmreye.methods import methods
 from bidsmreye.utils import check_layout
 from bidsmreye.utils import Config
+from bidsmreye.utils import config_to_dict
 from bidsmreye.utils import copy_license
 from bidsmreye.utils import create_bidsname
 from bidsmreye.utils import create_dir_if_absent
@@ -181,6 +182,7 @@ def prepare_data(cfg: Config) -> None:
     layout_out = set_dataset_description(layout_out)
     layout_out.dataset_description["DatasetType"] = "derivative"
     layout_out.dataset_description["GeneratedBy"][0]["Name"] = "bidsmreye"
+    layout_out.dataset_description["GeneratedBy"][0]["config"] = config_to_dict(cfg)
     write_dataset_description(layout_out)
 
     citation_file = methods(cfg.output_folder)
