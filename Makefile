@@ -106,6 +106,7 @@ validate_cff: ## Validate the citation file
 docs: ## generate Sphinx HTML documentation, including API docs
 	rm -f docs/source/bidsmreye.rst
 	rm -f docs/source/modules.rst
+	faqtory build
 	sphinx-apidoc -o docs/source bidsmreye
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html

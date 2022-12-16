@@ -4,6 +4,14 @@ bidsmreye package
 Submodules
 ----------
 
+bidsmreye.bidsmreye module
+--------------------------
+
+.. automodule:: bidsmreye.bidsmreye
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 bidsmreye.download module
 -------------------------
 
@@ -32,14 +40,6 @@ bidsmreye.prepare\_data module
 ------------------------------
 
 .. automodule:: bidsmreye.prepare_data
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-bidsmreye.run module
---------------------
-
-.. automodule:: bidsmreye.run
    :members:
    :undoc-members:
    :show-inheritance:

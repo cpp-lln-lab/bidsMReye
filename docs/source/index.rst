@@ -6,8 +6,9 @@ Welcome to bidsMReye's documentation!
    :caption: Contents:
 
    readme
-   demo
    usage_notes
+   demo
+   FAQ
    modules
 
 Indices and tables
