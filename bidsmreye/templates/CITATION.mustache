@@ -26,4 +26,16 @@ across voxels (spatial normalization).
 ### eyemotion decoding
 
 Voxels time series were used as inputs for generalization decoding
-using using the the pre-trained model {{model}} from deepMReye ({{model_url}}).
+using a
+{{#is_known_models}}
+pre-trained model {{ model_name }} from deepMReye from [OSF](https://osf.io/23t5v).
+    {{#is_default_model}}
+This model was trained on the following datasets:
+guided fixations (@alexander_open_2017),
+smooth pursuit (@nau_real-motion_2018, @polti_rapid_2022, @nau_hexadirectional_2018),
+free viewing (@julian_human_2018).
+    {{/is_default_model}}
+{{/is_known_models}}
+{{^is_known_models}}
+model trained on calibration data from the current study.
+{{/is_known_models}}
