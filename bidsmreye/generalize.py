@@ -1,6 +1,7 @@
 """TODO."""
 from __future__ import annotations
 
+import json
 import logging
 import os
 import warnings
@@ -29,6 +30,47 @@ from bidsmreye.utils import return_regex
 log = logging.getLogger("bidsmreye")
 
 
+def perform_quality_control(layout: BIDSLayout, confounds_tsv: str | Path) -> None:
+    """Perform quality control on the confounds.
+
+    :param layout: pybids layout to of the dataset to act on.
+    :type layout: BIDSLayout
+
+    :param confounds_tsv: Path to the confounds TSV file.
+    :type confounds_tsv: str | Path
+    """
+    confounds_tsv = Path(confounds_tsv)
+    confounds = pd.read_csv(confounds_tsv, sep="\t")
+
+    nb_timepoints = confounds.shape[0]
+
+    repetition_time = get_repetition_time(layout, confounds_tsv)
+
+    eye_timestamp = np.arange(0, repetition_time * nb_timepoints, repetition_time)
+    confounds["eye_timestamp"] = eye_timestamp
+
+    cols = confounds.columns.tolist()
+    cols.insert(0, cols.pop(cols.index("eye_timestamp")))
+    confounds = confounds[cols]
+
+    confounds.to_csv(confounds_tsv, sep="\t", index=False)
+
+
+def get_repetition_time(layout: BIDSLayout, file: str | Path) -> float | None:
+    repetition_time = None
+
+    sidecar_name = create_bidsname(layout, file, "confounds_json")
+
+    if sidecar_name.is_file():
+        with open(sidecar_name) as f:
+            content = json.load(f)
+            SamplingFrequency = content.get("SamplingFrequency", None)
+            if SamplingFrequency is not None and SamplingFrequency > 0:
+                repetition_time = 1 / SamplingFrequency
+
+    return repetition_time
+
+
 def convert_confounds(layout_out: BIDSLayout, file: str | Path) -> Path:
     """Convert numpy output to TSV.
 
@@ -53,7 +95,6 @@ def convert_confounds(layout_out: BIDSLayout, file: str | Path) -> Path:
     )
 
     evaluation = content.item(0)
-
     for key, item in evaluation.items():
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
@@ -62,7 +103,7 @@ def convert_confounds(layout_out: BIDSLayout, file: str | Path) -> Path:
 
         confound_name = create_bidsname(layout_out, Path(key + "p"), "confounds_tsv")
 
-        log.info(f"Saving to {confound_name}")
+        log.info(f"Saving eye gaze data to {confound_name.relative_to(layout_out.root)}")
 
         pd.DataFrame(this_pred).to_csv(
             confound_name,
@@ -71,6 +112,7 @@ def convert_confounds(layout_out: BIDSLayout, file: str | Path) -> Path:
             index=None,
         )
 
+    log.debug(f"Removing {confound_numpy.relative_to(layout_out.root)}")
     os.remove(confound_numpy)
 
     return confound_name

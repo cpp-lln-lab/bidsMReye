@@ -6,6 +6,7 @@ import pickle
 from pathlib import Path
 from typing import Any
 
+import nibabel as nib
 import numpy as np
 from bids import BIDSLayout
 from deepmreye import preprocess
@@ -163,9 +164,18 @@ def process_subject(
         deepmreye_mask_name = get_deepmreye_filename(layout_in, img, "mask")
         move_file(deepmreye_mask_name, mask_name)
 
-        create_sidecar(layout_out, img)
+        save_sampling_frequency_to_json(layout_out, img)
 
         combine_data_with_empty_labels(layout_out, mask_name)
+
+
+def save_sampling_frequency_to_json(layout_out: BIDSLayout, img: str) -> None:
+    func_img = nib.load(img)
+    header = func_img.header
+    repetition_time = header.get_zooms()[3]
+    if repetition_time <= 1:
+        log.warning(f"Found a repetition time of {repetition_time} seconds.")
+    create_sidecar(layout_out, img, SamplingFrequency=1 / float(repetition_time))
 
 
 def prepare_data(cfg: Config) -> None:
