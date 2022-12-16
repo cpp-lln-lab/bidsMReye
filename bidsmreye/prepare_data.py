@@ -13,6 +13,7 @@ from deepmreye import preprocess
 from bidsmreye.methods import methods
 from bidsmreye.utils import check_layout
 from bidsmreye.utils import Config
+from bidsmreye.utils import config_to_dict
 from bidsmreye.utils import copy_license
 from bidsmreye.utils import create_bidsname
 from bidsmreye.utils import create_dir_if_absent
@@ -28,7 +29,7 @@ from bidsmreye.utils import write_dataset_description
 log = logging.getLogger("bidsmreye")
 
 
-def coregister_and_extract_data(img: str) -> None:
+def coregister_and_extract_data(img: str, non_linear_coreg: bool = False) -> None:
     """Coregister image to eye template and extract data from eye mask for one image.
 
     :param img: Image to coregister and extract data from
@@ -44,9 +45,7 @@ def coregister_and_extract_data(img: str) -> None:
         z_edges,
     ) = preprocess.get_masks()
 
-    transforms = None
-    # if Affine:
-    #     transforms = ["Affine", "Affine", "SyNAggro"]
+    transforms = ["Affine", "Affine", "SyNAggro"] if non_linear_coreg else None
 
     preprocess.run_participant(
         img,
@@ -153,7 +152,7 @@ def process_subject(
 
         log.info(f"Processing file: {Path(img).name}")
 
-        coregister_and_extract_data(img)
+        coregister_and_extract_data(img, non_linear_coreg=cfg.non_linear_coreg)
 
         report_name = create_bidsname(layout_out, img, "report")
         deepmreye_mask_report = get_deepmreye_filename(layout_in, img, "report")
@@ -183,6 +182,7 @@ def prepare_data(cfg: Config) -> None:
     layout_out = set_dataset_description(layout_out)
     layout_out.dataset_description["DatasetType"] = "derivative"
     layout_out.dataset_description["GeneratedBy"][0]["Name"] = "bidsmreye"
+    layout_out.dataset_description["GeneratedBy"][0]["config"] = config_to_dict(cfg)
     write_dataset_description(layout_out)
 
     citation_file = methods(cfg.output_folder)
@@ -192,6 +192,9 @@ def prepare_data(cfg: Config) -> None:
     log.info(f"License file added: {license_file}")
 
     subjects = list_subjects(cfg, layout_in)
+
+    if cfg.non_linear_coreg:
+        log.debug("Using non-linear coregistration")
 
     for subject_label in subjects:
 
