@@ -48,6 +48,7 @@ def cli(argv: Any = sys.argv) -> None:
         model_weights_file=model_weights_file,
         reset_database=args.reset_database,
         bids_filter=args.bids_filter_file,
+        non_linear_coreg=args.non_linear_coreg,
     )  # type: ignore
 
     # TODO integrate as part of base config
@@ -104,7 +105,6 @@ def common_parser() -> MuhParser:
         see the online https://bidsmreye.readthedocs.io/.
         """,
     )
-
     parser.add_argument(
         "bids_dir",
         help="""
@@ -205,8 +205,17 @@ def common_parser() -> MuhParser:
         version=f"\nbidsMReye version {__version__}\n",
     )
     # TODO make it possible to pass path to a model ?
-    gen = parser.add_argument_group("generalize only arguments")
-    gen.add_argument(
+    prepare_only = parser.add_argument_group("prepare only arguments")
+    prepare_only.add_argument(
+        "--non_linear_coreg",
+        help="""
+        Uses a more aggressive (and non-linear) alignment procedure to the deepmreye template.
+        """,
+        action="store_true",
+    )
+    # TODO make it possible to pass path to a model ?
+    generalize_only = parser.add_argument_group("generalize only arguments")
+    generalize_only.add_argument(
         "--model",
         help="model to use",
         choices=available_models(),

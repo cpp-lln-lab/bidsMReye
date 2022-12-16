@@ -31,6 +31,7 @@ def test_Config():
         Path(__file__).parent.joinpath("data"),
     )
     assert not cfg.debug
+    assert not cfg.non_linear_coreg
     assert cfg.input_folder == pybids_test_dataset()
     assert cfg.output_folder == Path(__file__).parent.joinpath("data", "bidsmreye")
     assert sorted(cfg.participant) == ["01", "02", "03", "04", "05"]

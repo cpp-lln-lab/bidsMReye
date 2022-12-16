@@ -135,12 +135,7 @@ tests/data/moae_fmriprep: ## gets fmriprep preprocessed data of the SPM MOAE dat
 clean-demo:
 	rm -fr outputs/moae_fmriprep
 
-demo: clean-demo tests/data/moae_fmriprep ## demo: runs all demo steps on MOAE dataset
-	bidsmreye	$$PWD/tests/data/moae_fmriprep \
-				$$PWD/outputs/moae_fmriprep/derivatives \
-				participant \
-				--action all \
-				-vv \
+demo: clean-demo prepare generalize## demo: runs all demo steps on MOAE dataset
 
 prepare: tests/data/moae_fmriprep ## demo: prepares the data of MOAE dataset
 	bidsmreye 	$$PWD/tests/data/moae_fmriprep \
@@ -149,7 +144,8 @@ prepare: tests/data/moae_fmriprep ## demo: prepares the data of MOAE dataset
 				--action prepare \
 				-vv \
 				--debug \
-				--reset_database
+				--reset_database \
+				--non_linear_coreg
 
 generalize: ## demo: predicts labels of MOAE dataset
 	bidsmreye 	$$PWD/tests/data/moae_fmriprep \
@@ -158,7 +154,8 @@ generalize: ## demo: predicts labels of MOAE dataset
 				--action generalize \
 				-vv \
 				--debug \
-				--reset_database
+				--reset_database \
+				--non_linear_coreg
 
 
 ## Openneuro data

@@ -45,7 +45,7 @@ def copy_license(output_dir: Path) -> Path:
     :param output_dir:
     :type output_dir: Path
     """
-    input_file = str(Path(__file__).parent.joinpath("CCO"))
+    input_file = str(Path(__file__).parent.joinpath("templates", "CCO"))
     output_file = output_dir.joinpath("LICENSE")
     create_dir_if_absent(output_dir)
     if not output_dir.joinpath("LICENSE").is_file():
@@ -113,15 +113,21 @@ class Config:
             raise ValueError(f"Input_folder must be an existing directory:\n{value}.")
 
     output_folder: Path = field(default=None, converter=Path)
+
     participant: Any | None = field(kw_only=True, default=None)
+
     space: Any | None = field(kw_only=True, default=None)
     task: Any | None = field(kw_only=True, default=None)
     run: Any | None = field(kw_only=True, default=None)
+
     model_weights_file: str | Path | None = field(kw_only=True, default=None)
+    bids_filter: Any = field(kw_only=True, default=None)
+
     debug: str | bool | None = field(kw_only=True, default=None)
     reset_database: str | bool | None = field(kw_only=True, default=None)
-    bids_filter: Any = field(kw_only=True, default=None)
-    has_GPU = False
+    non_linear_coreg: bool = field(kw_only=True, default=False)
+
+    has_GPU: bool = False
 
     def __attrs_post_init__(self) -> None:
         """Check that output_folder exists and gets info from layout if not specified."""
