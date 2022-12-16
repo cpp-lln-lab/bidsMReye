@@ -47,7 +47,7 @@ def test_download_basic():
     output_dir = Path.cwd().joinpath("models")
     print(output_file)
     assert output_dir.is_dir()
-    assert output_dir.joinpath("dataset_1_guided_fixations.h5").is_file()
+    assert output_dir.joinpath("dataset_1to6.h5").is_file()
 
     shutil.rmtree(output_dir)
 

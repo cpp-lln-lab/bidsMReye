@@ -74,7 +74,7 @@ def download(
     :param model_name: Model to download. defaults to None
     :type model_name: str, optional
 
-    :param output_dir: PAth where to save the model. Defaults to None.
+    :param output_dir: Path where to save the model. Defaults to None.
     :type output_dir: Path, optional
 
     :return: Path to the downloaded model.
@@ -85,15 +85,14 @@ def download(
     if isinstance(model_name, Path):
         assert model_name.is_file()
         return model_name.resolve()
+    if model_name not in available_models():
+        warnings.warn(f"{model_name} is not a valid model name.")
+        return None
 
     if output_dir is None:
         output_dir = Path.cwd().joinpath("models")
     if isinstance(output_dir, str):
         output_dir = Path(output_dir)
-
-    if model_name not in available_models():
-        warnings.warn(f"{model_name} is not a valid model name.")
-        return None
 
     POOCH = pooch.create(
         path=output_dir,
