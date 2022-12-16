@@ -39,6 +39,21 @@ def default_model() -> str:
     return "1to6"
 
 
+def copy_license(output_dir: Path) -> Path:
+    """Copy CCO license to output directory.
+
+    :param output_dir:
+    :type output_dir: Path
+    """
+    input_file = str(Path(__file__).parent.joinpath("CCO"))
+    output_file = output_dir.joinpath("LICENSE")
+    create_dir_if_absent(output_dir)
+    if not output_dir.joinpath("LICENSE").is_file():
+        shutil.copy(input_file, output_dir)
+        move_file(output_dir.joinpath("CCO"), output_file)
+    return output_file
+
+
 def available_models() -> list[str]:
     """Return a list of available models."""
     return [
@@ -443,8 +458,7 @@ Magnetic resonance-based eye tracking using deep neural networks.
 Nat Neurosci 24, 1772-1779 (2021).
 https://doi.org/10.1038/s41593-021-00947-w""",
         "Funding": ["", ""],
-        "EthicsApprovals": [""],
-        "ReferencesAndLinks": ["https://doi.org/10.1038/s41593-021-00947-w", ""],
+        "ReferencesAndLinks": ["https://doi.org/10.1038/s41593-021-00947-w"],
         "DatasetDOI": "doi:",
     }
 

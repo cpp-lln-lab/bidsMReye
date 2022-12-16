@@ -13,6 +13,7 @@ from deepmreye import preprocess
 from bidsmreye.methods import methods
 from bidsmreye.utils import check_layout
 from bidsmreye.utils import Config
+from bidsmreye.utils import copy_license
 from bidsmreye.utils import create_bidsname
 from bidsmreye.utils import create_dir_if_absent
 from bidsmreye.utils import get_dataset_layout
@@ -186,6 +187,9 @@ def prepare_data(cfg: Config) -> None:
 
     citation_file = methods(cfg.output_folder)
     log.info(f"Method section generated: {citation_file}")
+
+    license_file = copy_license(cfg.output_folder)
+    log.info(f"License file added: {license_file}")
 
     subjects = list_subjects(cfg, layout_in)
 
