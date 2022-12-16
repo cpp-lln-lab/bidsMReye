@@ -25,7 +25,7 @@ from bidsmreye.utils import create_dir_for_file
 from bidsmreye.utils import get_dataset_layout
 from bidsmreye.utils import list_subjects
 from bidsmreye.utils import move_file
-from bidsmreye.utils import return_regex
+from bidsmreye.utils import set_this_filter
 
 log = logging.getLogger("bidsmreye")
 
@@ -188,17 +188,9 @@ def process_subject(cfg: Config, layout_out: BIDSLayout, subject_label: str) -> 
     :param subject_label:
     :type subject_label: str
     """
-    this_filter = cfg.bids_filter["no_label"]
-    this_filter["suffix"] = return_regex(this_filter["suffix"])
-    this_filter["task"] = return_regex(cfg.task)
-    this_filter["space"] = return_regex(cfg.space)
-    this_filter["subject"] = subject_label
-    if cfg.run:
-        this_filter["run"] = return_regex(cfg.run)
-
     log.info(f"Running subject: {subject_label}")
 
-    log.debug(f"Looking for files with filter\n{this_filter}")
+    this_filter = set_this_filter(cfg, subject_label, "no_label")
 
     data = layout_out.get(
         return_type="filename",
@@ -269,3 +261,38 @@ def generalize(cfg: Config) -> None:
     for subject_label in subjects:
 
         process_subject(cfg, layout_out, subject_label)
+
+    quality_control(cfg)
+
+
+def quality_control(cfg: Config) -> None:
+    log.info("QUALITY CONTROL")
+
+    layout_out = get_dataset_layout(cfg.output_folder)
+    check_layout(cfg, layout_out)
+
+    subjects = list_subjects(cfg, layout_out)
+
+    for subject_label in subjects:
+
+        qc_subject(cfg, layout_out, subject_label)
+
+
+def qc_subject(cfg: Config, layout_out: BIDSLayout, subject_label: str) -> None:
+
+    log.info(f"Running subject: {subject_label}")
+
+    this_filter = set_this_filter(cfg, subject_label, "eyetrack")
+
+    data = layout_out.get(
+        return_type="filename",
+        regex_search=True,
+        **this_filter,
+    )
+
+    to_print = [str(Path(x).relative_to(layout_out.root)) for x in data]
+    log.debug(f"Found files\n{to_print}")
+
+    for file in data:
+
+        perform_quality_control(layout_out, file)

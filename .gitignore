@@ -5,6 +5,9 @@ outputs
 download
 tmp
 logs
+pybids_db
+
+*desc-bidsmreye_eyetrack.tsv
 
 # Byte-compiled / optimized / DLL files
 __pycache__

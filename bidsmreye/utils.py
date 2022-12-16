@@ -94,6 +94,21 @@ def available_models() -> list[str]:
     ]
 
 
+def set_this_filter(cfg: Config, subject_label: str, filter_type: str) -> dict[str, Any]:
+
+    this_filter = cfg.bids_filter[filter_type]
+    this_filter["suffix"] = return_regex(this_filter["suffix"])
+    this_filter["task"] = return_regex(cfg.task)
+    this_filter["space"] = return_regex(cfg.space)
+    this_filter["subject"] = subject_label
+    if cfg.run:
+        this_filter["run"] = return_regex(cfg.run)
+
+    log.debug(f"Looking for files with filter\n{this_filter}")
+
+    return this_filter
+
+
 def bidsmreye_log(name: str | None = None) -> logging.Logger:
     """Create log.
 

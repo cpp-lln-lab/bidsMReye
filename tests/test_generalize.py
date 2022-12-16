@@ -7,7 +7,33 @@ import pandas as pd
 
 from bidsmreye.generalize import convert_confounds
 from bidsmreye.generalize import perform_quality_control
+from bidsmreye.generalize import quality_control
+from bidsmreye.utils import Config
 from bidsmreye.utils import get_dataset_layout
+
+
+def test_quality_control():
+
+    output_location = Path().resolve()
+    output_location = output_location.joinpath("tests", "data")
+
+    confounds_tsv = output_location.joinpath(
+        "bidsmreye",
+        "sub-01",
+        "func",
+        "sub-01_task-nback_space-MNI152NLin2009cAsym_desc-bidsmreye_eyetrack.tsv",
+    )
+
+    data = {"eye1_x_coordinate": [0, 1, 2], "eye1_y_coordinate": [0, 1, 2]}
+    df = pd.DataFrame(data)
+    df.to_csv(confounds_tsv, sep="\t", index=False)
+
+    cfg = Config(
+        output_location,
+        output_location,
+    )
+
+    quality_control(cfg)
 
 
 def test_perform_quality_control():
@@ -20,7 +46,7 @@ def test_perform_quality_control():
     confounds_tsv = output_location.joinpath(
         "sub-01",
         "func",
-        "sub-01_task-nback_space-MNI152NLin2009cAsym_desc-bidsmreye_confounds.tsv",
+        "sub-01_task-nback_space-MNI152NLin2009cAsym_desc-bidsmreye_eyetrack.tsv",
     )
 
     data = {"eye1_x_coordinate": [0, 1, 2], "eye1_y_coordinate": [0, 1, 2]}

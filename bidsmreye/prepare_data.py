@@ -23,8 +23,8 @@ from bidsmreye.utils import get_dataset_layout
 from bidsmreye.utils import get_deepmreye_filename
 from bidsmreye.utils import list_subjects
 from bidsmreye.utils import move_file
-from bidsmreye.utils import return_regex
 from bidsmreye.utils import set_dataset_description
+from bidsmreye.utils import set_this_filter
 from bidsmreye.utils import write_dataset_description
 
 
@@ -131,15 +131,7 @@ def process_subject(
     """
     log.info(f"Running subject: {subject_label}")
 
-    this_filter = cfg.bids_filter["bold"]
-    this_filter["suffix"] = return_regex(this_filter["suffix"])
-    this_filter["task"] = return_regex(cfg.task)
-    this_filter["space"] = return_regex(cfg.space)
-    this_filter["subject"] = subject_label
-    if cfg.run:
-        this_filter["run"] = return_regex(cfg.run)
-
-    log.debug(f"Looking for files with filter\n{this_filter}")
+    this_filter = set_this_filter(cfg, subject_label, "bold")
 
     bf = layout_in.get(
         return_type="filename",
