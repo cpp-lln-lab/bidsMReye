@@ -14,7 +14,7 @@ from attrs import asdict
 from attrs import converters
 from attrs import define
 from attrs import field
-from bids import BIDSLayout
+from bids import BIDSLayout  # type: ignore
 from rich.logging import RichHandler
 from rich.traceback import install
 

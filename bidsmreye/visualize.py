@@ -6,7 +6,7 @@ import pandas as pd
 import plotly.graph_objs as go
 from plotly.subplots import make_subplots
 
-opacity = 0.85
+opacity = 1
 line_width = 3
 font_size = dict(size=14)
 grid_color = "rgb(240,240,240)"
@@ -23,7 +23,7 @@ def time_range(time_stamps: pd.Series) -> list[float]:
 
 def visualize_eye_gaze_data(
     eye_gaze_data: pd.DataFrame,
-) -> None:
+) -> Any:
 
     fig = go.FigureWidget(
         make_subplots(
@@ -115,6 +115,7 @@ def plot_heat_map(fig: Any, X: pd.Series, Y: pd.Series) -> None:
         row=1,
         col=3,
     )
+
     fig.add_trace(
         go.Scatter(
             x=x_range,
@@ -143,14 +144,13 @@ def plot_heat_map(fig: Any, X: pd.Series, Y: pd.Series) -> None:
         go.Scatter(
             x=X,
             y=Y,
-            mode="lines",
-            line_color="black",
-            opacity=opacity,
-            line_width=2,
+            opacity=0.5,
+            line=dict(color="black", width=1.5, dash="dash"),
         ),
         row=1,
         col=3,
     )
+
     fig.update_xaxes(
         row=1,
         col=3,
