@@ -57,6 +57,7 @@ def perform_quality_control(layout: BIDSLayout, confounds_tsv: str | Path) -> No
 
 
 def get_repetition_time(layout: BIDSLayout, file: str | Path) -> float | None:
+    """Get the repetition time from the sidecar JSON file."""
     repetition_time = None
 
     sidecar_name = create_bidsname(layout, file, "confounds_json")
@@ -266,6 +267,8 @@ def generalize(cfg: Config) -> None:
 
 
 def quality_control(cfg: Config) -> None:
+    """Run quality control on the output dataset."""
+
     log.info("QUALITY CONTROL")
 
     layout_out = get_dataset_layout(cfg.output_folder)
@@ -279,6 +282,7 @@ def quality_control(cfg: Config) -> None:
 
 
 def qc_subject(cfg: Config, layout_out: BIDSLayout, subject_label: str) -> None:
+    """Run quality control for one subject."""
 
     log.info(f"Running subject: {subject_label}")
 
