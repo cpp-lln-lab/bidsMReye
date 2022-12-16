@@ -2,8 +2,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from bids.tests import get_test_data_path
-
 from bidsmreye.generalize import convert_confounds
 from bidsmreye.utils import get_dataset_layout
 

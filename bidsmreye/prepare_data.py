@@ -145,11 +145,12 @@ def process_subject(
         **this_filter,
     )
 
-    log.debug(f"Found files\n{bf}")
+    to_print = [str(Path(x).relative_to(layout_in.root)) for x in bf]
+    log.debug(f"Found files\n{to_print}")
 
     for img in bf:
 
-        log.info(f"Processing {img}")
+        log.info(f"Processing file: {Path(img).name}")
 
         coregister_and_extract_data(img)
 

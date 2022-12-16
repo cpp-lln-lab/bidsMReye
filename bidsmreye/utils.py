@@ -24,6 +24,16 @@ log = logging.getLogger("bidsmreye")
 __version__ = _version.get_versions()["version"]
 
 
+def default_log_level() -> str:
+    """Return default log level."""
+    return "WARNING"
+
+
+def log_levels() -> list[str]:
+    """Return a list of log levels."""
+    return ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
+
+
 def bidsmreye_log(name: str | None = None) -> logging.Logger:
     """Create log.
 
@@ -38,7 +48,7 @@ def bidsmreye_log(name: str | None = None) -> logging.Logger:
 
     FORMAT = "bidsMReye - %(asctime)s - %(message)s"
 
-    log_level = "INFO"
+    log_level = default_log_level()
 
     if not name:
         name = "rich"
@@ -187,8 +197,11 @@ def move_file(input: Path, output: Path) -> None:
 
     :param output:
     :type output: Path
+
+    :param root: Optional. If specified, the printed path will be relative to this path.
+    :type root: Path
     """
-    log.info(f"{input.resolve()} --> {output.resolve()}")
+    log.debug(f"{input.resolve()} --> {output.resolve()}")
     create_dir_for_file(output)
     shutil.copy(input, output)
     input.unlink()
@@ -203,7 +216,7 @@ def create_dir_if_absent(output_path: str | Path) -> None:
     if isinstance(output_path, str):
         output_path = Path(output_path)
     if not output_path.is_dir():
-        log.info(f"Creating dir: {output_path}")
+        log.debug(f"Creating dir: {output_path}")
     output_path.mkdir(parents=True, exist_ok=True)
 
 

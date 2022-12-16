@@ -15,13 +15,15 @@ from bidsmreye.generalize import generalize
 from bidsmreye.prepare_data import prepare_data
 from bidsmreye.utils import bidsmreye_log
 from bidsmreye.utils import Config
+from bidsmreye.utils import default_log_level
+from bidsmreye.utils import log_levels
 
 __version__ = _version.get_versions()["version"]
 
 log = bidsmreye_log(name="bidsmreye")
 
 
-def main(argv: Any = sys.argv) -> None:
+def cli(argv: Any = sys.argv) -> None:
     """Run the bids app.
 
     :param argv: _description_, defaults to sys.argv
@@ -46,9 +48,15 @@ def main(argv: Any = sys.argv) -> None:
         bids_filter=args.bids_filter_file,
     )  # type: ignore
 
-    log_level = "DEBUG" if cfg.debug else args.verbosity
-
-    log.setLevel(log_level)
+    # TODO integrate as part of base config
+    # https://stackoverflow.com/a/53293042/14223310
+    log_level = log_levels().index(default_log_level())
+    # For each "-v" flag, adjust the logging verbosity accordingly
+    # making sure to clamp off the value from 0 to 4, inclusive of both
+    for adjustment in args.log_level or ():
+        log_level = min(len(log_levels()) - 1, max(log_level + adjustment, 0))
+    log_level_name = log_levels()[log_level]
+    log.setLevel(log_level_name)
 
     log.info("Running bidsmreye version %s", __version__)
 
@@ -91,7 +99,7 @@ def common_parser() -> MuhParser:
         description="BIDS app using deepMReye to decode eye motion for fMRI time series data.",
         epilog="""
         For a more readable version of this help section,
-        see the online https://bidsmreye.readthedocs.io/".
+        see the online https://bidsmreye.readthedocs.io/.
         """,
     )
 
@@ -119,14 +127,7 @@ def common_parser() -> MuhParser:
     parser.add_argument(
         "--action",
         help="""
-        What action to perform:
-
-        - all:        run all steps
-
-        - prepare:    prepare data for analysis coregister to template,
-                      normalize and extract data
-
-        - generalize: generalize from data to give predicted labels
+        What action to perform.
         """,
         choices=["all", "prepare", "generalize"],
         default="all",
@@ -174,21 +175,19 @@ def common_parser() -> MuhParser:
         nargs="+",
     )
     parser.add_argument(
-        "--verbosity",
-        help="ERROR, INFO, WARNING, DEBUG",
-        choices=["ERROR", "INFO", "WARNING", "DEBUG"],
-        default="INFO",
+        "-v",
+        "--verbose",
+        dest="log_level",
+        action="append_const",
+        const=-1,
     )
-    parser.add_argument(
-        "--debug", help="true or false.", choices=["true", "false"], default="false"
-    )
+    parser.add_argument("--debug", help="Switch to debug mode", action="store_true")
     parser.add_argument(
         "--reset_database",
         help="""
         Resets the database of the input dataset.
         """,
-        choices=["true", "false"],
-        default="false",
+        action="store_true",
     )
     parser.add_argument(
         "--bids_filter_file",
@@ -222,7 +221,3 @@ def common_parser() -> MuhParser:
     )
 
     return parser
-
-
-if __name__ == "__main__":
-    main()

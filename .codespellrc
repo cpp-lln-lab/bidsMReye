@@ -1,0 +1,4 @@
+[codespell]
+skip = .git,env,build,outputs,.mypy_cache,moae_fmriprep
+ignore-words-list = fo
+builtin = clear,rare
