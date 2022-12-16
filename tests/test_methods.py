@@ -24,3 +24,5 @@ def test_methods_calibration_data():
 
     assert output_dir.is_dir()
     assert output_file.is_file()
+
+    shutil.rmtree(output_dir)
