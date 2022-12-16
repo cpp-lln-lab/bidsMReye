@@ -9,8 +9,9 @@ from plotly.subplots import make_subplots
 OPACITY = 1
 LINE_WIDTH = 3
 FONT_SIZE = dict(size=14)
-GRID_COLOR = "white"
+GRID_COLOR = "grey"
 LINE_COLOR = "rgb(0, 150, 175)"
+BG_COLOR = "rgb(255,255,255)"
 
 
 def value_range(X: pd.Series) -> list[float]:
@@ -40,22 +41,16 @@ def visualize_eye_gaze_data(
         )
     )
 
-    time_stamps = eye_gaze_data["eye_timestamp"]
-    X = eye_gaze_data["eye1_x_coordinate"]
-    Y = eye_gaze_data["eye1_y_coordinate"]
-    displacement = eye_gaze_data["displacement"]
-
     # Plot input signal together with split output signal (X & Y)
-    plot_time_series(fig, X, time_stamps, title_text="X", row=1, col=1)
-    plot_time_series(fig, Y, time_stamps, title_text="Y", row=2, col=1)
+    plot_time_series(fig, eye_gaze_data, title_text="X", row=1, col=1)
+    plot_time_series(fig, eye_gaze_data, title_text="Y", row=2, col=1)
     plot_time_series(
         fig,
-        displacement,
-        time_stamps,
+        eye_gaze_data,
         title_text="displacement",
         row=3,
         col=1,
-        plotting_range=[-0.1, displacement.max() + 0.1],
+        plotting_range=[-0.1, eye_gaze_data["displacement"].max() + 0.1],
         line_color="grey",
     )
     fig.update_xaxes(
@@ -65,26 +60,38 @@ def visualize_eye_gaze_data(
         tickfont=FONT_SIZE,
     )
 
-    plot_heat_map(fig, X, Y)
+    plot_heat_map(
+        fig, eye_gaze_data["eye1_x_coordinate"], eye_gaze_data["eye1_y_coordinate"]
+    )
 
     return fig
 
 
 def plot_time_series(
     fig: Any,
-    series: pd.Series,
-    time_stamps: pd.Series,
+    eye_gaze_data: pd.DataFrame,
     title_text: str,
     row: int,
     col: int,
     plotting_range: list[float] | None = None,
     line_color: str = LINE_COLOR,
 ) -> None:
+
+    outliers = None
+
+    values_to_plot = eye_gaze_data["eye1_x_coordinate"]
+    if title_text == "Y":
+        values_to_plot = eye_gaze_data["eye1_y_coordinate"]
+    elif title_text == "displacement":
+        values_to_plot = eye_gaze_data["displacement"]
+        outliers = eye_gaze_data["outliers"]
+
     if plotting_range is None:
-        plotting_range = value_range(series)
+        plotting_range = value_range(values_to_plot)
+
     fig.add_trace(
         go.Scatter(
-            x=time_range(time_stamps),
+            x=time_range(eye_gaze_data["eye_timestamp"]),
             y=[0, 0],
             mode="lines",
             line_color="black",
@@ -94,10 +101,11 @@ def plot_time_series(
         row=row,
         col=col,
     )
+
     fig.add_trace(
         go.Scatter(
-            x=time_stamps,
-            y=series,
+            x=eye_gaze_data["eye_timestamp"],
+            y=values_to_plot,
             mode="lines",
             line_color=line_color,
             opacity=OPACITY,
@@ -106,7 +114,26 @@ def plot_time_series(
         row=row,
         col=col,
     )
-    fig.update_xaxes(range=time_range(time_stamps), row=row, col=col, tickfont=FONT_SIZE)
+
+    if outliers is not None:
+        fig.add_trace(
+            go.Scatter(
+                x=eye_gaze_data["eye_timestamp"],
+                y=outliers,
+                fillcolor="red",
+                opacity=OPACITY,
+            ),
+            row=row,
+            col=col,
+        )
+
+    fig.update_xaxes(
+        range=time_range(eye_gaze_data["eye_timestamp"]),
+        row=row,
+        col=col,
+        gridcolor=GRID_COLOR,
+        tickfont=FONT_SIZE,
+    )
     fig.update_yaxes(
         range=plotting_range,
         row=row,
@@ -117,7 +144,7 @@ def plot_time_series(
         tickfont=FONT_SIZE,
     )
 
-    fig.update_layout(showlegend=False)
+    fig.update_layout(showlegend=False, plot_bgcolor=BG_COLOR, paper_bgcolor=BG_COLOR)
 
 
 def plot_heat_map(fig: Any, X: pd.Series, Y: pd.Series) -> None:
@@ -138,7 +165,7 @@ def plot_heat_map(fig: Any, X: pd.Series, Y: pd.Series) -> None:
             mode="lines",
             line_color="black",
             opacity=OPACITY,
-            line_width=1,
+            line_width=LINE_WIDTH - 2,
         ),
         row=1,
         col=3,
@@ -150,11 +177,12 @@ def plot_heat_map(fig: Any, X: pd.Series, Y: pd.Series) -> None:
             mode="lines",
             line_color="black",
             opacity=OPACITY,
-            line_width=1,
+            line_width=LINE_WIDTH - 2,
         ),
         row=1,
         col=3,
     )
+
     fig.add_trace(
         go.Scatter(
             x=X,
