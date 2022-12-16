@@ -22,6 +22,9 @@ def methods(output_dir: str | Path = Path("."), model_name: str | None = None) -
     :param output_dir: Defaults to Path(".")
     :type  output_dir: Union[str, Path], optional
 
+    :param model_name: Defaults to None.
+    :type  model_name: str, optional
+
     :return: Output file name.
     :rtype: Path
     """
