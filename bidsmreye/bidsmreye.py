@@ -13,9 +13,11 @@ from . import _version
 from bidsmreye.download import download
 from bidsmreye.generalize import generalize
 from bidsmreye.prepare_data import prepare_data
+from bidsmreye.utils import available_models
 from bidsmreye.utils import bidsmreye_log
 from bidsmreye.utils import Config
 from bidsmreye.utils import default_log_level
+from bidsmreye.utils import default_model
 from bidsmreye.utils import log_levels
 
 __version__ = _version.get_versions()["version"]
@@ -66,7 +68,7 @@ def cli(argv: Any = sys.argv) -> None:
     log.debug(f"args:\n{args}")
     log.debug(f"Configuration:\n{cfg}")
 
-    if args.action in ["all", "generalize"]:
+    if args.action in ["all", "generalize"] and isinstance(cfg.model_weights_file, str):
         cfg.model_weights_file = download(cfg.model_weights_file)
 
     if args.analysis_level == "participant":
@@ -207,17 +209,8 @@ def common_parser() -> MuhParser:
     gen.add_argument(
         "--model",
         help="model to use",
-        choices=[
-            "1_guided_fixations",
-            "2_pursuit",
-            "3_openclosed",
-            "3_pursuit",
-            "4_pursuit",
-            "5_free_viewing",
-            "6_1-to-5",
-            "7_1-to-6",
-        ],
-        default="7_1-to-6",
+        choices=available_models(),
+        default=default_model(),
     )
 
     return parser

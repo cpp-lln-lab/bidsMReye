@@ -11,6 +11,7 @@ def test_methods():
     output_dir = Path.cwd().joinpath("temp")
     output_file = methods(output_dir)
 
+    assert output_dir.is_dir()
     assert output_file.is_file()
 
-    shutil.rmtree(output_dir)
+    # shutil.rmtree(output_dir)

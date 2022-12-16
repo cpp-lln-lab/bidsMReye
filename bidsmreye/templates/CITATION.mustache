@@ -1,8 +1,10 @@
 ## eyemotion decoding
 
-Results included in this manuscript come from preprocessing performed using *bidsMReye* {{version}},
+Eyetracking results included in this manuscript
+come from preprocessing
+performed using [*bidsMReye*](https://github.com/cpp-lln-lab/bidsMReye) (version {{version}}),
 a BIDS app relying on [deepMReye](https://github.com/DeepMReye/DeepMReye) (@deepmreye)
-to decode eye motion for fMRI time series data.
+to decode eye motion from fMRI time series data.
 
 ### data extraction
 
@@ -10,8 +12,8 @@ All imaging data underwent co-registration conducted
 using Advanced Normalization Tools (ANTs, RRID:SCR_004757) within Python (ANTsPy).
 First, each participant's mean EPI was non-linearly co-registered
 to an average template.
-Second, we co-registered all voxels within a bounding box that included the eyes
-to a preselected bounding box in our group template to further improve the fit.
+Second, all voxels within a bounding box that included the eyes
+were co-registered to a preselected bounding box in our group template to further improve the fit.
 
 Each voxel within those bounding box underwent two normalization steps.
 First, the across-run median signal intensity was subtracted
