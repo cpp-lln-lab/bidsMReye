@@ -7,6 +7,7 @@ import pytest
 from bids.tests import get_test_data_path
 
 from bidsmreye.utils import Config
+from bidsmreye.utils import copy_license
 from bidsmreye.utils import create_bidsname
 from bidsmreye.utils import get_bidsname_config
 from bidsmreye.utils import get_config
@@ -195,6 +196,23 @@ def test_write_dataset_description():
     output_location = Path.joinpath(output_location, "derivatives")
 
     init_derivatives_layout(output_location)
+
+    shutil.rmtree(output_location)
+
+
+def test_copy_license():
+
+    output_dir = Path().resolve()
+    output_location = output_dir.joinpath("derivatives")
+
+    shutil.rmtree(output_location, ignore_errors=True)
+
+    license_file = copy_license(output_location)
+
+    assert license_file.is_file()
+    assert str(license_file) == str(output_location.joinpath("LICENSE"))
+
+    copy_license(output_location)
 
     shutil.rmtree(output_location)
 
