@@ -1,4 +1,4 @@
-[![System tests](https://github.com/cpp-lln-lab/bidsMReye/actions/workflows/system_tests.yml/badge.svg)](https://github.com/cpp-lln-lab/bidsMReye/actions/workflows/system_tests.yml)
+[![System tests](https://github.com/cpp-lln-lab/bidsMReye/actions/workflows/system_tests.yml/badge.svg?branch=main)](https://github.com/cpp-lln-lab/bidsMReye/actions/workflows/system_tests.yml)
 [![Test and coverage](https://github.com/cpp-lln-lab/bidsMReye/actions/workflows/test_and_coverage.yml/badge.svg)](https://github.com/cpp-lln-lab/bidsMReye/actions/workflows/test_and_coverage.yml)
 [![codecov](https://codecov.io/gh/cpp-lln-lab/bidsMReye/branch/main/graph/badge.svg?token=G5fm2kaloM)](https://codecov.io/gh/cpp-lln-lab/bidsMReye)
 [![Documentation Status](https://readthedocs.org/projects/bidsmreye/badge/?version=latest)](https://bidsmreye.readthedocs.io/en/latest/?badge=latest)
