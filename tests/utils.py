@@ -31,21 +31,18 @@ def bidsmreye_eyetrack():
     output_location = Path().resolve()
     output_location = output_location.joinpath("tests", "data", "bidsmreye")
 
-    confounds_tsv = output_location.joinpath(
+    return output_location.joinpath(
         "sub-01",
         "func",
         "sub-01_task-nback_space-MNI152NLin2009cAsym_desc-bidsmreye_eyetrack.tsv",
     )
 
-    return confounds_tsv
-
 
 def create_basic_data():
-    data = {
+    return {
         "eye1_x_coordinate": np.random.randn(400),
         "eye1_y_coordinate": np.random.randn(400),
     }
-    return data
 
 
 def create_data_with_outliers():
