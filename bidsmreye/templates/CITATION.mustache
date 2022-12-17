@@ -1,4 +1,4 @@
-## eyemotion decoding
+## eye gaze position decoding
 
 Eyetracking results included in this manuscript
 come from preprocessing
@@ -8,7 +8,7 @@ to decode eye motion from fMRI time series data.
 
 ### data extraction
 
-All imaging data underwent co-registration conducted
+The data of each BOLD runs underwent co-registration conducted
 using Advanced Normalization Tools (ANTs, RRID:SCR_004757) within Python (ANTsPy).
 First, each participant's mean EPI was non-linearly co-registered
 to an average template.
@@ -23,7 +23,7 @@ Second, for each sample, the mean across all voxels
 within the eye masks was subtracted and divided by the standard deviation
 across voxels (spatial normalization).
 
-### eyemotion decoding
+### decoding
 
 Voxels time series were used as inputs for generalization decoding
 using a
@@ -39,3 +39,15 @@ free viewing (@julian_human_2018).
 {{^is_known_models}}
 model trained on calibration data from the current study.
 {{/is_known_models}}
+
+### quality control
+
+For each run the following values were computed:
+- the variance for the X gaze position
+- the variance for the Y gaze position
+- the framewise gaze displacement
+- the number of outliers for the X gaze position
+- the number of outliers for the Y gaze position
+- the number of outliers for the gaze displacement
+
+Outliers were robustely estimated using an implementation of @carling_resistant_2000.
