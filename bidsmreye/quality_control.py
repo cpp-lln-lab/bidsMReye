@@ -155,12 +155,10 @@ def compute_robust_outliers(
 
         k = np.sqrt(chi2.ppf(0.975, df=1))
 
-        distance = []
-        for i in range(len(time_series)):
+        non_nan_idx = time_series.index[~time_series.isnull()].tolist()
 
-            if time_series[i] == np.nan:
-                distance.append(False)
-                continue
+        distance = []
+        for i in non_nan_idx:
 
             this_timepoint = time_series[i]
 
@@ -180,9 +178,11 @@ def compute_robust_outliers(
 
         # get the outliers in a normal distribution
         # no scaling needed as S estimates already std(data)
-        outliers = (distance / Sn) > k
 
-        return [int(x) for x in outliers]
+        outliers = np.zeros(len(time_series))
+        outliers[non_nan_idx] = (distance / Sn) > k
+
+        return outliers.tolist()
 
     elif outlier_type == "Carling":
 

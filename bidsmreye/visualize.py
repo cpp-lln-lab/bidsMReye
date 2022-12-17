@@ -50,7 +50,7 @@ def visualize_eye_gaze_data(
         title_text="displacement",
         row=3,
         col=1,
-        plotting_range=[-0.1, eye_gaze_data["displacement"].max() + 0.1],
+        plotting_range=[-0.1, eye_gaze_data["displacement"].max() * 1.1],
         line_color="grey",
     )
     fig.update_xaxes(
@@ -60,9 +60,7 @@ def visualize_eye_gaze_data(
         tickfont=FONT_SIZE,
     )
 
-    plot_heat_map(
-        fig, eye_gaze_data["eye1_x_coordinate"], eye_gaze_data["eye1_y_coordinate"]
-    )
+    plot_heat_map(fig, eye_gaze_data)
 
     return fig
 
@@ -118,9 +116,11 @@ def plot_time_series(
     if outliers is not None:
         fig.add_trace(
             go.Scatter(
-                x=eye_gaze_data["eye_timestamp"],
-                y=outliers,
-                fillcolor="red",
+                x=eye_gaze_data["eye_timestamp"][outliers == 1],
+                y=eye_gaze_data["displacement"][outliers == 1],
+                mode="markers",
+                marker_color="red",
+                marker_size=10,
                 opacity=OPACITY,
             ),
             row=row,
@@ -147,7 +147,10 @@ def plot_time_series(
     fig.update_layout(showlegend=False, plot_bgcolor=BG_COLOR, paper_bgcolor=BG_COLOR)
 
 
-def plot_heat_map(fig: Any, X: pd.Series, Y: pd.Series) -> None:
+def plot_heat_map(fig: Any, eye_gaze_data: pd.DataFrame) -> None:
+
+    X = eye_gaze_data["eye1_x_coordinate"]
+    Y = eye_gaze_data["eye1_y_coordinate"]
 
     x_range = value_range(X)
     y_range = value_range(Y)
@@ -187,8 +190,21 @@ def plot_heat_map(fig: Any, X: pd.Series, Y: pd.Series) -> None:
         go.Scatter(
             x=X,
             y=Y,
-            opacity=0.5,
-            line=dict(color="black", width=1.5, dash="dash"),
+            opacity=0.4,
+            line=dict(color="black", width=1, dash="dash"),
+        ),
+        row=1,
+        col=3,
+    )
+    outliers = eye_gaze_data["outliers"]
+    fig.add_trace(
+        go.Scatter(
+            x=X[outliers == 1],
+            y=Y[outliers == 1],
+            mode="markers",
+            marker_color="red",
+            marker_size=8,
+            opacity=OPACITY,
         ),
         row=1,
         col=3,

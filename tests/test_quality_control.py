@@ -1,13 +1,14 @@
 from __future__ import annotations
 
+import numpy as np
 import pandas as pd
 
 from bidsmreye.quality_control import compute_robust_outliers
 
 
-def test_compute_robust_outliers():
+def time_series():
 
-    time_series = [
+    return [
         0.6876,
         0.9751,
         0.1322,
@@ -30,9 +31,23 @@ def test_compute_robust_outliers():
         -1.0088,
     ]
 
-    time_series = pd.Series(time_series)
 
-    outliers = compute_robust_outliers(time_series)
+def test_compute_robust_outliers():
+
+    outliers = compute_robust_outliers(pd.Series(time_series()))
+
+    expected_outliers = [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+    assert outliers == expected_outliers
+
+
+def test_compute_robust_with_nan():
+
+    series = time_series()
+    series[1] = np.nan
+    series[8] = 10
+
+    outliers = compute_robust_outliers(pd.Series(series))
 
     expected_outliers = [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
