@@ -24,9 +24,7 @@ log = logging.getLogger("bidsmreye")
 
 def compute_displacement(x: pd.Series, y: pd.Series) -> pd.Series:
 
-    displacement = np.sqrt((x.diff() ** 2) + (y.diff() ** 2))
-
-    return displacement
+    return np.sqrt((x.diff() ** 2) + (y.diff() ** 2))
 
 
 def perform_quality_control(layout: BIDSLayout, confounds_tsv: str | Path) -> None:
