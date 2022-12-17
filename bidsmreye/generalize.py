@@ -2,27 +2,27 @@
 from __future__ import annotations
 
 import logging
+import os
 import warnings
 from pathlib import Path
-from typing import Any
 
 import numpy as np
 import pandas as pd
-from bids import BIDSLayout
-from deepmreye import analyse
+from bids import BIDSLayout  # type: ignore
 from deepmreye import train
 from deepmreye.util import data_generator
 from deepmreye.util import model_opts
 from rich import print
 
+from bidsmreye.quality_control import quality_control
+from bidsmreye.utils import add_sidecar_in_root
 from bidsmreye.utils import check_layout
 from bidsmreye.utils import Config
 from bidsmreye.utils import create_bidsname
-from bidsmreye.utils import create_dir_for_file
 from bidsmreye.utils import get_dataset_layout
 from bidsmreye.utils import list_subjects
 from bidsmreye.utils import move_file
-from bidsmreye.utils import return_regex
+from bidsmreye.utils import set_this_filter
 
 log = logging.getLogger("bidsmreye")
 
@@ -51,7 +51,6 @@ def convert_confounds(layout_out: BIDSLayout, file: str | Path) -> Path:
     )
 
     evaluation = content.item(0)
-
     for key, item in evaluation.items():
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
@@ -60,45 +59,19 @@ def convert_confounds(layout_out: BIDSLayout, file: str | Path) -> Path:
 
         confound_name = create_bidsname(layout_out, Path(key + "p"), "confounds_tsv")
 
-        log.info(f"Saving to {confound_name}")
+        log.info(f"Saving eye gaze data to {confound_name.relative_to(layout_out.root)}")
 
         pd.DataFrame(this_pred).to_csv(
-            confound_name, sep="\t", header=["x_position", "y_position"], index=None
+            confound_name,
+            sep="\t",
+            header=["eye1_x_coordinate", "eye1_y_coordinate"],
+            index=None,
         )
 
+    log.debug(f"Removing {confound_numpy.relative_to(layout_out.root)}")
+    os.remove(confound_numpy)
+
     return confound_name
-
-
-def create_and_save_figure(
-    layout_out: BIDSLayout, file: str, evaluation: Any, scores: Any
-) -> None:
-    """Generate a figure for the eye motion timeseries.
-
-    :param layout_out: Output dataset layout.
-    :type  layout_out: BIDSLayout
-
-    :param file:
-    :type  file: str
-
-    :param evaluation: see ``deepmreye.train.evaluate_model``
-    :type  evaluation: _type_
-
-    :param scores: see ``deepmreye.train.evaluate_model``
-    :type  scores: _type_
-    """
-    fig = analyse.visualise_predictions_slider(
-        evaluation,
-        scores,
-        color="rgb(0, 150, 175)",
-        bg_color="rgb(255,255,255)",
-        ylim=[-11, 11],
-    )
-    if log.isEnabledFor(logging.DEBUG):
-        fig.show()
-
-    confound_svg = create_bidsname(layout_out, file, "confounds_svg")
-    create_dir_for_file(confound_svg)
-    fig.write_image(confound_svg)
 
 
 def create_confounds_tsv(layout_out: BIDSLayout, file: str, subject_label: str) -> None:
@@ -139,17 +112,9 @@ def process_subject(cfg: Config, layout_out: BIDSLayout, subject_label: str) -> 
     :param subject_label:
     :type subject_label: str
     """
-    this_filter = cfg.bids_filter["no_label"]
-    this_filter["suffix"] = return_regex(this_filter["suffix"])
-    this_filter["task"] = return_regex(cfg.task)
-    this_filter["space"] = return_regex(cfg.space)
-    this_filter["subject"] = subject_label
-    if cfg.run:
-        this_filter["run"] = return_regex(cfg.run)
-
     log.info(f"Running subject: {subject_label}")
 
-    log.debug(f"Looking for files with filter\n{this_filter}")
+    this_filter = set_this_filter(cfg, subject_label, "no_label")
 
     data = layout_out.get(
         return_type="filename",
@@ -196,8 +161,6 @@ def process_subject(cfg: Config, layout_out: BIDSLayout, subject_label: str) -> 
             percentile_cut=80,
         )
 
-        create_and_save_figure(layout_out, file, evaluation, scores)
-
         create_confounds_tsv(layout_out, file, subject_label)
 
 
@@ -213,8 +176,12 @@ def generalize(cfg: Config) -> None:
     layout_out = get_dataset_layout(cfg.output_folder)
     check_layout(cfg, layout_out)
 
+    add_sidecar_in_root(layout_out)
+
     subjects = list_subjects(cfg, layout_out)
 
     for subject_label in subjects:
 
         process_subject(cfg, layout_out, subject_label)
+
+    quality_control(cfg)

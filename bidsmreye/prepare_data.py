@@ -6,8 +6,9 @@ import pickle
 from pathlib import Path
 from typing import Any
 
+import nibabel as nib
 import numpy as np
-from bids import BIDSLayout
+from bids import BIDSLayout  # type: ignore
 from deepmreye import preprocess
 
 from bidsmreye.methods import methods
@@ -17,12 +18,13 @@ from bidsmreye.utils import config_to_dict
 from bidsmreye.utils import copy_license
 from bidsmreye.utils import create_bidsname
 from bidsmreye.utils import create_dir_if_absent
+from bidsmreye.utils import create_sidecar
 from bidsmreye.utils import get_dataset_layout
 from bidsmreye.utils import get_deepmreye_filename
 from bidsmreye.utils import list_subjects
 from bidsmreye.utils import move_file
-from bidsmreye.utils import return_regex
 from bidsmreye.utils import set_dataset_description
+from bidsmreye.utils import set_this_filter
 from bidsmreye.utils import write_dataset_description
 
 
@@ -74,7 +76,7 @@ def combine_data_with_empty_labels(layout_out: BIDSLayout, img: Path, i: int = 1
     :param i: _description_, defaults to 1
     :type i: int, optional
     """
-    log.info(f"Combining data with empty labels: {img}")
+    log.debug(f"Combining data with empty labels: {img}")
 
     # Load data and normalize it
     data = pickle.load(open(img, "rb"))
@@ -129,15 +131,7 @@ def process_subject(
     """
     log.info(f"Running subject: {subject_label}")
 
-    this_filter = cfg.bids_filter["bold"]
-    this_filter["suffix"] = return_regex(this_filter["suffix"])
-    this_filter["task"] = return_regex(cfg.task)
-    this_filter["space"] = return_regex(cfg.space)
-    this_filter["subject"] = subject_label
-    if cfg.run:
-        this_filter["run"] = return_regex(cfg.run)
-
-    log.debug(f"Looking for files with filter\n{this_filter}")
+    this_filter = set_this_filter(cfg, subject_label, "bold")
 
     bf = layout_in.get(
         return_type="filename",
@@ -162,7 +156,18 @@ def process_subject(
         deepmreye_mask_name = get_deepmreye_filename(layout_in, img, "mask")
         move_file(deepmreye_mask_name, mask_name)
 
+        save_sampling_frequency_to_json(layout_out, img)
+
         combine_data_with_empty_labels(layout_out, mask_name)
+
+
+def save_sampling_frequency_to_json(layout_out: BIDSLayout, img: str) -> None:
+    func_img = nib.load(img)
+    header = func_img.header
+    repetition_time = header.get_zooms()[3]
+    if repetition_time <= 1:
+        log.warning(f"Found a repetition time of {repetition_time} seconds.")
+    create_sidecar(layout_out, img, SamplingFrequency=1 / float(repetition_time))
 
 
 def prepare_data(cfg: Config) -> None:

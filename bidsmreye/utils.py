@@ -14,7 +14,7 @@ from attrs import asdict
 from attrs import converters
 from attrs import define
 from attrs import field
-from bids import BIDSLayout
+from bids import BIDSLayout  # type: ignore
 from rich.logging import RichHandler
 from rich.traceback import install
 
@@ -55,6 +55,31 @@ def copy_license(output_dir: Path) -> Path:
     return output_file
 
 
+def add_sidecar_in_root(layout_out: BIDSLayout) -> None:
+    content = {
+        "StartTime": 0,
+        "SampleCoordinateUnit": "degrees",
+        "EnvironmentCoordinates": "center",
+        "SampleCoordinateSystem": "gaze-on-screen",
+        "RecordedEye": "both",
+    }
+    sidecar_name = Path(layout_out.root).joinpath("desc-bidsmreye_eyetrack.json")
+    json.dump(content, open(sidecar_name, "w"), indent=4)
+
+
+def create_sidecar(
+    layout: BIDSLayout, filename: str, SamplingFrequency: float | None = None
+) -> None:
+    """Create sidecar for the eye motion timeseries."""
+    if SamplingFrequency is None:
+        SamplingFrequency = 0
+    content = {
+        "SamplingFrequency": SamplingFrequency,
+    }
+    sidecar_name = create_bidsname(layout, filename, "confounds_json")
+    json.dump(content, open(sidecar_name, "w"), indent=4)
+
+
 def available_models() -> list[str]:
     """Return a list of available models."""
     return [
@@ -67,6 +92,21 @@ def available_models() -> list[str]:
         "1to5",
         "1to6",
     ]
+
+
+def set_this_filter(cfg: Config, subject_label: str, filter_type: str) -> dict[str, Any]:
+
+    this_filter = cfg.bids_filter[filter_type]
+    this_filter["suffix"] = return_regex(this_filter["suffix"])
+    this_filter["task"] = return_regex(cfg.task)
+    this_filter["space"] = return_regex(cfg.space)
+    this_filter["subject"] = subject_label
+    if cfg.run:
+        this_filter["run"] = return_regex(cfg.run)
+
+    log.debug(f"Looking for files with filter\n{this_filter}")
+
+    return this_filter
 
 
 def bidsmreye_log(name: str | None = None) -> logging.Logger:

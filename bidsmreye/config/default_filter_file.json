@@ -12,5 +12,10 @@
         "desc": "nolabel",
         "suffix": "^bidsmreye$$",
         "extension": "npz"
+    },
+    "eyetrack": {
+        "desc": "bidsmreye",
+        "suffix": "^eyetrack$$",
+        "extension": "tsv"
     }
 }

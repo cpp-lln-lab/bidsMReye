@@ -29,6 +29,10 @@ This can be used also for other multivariate pattern
 analyses in the absence of eye-tracking data.
 Decoded gaze positions allow computing eye movements.
 
+Some basic quality control and outliers detection is also performed.
+
+![](docs/source/images/sub-01_task-auditory_space-MNI152NLin6Asym_desc-bidsmreye_eyetrack.png)
+
 For more information, see the
 [User Recommendations](https://deepmreye.slite.com/p/channel/MUgmvViEbaATSrqt3susLZ/notes/kKdOXmLqe).
 If you have other questions, please reach out to the developer team.
