@@ -5,12 +5,10 @@ import logging
 import os
 import warnings
 from pathlib import Path
-from typing import Any
 
 import numpy as np
 import pandas as pd
 from bids import BIDSLayout  # type: ignore
-from deepmreye import analyse
 from deepmreye import train
 from deepmreye.util import data_generator
 from deepmreye.util import model_opts
@@ -21,7 +19,6 @@ from bidsmreye.utils import add_sidecar_in_root
 from bidsmreye.utils import check_layout
 from bidsmreye.utils import Config
 from bidsmreye.utils import create_bidsname
-from bidsmreye.utils import create_dir_for_file
 from bidsmreye.utils import get_dataset_layout
 from bidsmreye.utils import list_subjects
 from bidsmreye.utils import move_file
@@ -75,38 +72,6 @@ def convert_confounds(layout_out: BIDSLayout, file: str | Path) -> Path:
     os.remove(confound_numpy)
 
     return confound_name
-
-
-def create_and_save_figure(
-    layout_out: BIDSLayout, file: str, evaluation: Any, scores: Any
-) -> None:
-    """Generate a figure for the eye motion timeseries.
-
-    :param layout_out: Output dataset layout.
-    :type  layout_out: BIDSLayout
-
-    :param file:
-    :type  file: str
-
-    :param evaluation: see ``deepmreye.train.evaluate_model``
-    :type  evaluation: _type_
-
-    :param scores: see ``deepmreye.train.evaluate_model``
-    :type  scores: _type_
-    """
-    fig = analyse.visualise_predictions_slider(
-        evaluation,
-        scores,
-        color="rgb(0, 150, 175)",
-        bg_color="rgb(255,255,255)",
-        ylim=[-11, 11],
-    )
-    if log.isEnabledFor(logging.DEBUG):
-        fig.show()
-
-    confound_svg = create_bidsname(layout_out, file, "confounds_svg")
-    create_dir_for_file(confound_svg)
-    fig.write_image(confound_svg)
 
 
 def create_confounds_tsv(layout_out: BIDSLayout, file: str, subject_label: str) -> None:
@@ -195,8 +160,6 @@ def process_subject(cfg: Config, layout_out: BIDSLayout, subject_label: str) -> 
             verbose=verbose,
             percentile_cut=80,
         )
-
-        create_and_save_figure(layout_out, file, evaluation, scores)
 
         create_confounds_tsv(layout_out, file, subject_label)
 
