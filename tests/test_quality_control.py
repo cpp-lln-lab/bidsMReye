@@ -1,9 +1,15 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
 
 from bidsmreye.quality_control import compute_robust_outliers
+from bidsmreye.quality_control import perform_quality_control
+from bidsmreye.quality_control import quality_control
+from bidsmreye.utils import Config
+from bidsmreye.utils import get_dataset_layout
 
 
 def time_series():
@@ -52,3 +58,53 @@ def test_compute_robust_with_nan():
     expected_outliers = [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
     assert outliers == expected_outliers
+
+
+def test_quality_control():
+
+    output_location = Path().resolve()
+    output_location = output_location.joinpath("tests", "data")
+
+    confounds_tsv = output_location.joinpath(
+        "bidsmreye",
+        "sub-01",
+        "func",
+        "sub-01_task-nback_space-MNI152NLin2009cAsym_desc-bidsmreye_eyetrack.tsv",
+    )
+
+    data = {
+        "eye1_x_coordinate": np.random.randn(400),
+        "eye1_y_coordinate": np.random.randn(400),
+    }
+    df = pd.DataFrame(data)
+    df.to_csv(confounds_tsv, sep="\t", index=False)
+
+    cfg = Config(
+        output_location,
+        output_location,
+    )
+
+    quality_control(cfg)
+
+
+def test_perform_quality_control():
+
+    output_location = Path().resolve()
+    output_location = output_location.joinpath("tests", "data", "bidsmreye")
+
+    layout_out = get_dataset_layout(output_location)
+
+    confounds_tsv = output_location.joinpath(
+        "sub-01",
+        "func",
+        "sub-01_task-nback_space-MNI152NLin2009cAsym_desc-bidsmreye_eyetrack.tsv",
+    )
+
+    data = {
+        "eye1_x_coordinate": np.random.randn(400),
+        "eye1_y_coordinate": np.random.randn(400),
+    }
+    df = pd.DataFrame(data)
+    df.to_csv(confounds_tsv, sep="\t", index=False)
+
+    perform_quality_control(layout_out, confounds_tsv)

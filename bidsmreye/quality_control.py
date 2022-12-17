@@ -13,9 +13,11 @@ from scipy.stats.distributions import chi2
 from bidsmreye.utils import check_layout
 from bidsmreye.utils import Config
 from bidsmreye.utils import create_bidsname
+from bidsmreye.utils import create_dir_for_file
 from bidsmreye.utils import get_dataset_layout
 from bidsmreye.utils import list_subjects
 from bidsmreye.utils import set_this_filter
+from bidsmreye.visualize import visualize_eye_gaze_data
 
 log = logging.getLogger("bidsmreye")
 
@@ -50,7 +52,21 @@ def perform_quality_control(layout: BIDSLayout, confounds_tsv: str | Path) -> No
     cols.insert(0, cols.pop(cols.index("eye_timestamp")))
     confounds = confounds[cols]
 
+    confounds["displacement"] = compute_displacement(
+        confounds["eye1_x_coordinate"], confounds["eye1_y_coordinate"]
+    )
+    confounds["outliers"] = compute_robust_outliers(confounds["displacement"])
+
     confounds.to_csv(confounds_tsv, sep="\t", index=False)
+
+    fig = visualize_eye_gaze_data(confounds)
+
+    if log.isEnabledFor(logging.DEBUG):
+        fig.show()
+
+    visualization_html_file = create_bidsname(layout, confounds_tsv, "confounds_html")
+    create_dir_for_file(visualization_html_file)
+    fig.write_html(visualization_html_file)
 
 
 def get_repetition_time(layout: BIDSLayout, file: str | Path) -> float | None:

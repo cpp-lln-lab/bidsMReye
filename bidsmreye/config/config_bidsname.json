@@ -5,5 +5,6 @@
     "confounds_tsv": "sub-{subject}/[ses-{session}]/func/sub-{subject}[_ses-{session}]_task-{task}[_acq-{acquisition}][_ce-{ce}][_rec-{rec}][_dir-{dir}][_run-{run}][_space-{space}]_desc-bidsmreye_eyetrack.tsv",
     "confounds_json": "sub-{subject}/[ses-{session}]/func/sub-{subject}[_ses-{session}]_task-{task}[_acq-{acquisition}][_ce-{ce}][_rec-{rec}][_dir-{dir}][_run-{run}][_space-{space}]_desc-bidsmreye_eyetrack.json",
     "confounds_svg": "sub-{subject}/[ses-{session}]/figures/sub-{subject}[_ses-{session}]_task-{task}[_acq-{acquisition}][_ce-{ce}][_rec-{rec}][_dir-{dir}][_run-{run}][_space-{space}]_desc-bidsmreye_eyetrack.svg",
+    "confounds_html": "sub-{subject}/[ses-{session}]/figures/sub-{subject}[_ses-{session}]_task-{task}[_acq-{acquisition}][_ce-{ce}][_rec-{rec}][_dir-{dir}][_run-{run}][_space-{space}]_desc-bidsmreye_eyetrack.html",
     "confounds_numpy": "sub-{subject}/[ses-{session}]/func/sub-{subject}[_ses-{session}]_task-{task}_space-{space}_desc-bidsmreye_confounds.npy"
 }

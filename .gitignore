@@ -1,14 +1,19 @@
-Pipfile
-
-tmp.py
-*.h5
+# folders
 outputs
 download
 tmp
 logs
-pybids_db
 
+# files
+*.h5
+*.html
 *desc-bidsmreye_eyetrack.tsv
+pybids_db
+tmp.py
+
+# Python
+
+Pipfile
 
 # Byte-compiled / optimized / DLL files
 __pycache__
