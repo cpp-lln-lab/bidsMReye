@@ -8,7 +8,7 @@ from typing import Any
 
 import nibabel as nib
 import numpy as np
-from bids import BIDSLayout
+from bids import BIDSLayout  # type: ignore
 from deepmreye import preprocess
 
 from bidsmreye.methods import methods
@@ -76,7 +76,7 @@ def combine_data_with_empty_labels(layout_out: BIDSLayout, img: Path, i: int = 1
     :param i: _description_, defaults to 1
     :type i: int, optional
     """
-    log.info(f"Combining data with empty labels: {img}")
+    log.debug(f"Combining data with empty labels: {img}")
 
     # Load data and normalize it
     data = pickle.load(open(img, "rb"))

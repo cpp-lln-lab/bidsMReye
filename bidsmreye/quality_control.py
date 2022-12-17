@@ -41,10 +41,8 @@ def perform_quality_control(layout: BIDSLayout, confounds_tsv: str | Path) -> No
     confounds_tsv = Path(confounds_tsv)
     confounds = pd.read_csv(confounds_tsv, sep="\t")
 
-    nb_timepoints = confounds.shape[0]
-
     repetition_time = get_repetition_time(layout, confounds_tsv)
-
+    nb_timepoints = confounds.shape[0]
     eye_timestamp = np.arange(0, repetition_time * nb_timepoints, repetition_time)
     confounds["eye_timestamp"] = eye_timestamp
 
@@ -55,7 +53,9 @@ def perform_quality_control(layout: BIDSLayout, confounds_tsv: str | Path) -> No
     confounds["displacement"] = compute_displacement(
         confounds["eye1_x_coordinate"], confounds["eye1_y_coordinate"]
     )
+
     confounds["outliers"] = compute_robust_outliers(confounds["displacement"])
+    log.debug(f"Found {confounds['outliers'].sum()} outliers")
 
     confounds.to_csv(confounds_tsv, sep="\t", index=False)
 
