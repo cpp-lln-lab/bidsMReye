@@ -27,6 +27,34 @@ def compute_displacement(x: pd.Series, y: pd.Series) -> pd.Series:
     return np.sqrt((x.diff() ** 2) + (y.diff() ** 2))
 
 
+def add_qc_to_sidecar(layout: BIDSLayout, confounds_tsv: str | Path) -> Path:
+    """_summary_
+
+    :param layout: _description_
+    :type layout: BIDSLayout
+
+    :param confounds_tsv: _description_
+    :type confounds_tsv: str | Path
+
+    :return: _description_
+    :rtype: Path
+    """
+    confounds_tsv = Path(confounds_tsv)
+    confounds = pd.read_csv(confounds_tsv, sep="\t")
+
+    sidecar_name = create_bidsname(layout, confounds_tsv, "confounds_json")
+
+    with open(sidecar_name) as f:
+        content = json.load(f)
+        content["NbOutliers"] = confounds["outliers"].sum()
+        content["eye1XVar"] = confounds["eye1_x_coordinate"].var()
+        content["eye1YVar"] = confounds["eye1_y_coordinate"].var()
+
+    json.dump(content, open(sidecar_name, "w"), indent=4)
+
+    return sidecar_name
+
+
 def perform_quality_control(layout: BIDSLayout, confounds_tsv: str | Path) -> None:
     """Perform quality control on the confounds.
 
@@ -57,11 +85,12 @@ def perform_quality_control(layout: BIDSLayout, confounds_tsv: str | Path) -> No
 
     confounds.to_csv(confounds_tsv, sep="\t", index=False)
 
-    fig = visualize_eye_gaze_data(confounds)
+    sidecar_name = add_qc_to_sidecar(layout, confounds_tsv)
+    log.info(f"Quality control data added to {sidecar_name}")
 
+    fig = visualize_eye_gaze_data(confounds)
     if log.isEnabledFor(logging.DEBUG):
         fig.show()
-
     visualization_html_file = create_bidsname(layout, confounds_tsv, "confounds_html")
     create_dir_for_file(visualization_html_file)
     fig.write_html(visualization_html_file)
@@ -187,8 +216,8 @@ def compute_robust_outliers(
             distance.append(np.median(abs(this_timepoint - tmp)))
 
         # get the S estimator
-        # consistency factor c = 1.1926;
-        Sn = 1.1926 * np.median(distance)
+        consistency_factor = 1.1926
+        Sn = consistency_factor * np.median(distance)
 
         # get the outliers in a normal distribution
         # no scaling needed as S estimates already std(data)
@@ -202,21 +231,22 @@ def compute_robust_outliers(
 
         return NotImplementedError
 
-        # #  interquartile range
+        # interquartile range
         # nb_timepoints = len(time_series)
         # y = sorted(time_series)
         # j = math.floor(nb_timepoints / 4 + 5 / 12)
         # g = (nb_timepoints / 4) - j + (5 / 12)
         # k = nb_timepoints - j + 1
 
+        # TODO: translate from matlab
+        #     ql     = (1-g).*y(j,:) + g.*y(j+1,:); % lower quartiles
+        #     qu     = (1-g).*y(k,:) + g.*y(k-1,:); % higher quartiles
+        #     values = qu-ql;                       % inter-quartiles range
+
+        #     % robust outliers
+        #     M = median(time_series);
+        #     k = (17.63*n-23.64)/(7.74*n-3.71); % Carling's k
+        #     outliers = time_series<(M-k*values) | time_series>(M+k*values);
+
     else:
         raise ValueError(f"Unknown outlier_type: {outlier_type}")
-
-    #     ql     = (1-g).*y(j,:) + g.*y(j+1,:); % lower quartiles
-    #     qu     = (1-g).*y(k,:) + g.*y(k-1,:); % higher quartiles
-    #     values = qu-ql;                       % inter-quartiles range
-
-    #     % robust outliers
-    #     M = median(time_series);
-    #     k = (17.63*n-23.64)/(7.74*n-3.71); % Carling's k
-    #     outliers = time_series<(M-k*values) | time_series>(M+k*values);
