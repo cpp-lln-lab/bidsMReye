@@ -79,12 +79,14 @@ def plot_time_series(
 
     values_to_plot = eye_gaze_data["eye1_x_coordinate"]
     outliers = eye_gaze_data["eye1_x_outliers"]
+    outlier_color = "orange"
     if title_text == "Y":
         values_to_plot = eye_gaze_data["eye1_y_coordinate"]
         outliers = eye_gaze_data["eye1_y_outliers"]
     elif title_text == "displacement":
         values_to_plot = eye_gaze_data["displacement"]
         outliers = eye_gaze_data["displacement_outliers"]
+        outlier_color = "red"
 
     if plotting_range is None:
         plotting_range = value_range(values_to_plot)
@@ -121,7 +123,7 @@ def plot_time_series(
                 x=eye_gaze_data["eye_timestamp"][outliers == 1],
                 y=values_to_plot[outliers == 1],
                 mode="markers",
-                marker_color="red",
+                marker_color=outlier_color,
                 marker_size=10,
                 opacity=OPACITY,
             ),
@@ -198,19 +200,15 @@ def plot_heat_map(fig: Any, eye_gaze_data: pd.DataFrame) -> None:
         row=1,
         col=3,
     )
+
+    outliers = eye_gaze_data["eye1_x_outliers"]
+    outlier_color = "orange"
+    add_outlier_to_heatmap(fig, X, Y, outliers, outlier_color)
+    outliers = eye_gaze_data["eye1_y_outliers"]
+    add_outlier_to_heatmap(fig, X, Y, outliers, outlier_color)
     outliers = eye_gaze_data["displacement_outliers"]
-    fig.add_trace(
-        go.Scatter(
-            x=X[outliers == 1],
-            y=Y[outliers == 1],
-            mode="markers",
-            marker_color="red",
-            marker_size=8,
-            opacity=OPACITY,
-        ),
-        row=1,
-        col=3,
-    )
+    outlier_color = "red"
+    add_outlier_to_heatmap(fig, X, Y, outliers, outlier_color)
 
     fig.update_xaxes(
         row=1,
@@ -230,3 +228,20 @@ def plot_heat_map(fig: Any, eye_gaze_data: pd.DataFrame) -> None:
     )
 
     fig.update_layout(showlegend=False)
+
+
+def add_outlier_to_heatmap(
+    fig: Any, X: pd.Series, Y: pd.Series, outliers: pd.Series, outlier_color: str
+) -> None:
+    fig.add_trace(
+        go.Scatter(
+            x=X[outliers == 1],
+            y=Y[outliers == 1],
+            mode="markers",
+            marker_color=outlier_color,
+            marker_size=8,
+            opacity=OPACITY,
+        ),
+        row=1,
+        col=3,
+    )

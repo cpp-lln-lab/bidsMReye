@@ -47,6 +47,8 @@ def add_qc_to_sidecar(layout: BIDSLayout, confounds_tsv: str | Path) -> Path:
     with open(sidecar_name) as f:
         content = json.load(f)
         content["NbDisplacementOutliers"] = confounds["displacement_outliers"].sum()
+        content["NbXOutliers"] = confounds["eye1_x_outliers"].sum()
+        content["NbYOutliers"] = confounds["eye1_y_outliers"].sum()
         content["eye1XVar"] = confounds["eye1_x_coordinate"].var()
         content["eye1YVar"] = confounds["eye1_y_coordinate"].var()
 
