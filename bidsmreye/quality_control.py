@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import logging
+import math
 from pathlib import Path
 
 import numpy as np
@@ -46,6 +47,7 @@ def add_qc_to_sidecar(layout: BIDSLayout, confounds_tsv: str | Path) -> Path:
 
     with open(sidecar_name) as f:
         content = json.load(f)
+
         content["NbDisplacementOutliers"] = confounds["displacement_outliers"].sum()
         content["NbXOutliers"] = confounds["eye1_x_outliers"].sum()
         content["NbYOutliers"] = confounds["eye1_y_outliers"].sum()
@@ -83,14 +85,18 @@ def perform_quality_control(layout: BIDSLayout, confounds_tsv: str | Path) -> No
     )
 
     confounds["displacement_outliers"] = compute_robust_outliers(
-        confounds["displacement"]
+        confounds["displacement"], outlier_type="Carling"
     )
     log.debug(f"Found {confounds['displacement_outliers'].sum()} displacement outliers")
 
-    confounds["eye1_x_outliers"] = compute_robust_outliers(confounds["eye1_x_coordinate"])
+    confounds["eye1_x_outliers"] = compute_robust_outliers(
+        confounds["eye1_x_coordinate"], outlier_type="Carling"
+    )
     log.debug(f"Found {confounds['eye1_x_outliers'].sum()} x outliers")
 
-    confounds["eye1_y_outliers"] = compute_robust_outliers(confounds["eye1_y_coordinate"])
+    confounds["eye1_y_outliers"] = compute_robust_outliers(
+        confounds["eye1_y_coordinate"], outlier_type="Carling"
+    )
     log.debug(f"Found {confounds['eye1_y_outliers'].sum()} y outliers")
 
     confounds.to_csv(confounds_tsv, sep="\t", index=False)
@@ -239,24 +245,27 @@ def compute_robust_outliers(
 
     elif outlier_type == "Carling":
 
-        return NotImplementedError
-
         # interquartile range
-        # nb_timepoints = len(time_series)
-        # y = sorted(time_series)
-        # j = math.floor(nb_timepoints / 4 + 5 / 12)
-        # g = (nb_timepoints / 4) - j + (5 / 12)
-        # k = nb_timepoints - j + 1
+        nan_less = time_series.dropna()
+        nb_timepoints = len(nan_less)
+        y = sorted(nan_less)
+        j = math.floor(nb_timepoints / 4 + 5 / 12)
+        g = (nb_timepoints / 4) - j + (5 / 12)
+        k = nb_timepoints - j + 1
 
-        # TODO: translate from matlab
-        #     ql     = (1-g).*y(j,:) + g.*y(j+1,:); % lower quartiles
-        #     qu     = (1-g).*y(k,:) + g.*y(k-1,:); % higher quartiles
-        #     values = qu-ql;                       % inter-quartiles range
+        lower_quartiles = (1 - g) * y[j] + g * y[j + 1]
+        higher_quartiles = (1 - g) * y[k] + g * y[k - 1]
+        inter_quartiles_range = higher_quartiles - lower_quartiles
 
-        #     % robust outliers
-        #     M = median(time_series);
-        #     k = (17.63*n-23.64)/(7.74*n-3.71); % Carling's k
-        #     outliers = time_series<(M-k*values) | time_series>(M+k*values);
+        # robust outliers
+        M = np.median(nan_less)
+        carling_k = (17.63 * nb_timepoints - 23.64) / (7.74 * nb_timepoints - 3.71)
+        lt = time_series < (M - carling_k * inter_quartiles_range)
+        gt = time_series > (M + carling_k * inter_quartiles_range)
+        df = pd.DataFrame({"lt": lt, "gt": gt})
+        outliers = df["lt"] | df["gt"]
+
+        return list(map(float, outliers))  # type: ignore
 
     else:
         raise ValueError(f"Unknown outlier_type: {outlier_type}")

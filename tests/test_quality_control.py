@@ -7,6 +7,7 @@ import pandas as pd
 
 from .utils import bidsmreye_eyetrack
 from .utils import create_basic_data
+from .utils import create_basic_json
 from .utils import create_confounds_tsv
 from bidsmreye.quality_control import add_qc_to_sidecar
 from bidsmreye.quality_control import compute_robust_outliers
@@ -51,6 +52,29 @@ def test_compute_robust_outliers():
     assert outliers == expected_outliers
 
 
+def test_compute_robust_outliers_carling():
+
+    series = time_series()
+    series[8] = 10
+    outliers = compute_robust_outliers(pd.Series(series), outlier_type="Carling")
+
+    expected_outliers = [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+    assert outliers == expected_outliers
+
+
+def test_compute_robust_outliers_carling_with_nan():
+
+    series = time_series()
+    series[1] = np.nan
+    series[8] = 10
+    outliers = compute_robust_outliers(pd.Series(series), outlier_type="Carling")
+
+    expected_outliers = [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+    assert outliers == expected_outliers
+
+
 def test_compute_robust_with_nan():
 
     series = time_series()
@@ -65,6 +89,8 @@ def test_compute_robust_with_nan():
 
 
 def test_quality_control():
+
+    create_basic_json()
 
     output_location = Path().resolve()
     output_location = output_location.joinpath("tests", "data")
@@ -84,11 +110,11 @@ def test_quality_control():
 
 def test_perform_quality_control():
 
+    create_basic_json()
+
     output_location = Path().resolve()
     output_location = output_location.joinpath("tests", "data", "bidsmreye")
-
     layout_out = get_dataset_layout(output_location)
-
     confounds_tsv = bidsmreye_eyetrack()
 
     df = pd.DataFrame(create_basic_data())
@@ -99,13 +125,13 @@ def test_perform_quality_control():
 
 def test_add_qc_to_sidecar():
 
-    output_location = Path().resolve()
-    output_location = output_location.joinpath("tests", "data", "bidsmreye")
-
-    layout_out = get_dataset_layout(output_location)
-
-    confounds_tsv = bidsmreye_eyetrack()
+    create_basic_json()
 
     create_confounds_tsv()
+
+    output_location = Path().resolve()
+    output_location = output_location.joinpath("tests", "data", "bidsmreye")
+    layout_out = get_dataset_layout(output_location)
+    confounds_tsv = bidsmreye_eyetrack()
 
     add_qc_to_sidecar(layout_out, confounds_tsv)

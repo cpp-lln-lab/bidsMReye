@@ -12,10 +12,11 @@ FONT_SIZE = dict(size=14)
 GRID_COLOR = "grey"
 LINE_COLOR = "rgb(0, 150, 175)"
 BG_COLOR = "rgb(255,255,255)"
+HEAT_MAP_COLOR = "gnbu"
 
 
 def value_range(X: pd.Series) -> list[float]:
-    return [-X.max() - 1, X.max() + 1]
+    return [-X.max() * 1.2, X.max() * 1.2]
 
 
 def time_range(time_stamps: pd.Series) -> list[float]:
@@ -160,7 +161,7 @@ def plot_heat_map(fig: Any, eye_gaze_data: pd.DataFrame) -> None:
     y_range = value_range(Y)
 
     fig.add_trace(
-        go.Histogram2dContour(x=X, y=Y, colorscale="Blues"),
+        go.Histogram2dContour(x=X, y=Y, colorscale=HEAT_MAP_COLOR),
         row=1,
         col=3,
     )
@@ -203,12 +204,12 @@ def plot_heat_map(fig: Any, eye_gaze_data: pd.DataFrame) -> None:
 
     outliers = eye_gaze_data["eye1_x_outliers"]
     outlier_color = "orange"
-    add_outlier_to_heatmap(fig, X, Y, outliers, outlier_color)
+    add_outliers_to_heatmap(fig, X, Y, outliers, outlier_color)
     outliers = eye_gaze_data["eye1_y_outliers"]
-    add_outlier_to_heatmap(fig, X, Y, outliers, outlier_color)
+    add_outliers_to_heatmap(fig, X, Y, outliers, outlier_color)
     outliers = eye_gaze_data["displacement_outliers"]
     outlier_color = "red"
-    add_outlier_to_heatmap(fig, X, Y, outliers, outlier_color)
+    add_outliers_to_heatmap(fig, X, Y, outliers, outlier_color)
 
     fig.update_xaxes(
         row=1,
@@ -230,7 +231,7 @@ def plot_heat_map(fig: Any, eye_gaze_data: pd.DataFrame) -> None:
     fig.update_layout(showlegend=False)
 
 
-def add_outlier_to_heatmap(
+def add_outliers_to_heatmap(
     fig: Any, X: pd.Series, Y: pd.Series, outliers: pd.Series, outlier_color: str
 ) -> None:
     fig.add_trace(
