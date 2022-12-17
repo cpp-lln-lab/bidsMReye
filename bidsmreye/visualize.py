@@ -78,11 +78,13 @@ def plot_time_series(
     outliers = None
 
     values_to_plot = eye_gaze_data["eye1_x_coordinate"]
+    outliers = eye_gaze_data["eye1_x_outliers"]
     if title_text == "Y":
         values_to_plot = eye_gaze_data["eye1_y_coordinate"]
+        outliers = eye_gaze_data["eye1_y_outliers"]
     elif title_text == "displacement":
         values_to_plot = eye_gaze_data["displacement"]
-        outliers = eye_gaze_data["outliers"]
+        outliers = eye_gaze_data["displacement_outliers"]
 
     if plotting_range is None:
         plotting_range = value_range(values_to_plot)
@@ -117,7 +119,7 @@ def plot_time_series(
         fig.add_trace(
             go.Scatter(
                 x=eye_gaze_data["eye_timestamp"][outliers == 1],
-                y=eye_gaze_data["displacement"][outliers == 1],
+                y=values_to_plot[outliers == 1],
                 mode="markers",
                 marker_color="red",
                 marker_size=10,
@@ -196,7 +198,7 @@ def plot_heat_map(fig: Any, eye_gaze_data: pd.DataFrame) -> None:
         row=1,
         col=3,
     )
-    outliers = eye_gaze_data["outliers"]
+    outliers = eye_gaze_data["displacement_outliers"]
     fig.add_trace(
         go.Scatter(
             x=X[outliers == 1],

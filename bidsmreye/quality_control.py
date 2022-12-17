@@ -46,7 +46,7 @@ def add_qc_to_sidecar(layout: BIDSLayout, confounds_tsv: str | Path) -> Path:
 
     with open(sidecar_name) as f:
         content = json.load(f)
-        content["NbOutliers"] = confounds["outliers"].sum()
+        content["NbDisplacementOutliers"] = confounds["displacement_outliers"].sum()
         content["eye1XVar"] = confounds["eye1_x_coordinate"].var()
         content["eye1YVar"] = confounds["eye1_y_coordinate"].var()
 
@@ -80,8 +80,16 @@ def perform_quality_control(layout: BIDSLayout, confounds_tsv: str | Path) -> No
         confounds["eye1_x_coordinate"], confounds["eye1_y_coordinate"]
     )
 
-    confounds["outliers"] = compute_robust_outliers(confounds["displacement"])
-    log.debug(f"Found {confounds['outliers'].sum()} outliers")
+    confounds["displacement_outliers"] = compute_robust_outliers(
+        confounds["displacement"]
+    )
+    log.debug(f"Found {confounds['displacement_outliers'].sum()} displacement outliers")
+
+    confounds["eye1_x_outliers"] = compute_robust_outliers(confounds["eye1_x_coordinate"])
+    log.debug(f"Found {confounds['eye1_x_outliers'].sum()} x outliers")
+
+    confounds["eye1_y_outliers"] = compute_robust_outliers(confounds["eye1_y_coordinate"])
+    log.debug(f"Found {confounds['eye1_y_outliers'].sum()} y outliers")
 
     confounds.to_csv(confounds_tsv, sep="\t", index=False)
 

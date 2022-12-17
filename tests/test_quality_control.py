@@ -5,8 +5,10 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from .utils import bidsmreye_eyetrack
+from .utils import create_basic_data
+from .utils import create_confounds_tsv
 from bidsmreye.quality_control import add_qc_to_sidecar
-from bidsmreye.quality_control import compute_displacement
 from bidsmreye.quality_control import compute_robust_outliers
 from bidsmreye.quality_control import perform_quality_control
 from bidsmreye.quality_control import quality_control
@@ -67,18 +69,9 @@ def test_quality_control():
     output_location = Path().resolve()
     output_location = output_location.joinpath("tests", "data")
 
-    confounds_tsv = output_location.joinpath(
-        "bidsmreye",
-        "sub-01",
-        "func",
-        "sub-01_task-nback_space-MNI152NLin2009cAsym_desc-bidsmreye_eyetrack.tsv",
-    )
+    confounds_tsv = bidsmreye_eyetrack()
 
-    data = {
-        "eye1_x_coordinate": np.random.randn(400),
-        "eye1_y_coordinate": np.random.randn(400),
-    }
-    df = pd.DataFrame(data)
+    df = pd.DataFrame(create_basic_data())
     df.to_csv(confounds_tsv, sep="\t", index=False)
 
     cfg = Config(
@@ -96,17 +89,9 @@ def test_perform_quality_control():
 
     layout_out = get_dataset_layout(output_location)
 
-    confounds_tsv = output_location.joinpath(
-        "sub-01",
-        "func",
-        "sub-01_task-nback_space-MNI152NLin2009cAsym_desc-bidsmreye_eyetrack.tsv",
-    )
+    confounds_tsv = bidsmreye_eyetrack()
 
-    data = {
-        "eye1_x_coordinate": np.random.randn(400),
-        "eye1_y_coordinate": np.random.randn(400),
-    }
-    df = pd.DataFrame(data)
+    df = pd.DataFrame(create_basic_data())
     df.to_csv(confounds_tsv, sep="\t", index=False)
 
     perform_quality_control(layout_out, confounds_tsv)
@@ -119,34 +104,8 @@ def test_add_qc_to_sidecar():
 
     layout_out = get_dataset_layout(output_location)
 
-    confounds_tsv = output_location.joinpath(
-        "sub-01",
-        "func",
-        "sub-01_task-nback_space-MNI152NLin2009cAsym_desc-bidsmreye_eyetrack.tsv",
-    )
+    confounds_tsv = bidsmreye_eyetrack()
 
-    eye1_x_coordinate = np.random.randn(400)
-    eye1_y_coordinate = np.random.randn(400)
-
-    data = {
-        "eye_timestamp": np.arange(400),
-        "eye1_x_coordinate": eye1_x_coordinate,
-        "eye1_y_coordinate": eye1_y_coordinate,
-    }
-    data["eye1_x_coordinate"][200] = (
-        eye1_x_coordinate.mean() + eye1_x_coordinate.std() * 4
-    )
-    data["eye1_y_coordinate"][200] = (
-        eye1_y_coordinate.mean() - eye1_y_coordinate.std() * 5
-    )
-    data["eye1_x_coordinate"][50] = eye1_x_coordinate.mean() - eye1_x_coordinate.std() * 5
-    data["eye1_y_coordinate"][50] = eye1_y_coordinate.mean() + eye1_y_coordinate.std() * 4
-    df = pd.DataFrame(data)
-    df["displacement"] = compute_displacement(
-        df["eye1_x_coordinate"], df["eye1_y_coordinate"]
-    )
-    df["outliers"] = compute_robust_outliers(df["displacement"])
-
-    df.to_csv(confounds_tsv, sep="\t", index=False)
+    create_confounds_tsv()
 
     add_qc_to_sidecar(layout_out, confounds_tsv)
