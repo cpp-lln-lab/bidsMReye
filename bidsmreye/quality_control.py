@@ -20,11 +20,6 @@ from bidsmreye.utils import list_subjects
 from bidsmreye.utils import set_this_filter
 from bidsmreye.visualize import visualize_eye_gaze_data
 
-# from bidsmreye.utils import config_to_dict
-# from bidsmreye.utils import create_dir_if_absent
-# from bidsmreye.utils import set_dataset_description
-# from bidsmreye.utils import write_dataset_description
-
 log = logging.getLogger("bidsmreye")
 
 
@@ -33,40 +28,61 @@ def compute_displacement(x: pd.Series, y: pd.Series) -> pd.Series:
     return np.sqrt((x.diff() ** 2) + (y.diff() ** 2))
 
 
-def add_qc_to_sidecar(layout: BIDSLayout, confounds_tsv: str | Path) -> Path:
-    """_summary_
+def add_qc_to_sidecar(confounds: pd.DataFrame, sidecar_name: Path) -> None:
+    """Add quality control metrics to the sidecar json file.
 
-    :param layout: _description_
-    :type layout: BIDSLayout
+    :param layout: Layout of the BIDS dataset to which the confounds tsv file belongs to
+    :type  layout: BIDSLayout
 
-    :param confounds_tsv: _description_
-    :type confounds_tsv: str | Path
+    :param confounds_tsv: path the the confounds tsv file
+    :type  confounds_tsv: str | Path
 
-    :return: _description_
+    :return: Path to the sidecar json file
     :rtype: Path
     """
-    confounds_tsv = Path(confounds_tsv)
-    confounds = pd.read_csv(confounds_tsv, sep="\t")
+    log.info(f"Quality control data added to {sidecar_name}")
 
-    sidecar_name = create_bidsname(layout, confounds_tsv, "confounds_json")
+    if Path(sidecar_name).exists():
+        with open(sidecar_name) as f:
+            content = json.load(f)
+    # In case we are adding the metrics for a file that has its metadata
+    # in the root of the dataset
+    else:
+        content = {}
 
-    with open(sidecar_name) as f:
-        content = json.load(f)
-
-        content["NbDisplacementOutliers"] = confounds["displacement_outliers"].sum()
-        content["NbXOutliers"] = confounds["eye1_x_outliers"].sum()
-        content["NbYOutliers"] = confounds["eye1_y_outliers"].sum()
-        content["eye1XVar"] = confounds["eye1_x_coordinate"].var()
-        content["eye1YVar"] = confounds["eye1_y_coordinate"].var()
+    content["NbDisplacementOutliers"] = confounds["displacement_outliers"].sum()
+    content["NbXOutliers"] = confounds["eye1_x_outliers"].sum()
+    content["NbYOutliers"] = confounds["eye1_y_outliers"].sum()
+    content["eye1XVar"] = confounds["eye1_x_coordinate"].var()
+    content["eye1YVar"] = confounds["eye1_y_coordinate"].var()
 
     json.dump(content, open(sidecar_name, "w"), indent=4)
 
-    return sidecar_name
+
+def compute_displacement_and_outliers(confounds: pd.DataFrame) -> pd.DataFrame:
+
+    confounds["displacement"] = compute_displacement(
+        confounds["eye1_x_coordinate"], confounds["eye1_y_coordinate"]
+    )
+
+    confounds["displacement_outliers"] = compute_robust_outliers(
+        confounds["displacement"], outlier_type="Carling"
+    )
+
+    confounds["eye1_x_outliers"] = compute_robust_outliers(
+        confounds["eye1_x_coordinate"], outlier_type="Carling"
+    )
+    log.debug(f"Found {confounds['eye1_x_outliers'].sum()} x outliers")
+
+    confounds["eye1_y_outliers"] = compute_robust_outliers(
+        confounds["eye1_y_coordinate"], outlier_type="Carling"
+    )
+    log.debug(f"Found {confounds['eye1_y_outliers'].sum()} y outliers")
+
+    return confounds
 
 
-def perform_quality_control(
-    layout_in: BIDSLayout, confounds_tsv: str | Path, layout_out: BIDSLayout = None
-) -> None:
+def perform_quality_control(layout_in: BIDSLayout, confounds_tsv: str | Path) -> None:
     """Perform quality control on the confounds.
 
     Compute displacement and outlier for a given eyetrack.tsv file
@@ -82,37 +98,22 @@ def perform_quality_control(
     confounds = pd.read_csv(confounds_tsv, sep="\t")
 
     sampling_frequency = get_sampling_frequency(layout_in, confounds_tsv)
-    nb_timepoints = confounds.shape[0]
-    eye_timestamp = np.arange(0, sampling_frequency * nb_timepoints, sampling_frequency)
-    confounds["eye_timestamp"] = eye_timestamp
 
-    cols = confounds.columns.tolist()
-    cols.insert(0, cols.pop(cols.index("eye_timestamp")))
-    confounds = confounds[cols]
+    if sampling_frequency is not None:
+        nb_timepoints = confounds.shape[0]
+        eye_timestamp = np.arange(
+            0, 1 / sampling_frequency * nb_timepoints, 1 / sampling_frequency
+        )
+        confounds["eye_timestamp"] = eye_timestamp
 
-    confounds["displacement"] = compute_displacement(
-        confounds["eye1_x_coordinate"], confounds["eye1_y_coordinate"]
-    )
+        cols = confounds.columns.tolist()
+        cols.insert(0, cols.pop(cols.index("eye_timestamp")))
+        confounds = confounds[cols]
 
-    confounds["displacement_outliers"] = compute_robust_outliers(
-        confounds["displacement"], outlier_type="Carling"
-    )
-    log.debug(f"Found {confounds['displacement_outliers'].sum()} displacement outliers")
+    compute_displacement_and_outliers(confounds)
 
-    confounds["eye1_x_outliers"] = compute_robust_outliers(
-        confounds["eye1_x_coordinate"], outlier_type="Carling"
-    )
-    log.debug(f"Found {confounds['eye1_x_outliers'].sum()} x outliers")
-
-    confounds["eye1_y_outliers"] = compute_robust_outliers(
-        confounds["eye1_y_coordinate"], outlier_type="Carling"
-    )
-    log.debug(f"Found {confounds['eye1_y_outliers'].sum()} y outliers")
-
-    confounds.to_csv(confounds_tsv, sep="\t", index=False)
-
-    sidecar_name = add_qc_to_sidecar(layout_in, confounds_tsv)
-    log.info(f"Quality control data added to {sidecar_name}")
+    sidecar_name = create_bidsname(layout_in, confounds_tsv, "confounds_json")
+    add_qc_to_sidecar(confounds, sidecar_name)
 
     fig = visualize_eye_gaze_data(confounds)
     if log.isEnabledFor(logging.DEBUG):
@@ -133,7 +134,7 @@ def get_sampling_frequency(layout: BIDSLayout, file: str | Path) -> float | None
             content = json.load(f)
             SamplingFrequency = content.get("SamplingFrequency", None)
             if SamplingFrequency is not None and SamplingFrequency > 0:
-                sampling_frequency = 1 / SamplingFrequency
+                sampling_frequency = SamplingFrequency
 
     return sampling_frequency
 

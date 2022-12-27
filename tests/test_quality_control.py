@@ -11,9 +11,11 @@ from .utils import create_confounds_tsv
 from .utils import return_bidsmreye_eyetrack_tsv
 from bidsmreye.quality_control import add_qc_to_sidecar
 from bidsmreye.quality_control import compute_robust_outliers
+from bidsmreye.quality_control import get_sampling_frequency
 from bidsmreye.quality_control import perform_quality_control
 from bidsmreye.quality_control import quality_control
 from bidsmreye.utils import Config
+from bidsmreye.utils import create_bidsname
 from bidsmreye.utils import get_dataset_layout
 
 
@@ -41,6 +43,18 @@ def time_series():
         1.8999,
         -1.0088,
     ]
+
+
+def test_get_sampling_frequency():
+
+    ds_location = Path().resolve().joinpath("tests", "data", "bidsmreye")
+    layout = get_dataset_layout(ds_location)
+
+    file = layout.get(return_type="filename", suffix="eyetrack")[0]
+
+    sampling_frequency = get_sampling_frequency(layout, file)
+
+    assert sampling_frequency == 0.14285714285714285
 
 
 def test_compute_robust_outliers():
@@ -132,6 +146,10 @@ def test_add_qc_to_sidecar():
     output_location = Path().resolve()
     output_location = output_location.joinpath("tests", "data", "bidsmreye")
     layout_out = get_dataset_layout(output_location)
-    confounds_tsv = return_bidsmreye_eyetrack_tsv()
 
-    add_qc_to_sidecar(layout_out, confounds_tsv)
+    confounds_tsv = return_bidsmreye_eyetrack_tsv()
+    confounds = pd.read_csv(confounds_tsv, sep="\t")
+
+    sidecar_name = create_bidsname(layout_out, confounds_tsv, "confounds_json")
+
+    add_qc_to_sidecar(confounds, sidecar_name)
