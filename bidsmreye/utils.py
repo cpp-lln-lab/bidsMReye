@@ -216,7 +216,7 @@ class Config:
         self.check_argument(attribute="space", layout_in=layout_in)
 
     def check_argument(self, attribute: str, layout_in: BIDSLayout) -> Config:
-        """Check an attribute value compared to a the input dataset content.
+        """Check an attribute value compared to the input dataset content.
 
         :param attribute:
         :type attribute: str
@@ -227,7 +227,7 @@ class Config:
         :raises RuntimeError:
 
         :return:
-        :rtype: _type_
+        :rtype: Config
         """
         if attribute == "participant":
             value = layout_in.get_subjects()
@@ -256,12 +256,8 @@ class Config:
 
         setattr(self, attribute, value)
 
-        # run can be empty if run entity is not used
-        if (
-            attribute not in ["run"]
-            and len(getattr(self, attribute)) > 0
-            and not getattr(self, attribute)
-        ):
+        # run and space can be empty if their entity are not used
+        if attribute not in ["run", "space"] and not getattr(self, attribute):
             raise RuntimeError(f"No {attribute} not found in {self.input_folder}")
 
         return self

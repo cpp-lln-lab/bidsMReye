@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import pandas as pd
 
-from .utils import bidsmreye_eyetrack
 from .utils import create_confounds_tsv
+from .utils import return_bidsmreye_eyetrack_tsv
 from bidsmreye.visualize import visualize_eye_gaze_data
 
 
