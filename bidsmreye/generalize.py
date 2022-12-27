@@ -16,7 +16,6 @@ from deepmreye.util import data_generator
 from deepmreye.util import model_opts
 from rich import print
 
-from bidsmreye.quality_control import quality_control
 from bidsmreye.utils import add_sidecar_in_root
 from bidsmreye.utils import check_layout
 from bidsmreye.utils import Config
@@ -220,5 +219,3 @@ def generalize(cfg: Config) -> None:
     for subject_label in subjects:
 
         process_subject(cfg, layout_out, subject_label)
-
-    quality_control(cfg)

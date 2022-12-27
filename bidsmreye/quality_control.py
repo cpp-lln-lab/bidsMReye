@@ -20,6 +20,11 @@ from bidsmreye.utils import list_subjects
 from bidsmreye.utils import set_this_filter
 from bidsmreye.visualize import visualize_eye_gaze_data
 
+# from bidsmreye.utils import config_to_dict
+# from bidsmreye.utils import create_dir_if_absent
+# from bidsmreye.utils import set_dataset_description
+# from bidsmreye.utils import write_dataset_description
+
 log = logging.getLogger("bidsmreye")
 
 
@@ -59,21 +64,26 @@ def add_qc_to_sidecar(layout: BIDSLayout, confounds_tsv: str | Path) -> Path:
     return sidecar_name
 
 
-def perform_quality_control(layout: BIDSLayout, confounds_tsv: str | Path) -> None:
+def perform_quality_control(
+    layout_in: BIDSLayout, confounds_tsv: str | Path, layout_out: BIDSLayout = None
+) -> None:
     """Perform quality control on the confounds.
 
+    Compute displacement and outlier for a given eyetrack.tsv file
+    and create a visualization for it that is saved as an html file.
+
     :param layout: pybids layout to of the dataset to act on.
-    :type layout: BIDSLayout
+    :type  layout: BIDSLayout
 
     :param confounds_tsv: Path to the confounds TSV file.
-    :type confounds_tsv: str | Path
+    :type  confounds_tsv: str | Path
     """
     confounds_tsv = Path(confounds_tsv)
     confounds = pd.read_csv(confounds_tsv, sep="\t")
 
-    repetition_time = get_repetition_time(layout, confounds_tsv)
+    sampling_frequency = get_sampling_frequency(layout_in, confounds_tsv)
     nb_timepoints = confounds.shape[0]
-    eye_timestamp = np.arange(0, repetition_time * nb_timepoints, repetition_time)
+    eye_timestamp = np.arange(0, sampling_frequency * nb_timepoints, sampling_frequency)
     confounds["eye_timestamp"] = eye_timestamp
 
     cols = confounds.columns.tolist()
@@ -101,20 +111,20 @@ def perform_quality_control(layout: BIDSLayout, confounds_tsv: str | Path) -> No
 
     confounds.to_csv(confounds_tsv, sep="\t", index=False)
 
-    sidecar_name = add_qc_to_sidecar(layout, confounds_tsv)
+    sidecar_name = add_qc_to_sidecar(layout_in, confounds_tsv)
     log.info(f"Quality control data added to {sidecar_name}")
 
     fig = visualize_eye_gaze_data(confounds)
     if log.isEnabledFor(logging.DEBUG):
         fig.show()
-    visualization_html_file = create_bidsname(layout, confounds_tsv, "confounds_html")
+    visualization_html_file = create_bidsname(layout_in, confounds_tsv, "confounds_html")
     create_dir_for_file(visualization_html_file)
     fig.write_html(visualization_html_file)
 
 
-def get_repetition_time(layout: BIDSLayout, file: str | Path) -> float | None:
-    """Get the repetition time from the sidecar JSON file."""
-    repetition_time = None
+def get_sampling_frequency(layout: BIDSLayout, file: str | Path) -> float | None:
+    """Get the sampling frequency from the sidecar JSON file."""
+    sampling_frequency = None
 
     sidecar_name = create_bidsname(layout, file, "confounds_json")
 
@@ -123,9 +133,9 @@ def get_repetition_time(layout: BIDSLayout, file: str | Path) -> float | None:
             content = json.load(f)
             SamplingFrequency = content.get("SamplingFrequency", None)
             if SamplingFrequency is not None and SamplingFrequency > 0:
-                repetition_time = 1 / SamplingFrequency
+                sampling_frequency = 1 / SamplingFrequency
 
-    return repetition_time
+    return sampling_frequency
 
 
 def quality_control(cfg: Config) -> None:

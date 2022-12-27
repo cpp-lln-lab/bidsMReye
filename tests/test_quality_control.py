@@ -5,10 +5,10 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from .utils import bidsmreye_eyetrack
 from .utils import create_basic_data
 from .utils import create_basic_json
 from .utils import create_confounds_tsv
+from .utils import return_bidsmreye_eyetrack_tsv
 from bidsmreye.quality_control import add_qc_to_sidecar
 from bidsmreye.quality_control import compute_robust_outliers
 from bidsmreye.quality_control import perform_quality_control
@@ -95,7 +95,7 @@ def test_quality_control():
     output_location = Path().resolve()
     output_location = output_location.joinpath("tests", "data")
 
-    confounds_tsv = bidsmreye_eyetrack()
+    confounds_tsv = return_bidsmreye_eyetrack_tsv()
 
     df = pd.DataFrame(create_basic_data())
     df.to_csv(confounds_tsv, sep="\t", index=False)
@@ -115,7 +115,7 @@ def test_perform_quality_control():
     output_location = Path().resolve()
     output_location = output_location.joinpath("tests", "data", "bidsmreye")
     layout_out = get_dataset_layout(output_location)
-    confounds_tsv = bidsmreye_eyetrack()
+    confounds_tsv = return_bidsmreye_eyetrack_tsv()
 
     df = pd.DataFrame(create_basic_data())
     df.to_csv(confounds_tsv, sep="\t", index=False)
@@ -132,6 +132,6 @@ def test_add_qc_to_sidecar():
     output_location = Path().resolve()
     output_location = output_location.joinpath("tests", "data", "bidsmreye")
     layout_out = get_dataset_layout(output_location)
-    confounds_tsv = bidsmreye_eyetrack()
+    confounds_tsv = return_bidsmreye_eyetrack_tsv()
 
     add_qc_to_sidecar(layout_out, confounds_tsv)

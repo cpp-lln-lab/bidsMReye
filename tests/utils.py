@@ -26,7 +26,7 @@ def create_basic_json():
     json.dump(content, open(sidecar_name, "w"), indent=4)
 
 
-def bidsmreye_eyetrack():
+def return_bidsmreye_eyetrack_tsv():
 
     output_location = Path().resolve()
     output_location = output_location.joinpath("tests", "data", "bidsmreye")
@@ -68,7 +68,7 @@ def create_data_with_outliers():
 
 def create_confounds_tsv():
 
-    confounds_tsv = bidsmreye_eyetrack()
+    confounds_tsv = return_bidsmreye_eyetrack_tsv()
 
     df = pd.DataFrame(create_data_with_outliers())
 

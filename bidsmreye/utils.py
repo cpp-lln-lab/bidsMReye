@@ -205,6 +205,8 @@ class Config:
             reset_database=self.reset_database,
         )
 
+        log.debug(f"Layout in:\n{layout_in}")
+
         if not database_path.is_dir():
             layout_in.save(database_path)
 
@@ -217,7 +219,7 @@ class Config:
         """Check an attribute value compared to a the input dataset content.
 
         :param attribute:
-        :type attribute: _type_
+        :type attribute: str
 
         :param layout_in:
         :type layout_in: BIDSLayout
@@ -255,7 +257,11 @@ class Config:
         setattr(self, attribute, value)
 
         # run can be empty if run entity is not used
-        if attribute not in ["run"] and not getattr(self, attribute):
+        if (
+            attribute not in ["run"]
+            and len(getattr(self, attribute)) > 0
+            and not getattr(self, attribute)
+        ):
             raise RuntimeError(f"No {attribute} not found in {self.input_folder}")
 
         return self

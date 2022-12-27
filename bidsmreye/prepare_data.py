@@ -164,10 +164,10 @@ def process_subject(
 def save_sampling_frequency_to_json(layout_out: BIDSLayout, img: str) -> None:
     func_img = nib.load(img)
     header = func_img.header
-    repetition_time = header.get_zooms()[3]
-    if repetition_time <= 1:
-        log.warning(f"Found a repetition time of {repetition_time} seconds.")
-    create_sidecar(layout_out, img, SamplingFrequency=1 / float(repetition_time))
+    sampling_frequency = header.get_zooms()[3]
+    if sampling_frequency <= 1:
+        log.warning(f"Found a repetition time of {sampling_frequency} seconds.")
+    create_sidecar(layout_out, img, SamplingFrequency=1 / float(sampling_frequency))
 
 
 def prepare_data(cfg: Config) -> None:
@@ -183,7 +183,6 @@ def prepare_data(cfg: Config) -> None:
 
     create_dir_if_absent(cfg.output_folder)
     layout_out = get_dataset_layout(cfg.output_folder)
-    # TODO add readme and license
     layout_out = set_dataset_description(layout_out)
     layout_out.dataset_description["DatasetType"] = "derivative"
     layout_out.dataset_description["GeneratedBy"][0]["Name"] = "bidsmreye"

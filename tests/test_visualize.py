@@ -9,7 +9,7 @@ from bidsmreye.visualize import visualize_eye_gaze_data
 
 def test_visualize_eye_gaze_data():
 
-    confounds_tsv = bidsmreye_eyetrack()
+    confounds_tsv = return_bidsmreye_eyetrack_tsv()
 
     create_confounds_tsv()
 
