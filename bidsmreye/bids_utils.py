@@ -147,6 +147,8 @@ def get_dataset_layout(
         dataset_path = Path(dataset_path)
     create_dir_if_absent(dataset_path)
 
+    dataset_path = dataset_path.resolve()
+
     if config is None:
         pybids_config = get_pybids_config()
 

@@ -33,7 +33,16 @@ class Config:
     @input_dir.validator
     def _check_input_dir(self, attribute: str, value: Path) -> None:
         if not value.is_dir:  # type: ignore
-            raise ValueError(f"input_dir must be an existing directory:\n{value}.")
+            raise ValueError(
+                f"input_dir must be an existing directory:\n{value.resolve()}."
+            )
+
+        if not value.joinpath("dataset_description.json").is_file():
+            raise ValueError(
+                f"""input_dir does not seem to be a valid BIDS dataset.
+No dataset_description.json found:
+\t{value.resolve()}."""
+            )
 
     output_dir: Path = field(default=None, converter=Path)
 
