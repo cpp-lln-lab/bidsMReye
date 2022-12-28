@@ -172,11 +172,11 @@ def get_dataset_layout(
     )
 
 
-def init_dataset(cfg: Config) -> BIDSLayout:
+def init_dataset(cfg: Config, qc_only: bool = False) -> BIDSLayout:
 
     layout_out = init_derivatives_layout(cfg)
 
-    citation_file = methods(cfg.output_dir)
+    citation_file = methods(cfg.output_dir, qc_only=qc_only)
     log.info(f"Method section generated: {citation_file}")
 
     license_file = copy_license(cfg.output_dir)

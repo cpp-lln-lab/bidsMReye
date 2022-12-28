@@ -1,8 +1,8 @@
 {
     "SamplingFrequency": 0.14285714285714285,
-    "NbDisplacementOutliers": 7.0,
-    "NbXOutliers": 4.0,
-    "NbYOutliers": 4.0,
-    "eye1XVar": 1.1613998561833485,
-    "eye1YVar": 1.1369423032452983
+    "NbDisplacementOutliers": 6.0,
+    "NbXOutliers": 3.0,
+    "NbYOutliers": 3.0,
+    "eye1XVar": 1.1748409701132374,
+    "eye1YVar": 1.309615831887895
 }

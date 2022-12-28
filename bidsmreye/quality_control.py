@@ -177,7 +177,7 @@ def quality_control_input(cfg: Config) -> None:
     layout_in = get_dataset_layout(cfg.input_dir)
     check_layout(cfg, layout_in, "eyetrack")
 
-    layout_out = init_dataset(cfg)
+    layout_out = init_dataset(cfg, qc_only=True)
 
     subjects = list_subjects(cfg, layout_in)
 

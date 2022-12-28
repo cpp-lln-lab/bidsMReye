@@ -20,7 +20,7 @@
     "GeneratedBy": [
         {
             "Name": "bidsmreye",
-            "Version": "0.2.0+11.gd0da9b9.dirty",
+            "Version": "0.2.0+14.gb873b72.dirty",
             "Container": {
                 "Type": "",
                 "Tag": ""
@@ -31,12 +31,12 @@
                 "input_dir": "/home/remi/github/bidsMReye/tests/data/ds000201-der",
                 "output_dir": "/home/remi/github/bidsMReye/tests/data/ds000201-der/derivatives/bidsmreye/bidsmreye",
                 "participant": [
-                    "9001",
-                    "9013",
                     "9007",
+                    "9013",
+                    "9022",
                     "9008",
                     "9016",
-                    "9022"
+                    "9001"
                 ],
                 "space": [],
                 "task": [
