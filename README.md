@@ -33,7 +33,7 @@ Decoded gaze positions allow computing eye movements.
 
 Some basic quality control and outliers detection is also performed.
 
-![](docs/source/images/sub-01_task-auditory_space-MNI152NLin6Asym_desc-bidsmreye_eyetrack.png)
+![](https://github.com/cpp-lln-lab/bidsMReye/blob/b9b60b4ec9d1bd6904da6151f0d6c44aa425536d/docs/source/images/bidsMReye_logo.png)
 
 For more information, see the
 [User Recommendations](https://deepmreye.slite.com/p/channel/MUgmvViEbaATSrqt3susLZ/notes/kKdOXmLqe).
