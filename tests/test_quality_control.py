@@ -142,9 +142,9 @@ def test_quality_control_output():
 def test_quality_control_input():
 
     input_dir = Path().resolve().joinpath("tests", "data", "ds000201-der")
-    output_dir = input_dir.joinpath("derivatives", "bidsmreye")
+    output_dir = input_dir.joinpath("derivatives")
 
-    rm_dir(output_dir.parent)
+    rm_dir(output_dir)
 
     cfg = Config(
         input_dir,
@@ -152,6 +152,8 @@ def test_quality_control_input():
     )
 
     quality_control_input(cfg)
+
+    rm_dir(output_dir)
 
 
 def test_perform_quality_control():
@@ -184,6 +186,8 @@ def test_perform_quality_control_with_different_output():
     perform_quality_control(
         layout_in=layout_in, confounds_tsv=confounds_tsv, layout_out=layout_out
     )
+
+    rm_dir(output_dir)
 
 
 def test_add_qc_to_sidecar():
