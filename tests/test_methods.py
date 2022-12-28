@@ -36,4 +36,4 @@ def test_methods_qc_only():
     assert output_dir.is_dir()
     assert output_file.is_file()
 
-    # shutil.rmtree(output_dir)
+    shutil.rmtree(output_dir)
