@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import argparse
+import json
 import sys
+from pathlib import Path
 from typing import Any
 from typing import IO
 
@@ -82,6 +84,11 @@ def bidsmreye(
     log_level_name: str = default_log_level(),
 ) -> None:
 
+    bids_filter = None
+    if bids_filter_file is not None and Path(bids_filter_file).is_file():
+        with open(Path(bids_filter_file)) as f:
+            bids_filter = json.load(f)
+
     cfg = Config(
         bids_dir,
         output_dir,
@@ -92,7 +99,7 @@ def bidsmreye(
         debug=debug,
         model_weights_file=model_weights_file,
         reset_database=reset_database,
-        bids_filter=bids_filter_file,
+        bids_filter=bids_filter,
         non_linear_coreg=non_linear_coreg,
     )  # type: ignore
 

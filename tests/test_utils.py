@@ -1,14 +1,17 @@
 from __future__ import annotations
 
+import json
 import shutil
 from pathlib import Path
 
 from .utils import pybids_test_dataset
 from bidsmreye.bids_utils import get_dataset_layout
+from bidsmreye.configuration import Config
 from bidsmreye.utils import copy_license
 from bidsmreye.utils import get_deepmreye_filename
 from bidsmreye.utils import return_deepmreye_output_filename
 from bidsmreye.utils import return_regex
+from bidsmreye.utils import set_this_filter
 
 
 def test_copy_license():
@@ -71,3 +74,73 @@ def test_return_regex():
     assert return_regex("^foo") == "^foo$"
     assert return_regex("foo$") == "^foo$"
     assert return_regex(["foo", "bar"]) == "^foo$|^bar$"
+
+
+def test_set_this_filter_bold():
+
+    output_dir = Path().resolve()
+    output_dir = Path.joinpath(output_dir, "derivatives")
+
+    cfg = Config(
+        pybids_test_dataset(),
+        output_dir,
+    )
+
+    this_filter = set_this_filter(cfg, subject_label="001", filter_type="bold")
+
+    # remove keys that are not always sorted
+    this_filter.pop("space")
+    this_filter.pop("task")
+
+    assert this_filter == {
+        "datatype": "func",
+        "extension": "nii.*",
+        "run": "1|2",
+        "subject": "001",
+        "suffix": "^bold$",
+    }
+
+
+def test_set_this_filter_bidsmreye():
+
+    output_dir = Path().resolve()
+    output_dir = Path.joinpath(output_dir, "data", "bidsmreye")
+
+    cfg = Config(pybids_test_dataset(), output_dir, run="1")
+
+    this_filter = set_this_filter(cfg, subject_label="001", filter_type="eyetrack")
+
+    # remove keys that are not always sorted
+    this_filter.pop("task")
+
+    assert this_filter == {
+        "extension": "tsv",
+        "run": "1",
+        "subject": "001",
+        "suffix": "^eyetrack$$",
+    }
+
+
+def test_set_this_filter_with_bids_filter_file():
+
+    bids_filter = {
+        "eyetrack": {"suffix": "^eyetrack$$", "extension": "tsv", "desc": "preproc"}
+    }
+
+    output_dir = Path().resolve()
+    output_dir = Path.joinpath(output_dir, "data", "bidsmreye")
+
+    cfg = Config(pybids_test_dataset(), output_dir, run="1", bids_filter=bids_filter)
+
+    this_filter = set_this_filter(cfg, subject_label="001", filter_type="eyetrack")
+
+    # remove keys that are not always sorted
+    this_filter.pop("task")
+
+    assert this_filter == {
+        "extension": "tsv",
+        "run": "1",
+        "subject": "001",
+        "suffix": "^eyetrack$$",
+        "desc": "preproc",
+    }

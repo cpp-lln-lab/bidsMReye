@@ -140,7 +140,7 @@ class Config:
 
         # run and space can be empty if their entity are not used
         if attribute not in ["run", "space"] and not getattr(self, attribute):
-            raise RuntimeError(f"No {attribute} not found in {self.input_dir}")
+            raise RuntimeError(f"No {attribute} found in {self.input_dir}")
 
         return self
 
