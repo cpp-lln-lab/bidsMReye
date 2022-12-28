@@ -97,18 +97,20 @@ def perform_quality_control(layout_in: BIDSLayout, confounds_tsv: str | Path) ->
     confounds_tsv = Path(confounds_tsv)
     confounds = pd.read_csv(confounds_tsv, sep="\t")
 
-    sampling_frequency = get_sampling_frequency(layout_in, confounds_tsv)
+    if "eye_timestamp" not in confounds.columns:
 
-    if sampling_frequency is not None:
-        nb_timepoints = confounds.shape[0]
-        eye_timestamp = np.arange(
-            0, 1 / sampling_frequency * nb_timepoints, 1 / sampling_frequency
-        )
-        confounds["eye_timestamp"] = eye_timestamp
+        sampling_frequency = get_sampling_frequency(layout_in, confounds_tsv)
 
-        cols = confounds.columns.tolist()
-        cols.insert(0, cols.pop(cols.index("eye_timestamp")))
-        confounds = confounds[cols]
+        if sampling_frequency is not None:
+            nb_timepoints = confounds.shape[0]
+            eye_timestamp = np.arange(
+                0, 1 / sampling_frequency * nb_timepoints, 1 / sampling_frequency
+            )
+            confounds["eye_timestamp"] = eye_timestamp
+
+            cols = confounds.columns.tolist()
+            cols.insert(0, cols.pop(cols.index("eye_timestamp")))
+            confounds = confounds[cols]
 
     compute_displacement_and_outliers(confounds)
 
@@ -122,6 +124,8 @@ def perform_quality_control(layout_in: BIDSLayout, confounds_tsv: str | Path) ->
     create_dir_for_file(visualization_html_file)
     fig.write_html(visualization_html_file)
 
+    confounds.to_csv(confounds_tsv, sep="\t", index=False)
+
 
 def get_sampling_frequency(layout: BIDSLayout, file: str | Path) -> float | None:
     """Get the sampling frequency from the sidecar JSON file."""
@@ -129,6 +133,7 @@ def get_sampling_frequency(layout: BIDSLayout, file: str | Path) -> float | None
 
     sidecar_name = create_bidsname(layout, file, "confounds_json")
 
+    # TODO: deal with cases where the sidecar is in the root of the dataset
     if sidecar_name.is_file():
         with open(sidecar_name) as f:
             content = json.load(f)

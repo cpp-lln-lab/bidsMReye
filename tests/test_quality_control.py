@@ -4,6 +4,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import pytest
 
 from .utils import create_basic_data
 from .utils import create_basic_json
@@ -51,6 +52,19 @@ def test_get_sampling_frequency():
     layout = get_dataset_layout(ds_location)
 
     file = layout.get(return_type="filename", suffix="eyetrack")[0]
+
+    sampling_frequency = get_sampling_frequency(layout, file)
+
+    assert sampling_frequency == 0.14285714285714285
+
+
+@pytest.mark.xfail(reason="not implemented yet")
+def test_get_sampling_frequency_in_root():
+
+    ds_location = Path().resolve().joinpath("tests", "data", "ds000201-der")
+    layout = get_dataset_layout(ds_location)
+
+    file = layout.get(return_type="filename", subject="9001", suffix="eyetrack")[0]
 
     sampling_frequency = get_sampling_frequency(layout, file)
 
