@@ -8,9 +8,9 @@ from pathlib import Path
 import chevron
 
 from . import _version
-from bidsmreye.utils import available_models
+from bidsmreye.defaults import available_models
+from bidsmreye.defaults import default_model
 from bidsmreye.utils import create_dir_for_file
-from bidsmreye.utils import default_model
 
 
 __version__ = _version.get_versions()["version"]

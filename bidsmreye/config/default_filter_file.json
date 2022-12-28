@@ -14,7 +14,6 @@
         "extension": "npz"
     },
     "eyetrack": {
-        "desc": "bidsmreye",
         "suffix": "^eyetrack$$",
         "extension": "tsv"
     }

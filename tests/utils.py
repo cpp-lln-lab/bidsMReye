@@ -12,10 +12,10 @@ from bidsmreye.quality_control import compute_robust_outliers
 
 def create_basic_json():
 
-    output_location = Path().resolve()
-    output_location = output_location.joinpath("tests", "data", "bidsmreye")
+    output_dir = Path().resolve()
+    output_dir = output_dir.joinpath("tests", "data", "bidsmreye")
 
-    sidecar_name = output_location.joinpath(
+    sidecar_name = output_dir.joinpath(
         "sub-01",
         "func",
         "sub-01_task-nback_space-MNI152NLin2009cAsym_desc-bidsmreye_eyetrack.json",
@@ -28,10 +28,10 @@ def create_basic_json():
 
 def return_bidsmreye_eyetrack_tsv():
 
-    output_location = Path().resolve()
-    output_location = output_location.joinpath("tests", "data", "bidsmreye")
+    output_dir = Path().resolve()
+    output_dir = output_dir.joinpath("tests", "data", "bidsmreye")
 
-    return output_location.joinpath(
+    return output_dir.joinpath(
         "sub-01",
         "func",
         "sub-01_task-nback_space-MNI152NLin2009cAsym_desc-bidsmreye_eyetrack.tsv",

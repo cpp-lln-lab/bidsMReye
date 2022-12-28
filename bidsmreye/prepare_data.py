@@ -1,7 +1,6 @@
 """Run coregistration and extract data."""
 from __future__ import annotations
 
-import logging
 import pickle
 from pathlib import Path
 from typing import Any
@@ -11,24 +10,19 @@ import numpy as np
 from bids import BIDSLayout  # type: ignore
 from deepmreye import preprocess
 
-from bidsmreye.methods import methods
-from bidsmreye.utils import check_layout
-from bidsmreye.utils import Config
-from bidsmreye.utils import config_to_dict
-from bidsmreye.utils import copy_license
-from bidsmreye.utils import create_bidsname
-from bidsmreye.utils import create_dir_if_absent
-from bidsmreye.utils import create_sidecar
-from bidsmreye.utils import get_dataset_layout
+from bidsmreye.bids_utils import check_layout
+from bidsmreye.bids_utils import create_bidsname
+from bidsmreye.bids_utils import create_sidecar
+from bidsmreye.bids_utils import get_dataset_layout
+from bidsmreye.bids_utils import init_dataset
+from bidsmreye.bids_utils import list_subjects
+from bidsmreye.configuration import Config
+from bidsmreye.logging import bidsmreye_log
 from bidsmreye.utils import get_deepmreye_filename
-from bidsmreye.utils import list_subjects
 from bidsmreye.utils import move_file
-from bidsmreye.utils import set_dataset_description
 from bidsmreye.utils import set_this_filter
-from bidsmreye.utils import write_dataset_description
 
-
-log = logging.getLogger("bidsmreye")
+log = bidsmreye_log(name="bidsmreye")
 
 
 def coregister_and_extract_data(img: str, non_linear_coreg: bool = False) -> None:
@@ -178,22 +172,10 @@ def prepare_data(cfg: Config) -> None:
     """
     log.info("PREPARING DATA")
 
-    layout_in = get_dataset_layout(cfg.input_folder, use_database=True)
+    layout_in = get_dataset_layout(cfg.input_dir, use_database=True)
     check_layout(cfg, layout_in)
 
-    create_dir_if_absent(cfg.output_folder)
-    layout_out = get_dataset_layout(cfg.output_folder)
-    layout_out = set_dataset_description(layout_out)
-    layout_out.dataset_description["DatasetType"] = "derivative"
-    layout_out.dataset_description["GeneratedBy"][0]["Name"] = "bidsmreye"
-    layout_out.dataset_description["GeneratedBy"][0]["config"] = config_to_dict(cfg)
-    write_dataset_description(layout_out)
-
-    citation_file = methods(cfg.output_folder)
-    log.info(f"Method section generated: {citation_file}")
-
-    license_file = copy_license(cfg.output_folder)
-    log.info(f"License file added: {license_file}")
+    layout_out = init_dataset(cfg)
 
     subjects = list_subjects(cfg, layout_in)
 

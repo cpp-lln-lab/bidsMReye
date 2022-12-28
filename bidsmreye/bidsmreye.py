@@ -10,16 +10,16 @@ from typing import IO
 import rich
 
 from . import _version
+from bidsmreye.configuration import Config
+from bidsmreye.defaults import available_models
+from bidsmreye.defaults import default_log_level
+from bidsmreye.defaults import default_model
+from bidsmreye.defaults import log_levels
 from bidsmreye.download import download
 from bidsmreye.generalize import generalize
+from bidsmreye.logging import bidsmreye_log
 from bidsmreye.prepare_data import prepare_data
-from bidsmreye.quality_control import quality_control
-from bidsmreye.utils import available_models
-from bidsmreye.utils import bidsmreye_log
-from bidsmreye.utils import Config
-from bidsmreye.utils import default_log_level
-from bidsmreye.utils import default_model
-from bidsmreye.utils import log_levels
+from bidsmreye.quality_control import quality_control_input
 
 __version__ = _version.get_versions()["version"]
 
@@ -127,7 +127,7 @@ def bidsmreye(
             generalize(cfg)
 
         elif action == "qc":
-            quality_control(cfg)
+            quality_control_input(cfg)
 
         else:
             log.error("Unknown action")

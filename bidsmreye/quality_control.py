@@ -11,16 +11,18 @@ import pandas as pd
 from bids import BIDSLayout  # type: ignore
 from scipy.stats.distributions import chi2
 
-from bidsmreye.utils import check_layout
-from bidsmreye.utils import Config
-from bidsmreye.utils import create_bidsname
+from bidsmreye.bids_utils import check_layout
+from bidsmreye.bids_utils import create_bidsname
+from bidsmreye.bids_utils import get_dataset_layout
+from bidsmreye.bids_utils import init_dataset
+from bidsmreye.bids_utils import list_subjects
+from bidsmreye.configuration import Config
+from bidsmreye.logging import bidsmreye_log
 from bidsmreye.utils import create_dir_for_file
-from bidsmreye.utils import get_dataset_layout
-from bidsmreye.utils import list_subjects
 from bidsmreye.utils import set_this_filter
 from bidsmreye.visualize import visualize_eye_gaze_data
 
-log = logging.getLogger("bidsmreye")
+log = bidsmreye_log("bidsmreye")
 
 
 def compute_displacement(x: pd.Series, y: pd.Series) -> pd.Series:
@@ -42,12 +44,13 @@ def add_qc_to_sidecar(confounds: pd.DataFrame, sidecar_name: Path) -> None:
     """
     log.info(f"Quality control data added to {sidecar_name}")
 
-    if Path(sidecar_name).exists():
+    if sidecar_name.exists():
         with open(sidecar_name) as f:
             content = json.load(f)
     # In case we are adding the metrics for a file that has its metadata
     # in the root of the dataset
     else:
+        create_dir_for_file(file=sidecar_name)
         content = {}
 
     content["NbDisplacementOutliers"] = confounds["displacement_outliers"].sum()
@@ -82,7 +85,9 @@ def compute_displacement_and_outliers(confounds: pd.DataFrame) -> pd.DataFrame:
     return confounds
 
 
-def perform_quality_control(layout_in: BIDSLayout, confounds_tsv: str | Path) -> None:
+def perform_quality_control(
+    layout_in: BIDSLayout, confounds_tsv: str | Path, layout_out: BIDSLayout | None = None
+) -> None:
     """Perform quality control on the confounds.
 
     Compute displacement and outlier for a given eyetrack.tsv file
@@ -94,6 +99,9 @@ def perform_quality_control(layout_in: BIDSLayout, confounds_tsv: str | Path) ->
     :param confounds_tsv: Path to the confounds TSV file.
     :type  confounds_tsv: str | Path
     """
+    if layout_out is None:
+        layout_out = layout_in
+
     confounds_tsv = Path(confounds_tsv)
     confounds = pd.read_csv(confounds_tsv, sep="\t")
 
@@ -114,16 +122,17 @@ def perform_quality_control(layout_in: BIDSLayout, confounds_tsv: str | Path) ->
 
     compute_displacement_and_outliers(confounds)
 
-    sidecar_name = create_bidsname(layout_in, confounds_tsv, "confounds_json")
+    sidecar_name = create_bidsname(layout_out, confounds_tsv, "confounds_json")
     add_qc_to_sidecar(confounds, sidecar_name)
 
     fig = visualize_eye_gaze_data(confounds)
     if log.isEnabledFor(logging.DEBUG):
         fig.show()
-    visualization_html_file = create_bidsname(layout_in, confounds_tsv, "confounds_html")
+    visualization_html_file = create_bidsname(layout_out, confounds_tsv, "confounds_html")
     create_dir_for_file(visualization_html_file)
     fig.write_html(visualization_html_file)
 
+    confounds_tsv = create_bidsname(layout_out, confounds_tsv, "confounds_tsv")
     confounds.to_csv(confounds_tsv, sep="\t", index=False)
 
 
@@ -144,12 +153,12 @@ def get_sampling_frequency(layout: BIDSLayout, file: str | Path) -> float | None
     return sampling_frequency
 
 
-def quality_control(cfg: Config) -> None:
+def quality_control_output(cfg: Config) -> None:
     """Run quality control on the output dataset."""
 
     log.info("QUALITY CONTROL")
 
-    layout_out = get_dataset_layout(cfg.output_folder)
+    layout_out = get_dataset_layout(cfg.output_dir)
     check_layout(cfg, layout_out)
 
     subjects = list_subjects(cfg, layout_out)
@@ -159,25 +168,47 @@ def quality_control(cfg: Config) -> None:
         qc_subject(cfg, layout_out, subject_label)
 
 
-def qc_subject(cfg: Config, layout_out: BIDSLayout, subject_label: str) -> None:
+def quality_control_input(cfg: Config) -> None:
+    """Run quality control on the input dataset."""
+
+    log.info("QUALITY CONTROL")
+
+    layout_in = get_dataset_layout(cfg.input_dir)
+    check_layout(cfg, layout_in, "eyetrack")
+
+    layout_out = init_dataset(cfg)
+
+    subjects = list_subjects(cfg, layout_in)
+
+    for subject_label in subjects:
+
+        qc_subject(cfg, layout_in, subject_label, layout_out)
+
+
+def qc_subject(
+    cfg: Config,
+    layout_in: BIDSLayout,
+    subject_label: str,
+    layout_out: BIDSLayout | None = None,
+) -> None:
     """Run quality control for one subject."""
 
     log.info(f"Running subject: {subject_label}")
 
     this_filter = set_this_filter(cfg, subject_label, "eyetrack")
 
-    data = layout_out.get(
+    data = layout_in.get(
         return_type="filename",
         regex_search=True,
         **this_filter,
     )
 
-    to_print = [str(Path(x).relative_to(layout_out.root)) for x in data]
+    to_print = [str(Path(x).relative_to(layout_in.root)) for x in data]
     log.debug(f"Found files\n{to_print}")
 
     for file in data:
 
-        perform_quality_control(layout_out, file)
+        perform_quality_control(layout_in, file, layout_out)
 
 
 def compute_robust_outliers(

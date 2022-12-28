@@ -6,17 +6,17 @@ from pathlib import Path
 import pytest
 from bids.tests import get_test_data_path
 
-from bidsmreye.utils import Config
-from bidsmreye.utils import config_to_dict
+from bidsmreye.bids_utils import create_bidsname
+from bidsmreye.bids_utils import get_dataset_layout
+from bidsmreye.bids_utils import init_dataset
+from bidsmreye.bids_utils import list_subjects
+from bidsmreye.configuration import Config
+from bidsmreye.configuration import config_to_dict
+from bidsmreye.configuration import get_bidsname_config
+from bidsmreye.configuration import get_config
+from bidsmreye.configuration import get_pybids_config
 from bidsmreye.utils import copy_license
-from bidsmreye.utils import create_bidsname
-from bidsmreye.utils import get_bidsname_config
-from bidsmreye.utils import get_config
-from bidsmreye.utils import get_dataset_layout
 from bidsmreye.utils import get_deepmreye_filename
-from bidsmreye.utils import get_pybids_config
-from bidsmreye.utils import init_derivatives_layout
-from bidsmreye.utils import list_subjects
 from bidsmreye.utils import return_deepmreye_output_filename
 from bidsmreye.utils import return_regex
 
@@ -33,8 +33,8 @@ def test_Config():
     )
     assert not cfg.debug
     assert not cfg.non_linear_coreg
-    assert cfg.input_folder == pybids_test_dataset()
-    assert cfg.output_folder == Path(__file__).parent.joinpath("data", "bidsmreye")
+    assert cfg.input_dir == pybids_test_dataset()
+    assert cfg.output_dir == Path(__file__).parent.joinpath("data", "bidsmreye")
     assert sorted(cfg.participant) == ["01", "02", "03", "04", "05"]
     assert sorted(cfg.task) == ["nback", "rest"]
     assert sorted(cfg.space) == ["MNI152NLin2009cAsym", "T1w"]
@@ -190,39 +190,44 @@ def test_get_pybids_config_smoke():
     assert cfg is not None
 
 
-def test_write_dataset_description():
+def test_init_dataset():
 
-    output_location = Path().resolve()
-    output_location = Path.joinpath(output_location, "derivatives")
+    output_dir = Path().resolve()
+    output_dir = Path.joinpath(output_dir, "derivatives")
 
-    init_derivatives_layout(output_location)
+    cfg = Config(
+        pybids_test_dataset(),
+        output_dir,
+    )
 
-    shutil.rmtree(output_location)
+    init_dataset(cfg)
+
+    shutil.rmtree(output_dir)
 
 
 def test_copy_license():
 
     output_dir = Path().resolve()
-    output_location = output_dir.joinpath("derivatives")
+    output_dir = output_dir.joinpath("derivatives")
 
-    shutil.rmtree(output_location, ignore_errors=True)
+    shutil.rmtree(output_dir, ignore_errors=True)
 
-    license_file = copy_license(output_location)
+    license_file = copy_license(output_dir)
 
     assert license_file.is_file()
-    assert str(license_file) == str(output_location.joinpath("LICENSE"))
+    assert str(license_file) == str(output_dir.joinpath("LICENSE"))
 
-    copy_license(output_location)
+    copy_license(output_dir)
 
-    shutil.rmtree(output_location)
+    shutil.rmtree(output_dir)
 
 
 def test_create_bidsname():
 
-    output_location = Path().resolve()
-    output_location = Path.joinpath(output_location, "derivatives")
+    output_dir = Path().resolve()
+    output_dir = Path.joinpath(output_dir, "derivatives")
 
-    layout = get_dataset_layout(output_location)
+    layout = get_dataset_layout(output_dir)
     filename = Path("inputs").joinpath(
         "raw",
         "sub-01",
@@ -239,4 +244,4 @@ def test_create_bidsname():
         "ses-01", "func", "sub-01_ses-01_task-motion_run-1_desc-eye_mask.p"
     )
 
-    shutil.rmtree(output_location)
+    shutil.rmtree(output_dir)
