@@ -50,7 +50,8 @@ def set_this_filter(cfg: Config, subject_label: str, filter_type: str) -> dict[s
     this_filter = cfg.bids_filter[filter_type]
     this_filter["suffix"] = return_regex(this_filter["suffix"])
     this_filter["task"] = return_regex(cfg.task)
-    this_filter["space"] = return_regex(cfg.space)
+    if filter_type not in ("eyetrack"):
+        this_filter["space"] = return_regex(cfg.space)
     this_filter["subject"] = subject_label
     if cfg.run:
         this_filter["run"] = return_regex(cfg.run)

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import shutil
 from pathlib import Path
 
 import numpy as np
@@ -10,6 +11,7 @@ from .utils import create_basic_data
 from .utils import create_basic_json
 from .utils import create_confounds_tsv
 from .utils import return_bidsmreye_eyetrack_tsv
+from .utils import rm_dir
 from bidsmreye.bids_utils import create_bidsname
 from bidsmreye.bids_utils import get_dataset_layout
 from bidsmreye.configuration import Config
@@ -143,12 +145,16 @@ def test_quality_control_input():
     input_dir = Path().resolve().joinpath("tests", "data", "ds000201-der")
     output_dir = input_dir.joinpath("derivatives", "bidsmreye")
 
+    rm_dir(output_dir.parent)
+
     cfg = Config(
         input_dir,
         output_dir,
     )
 
     quality_control_input(cfg)
+
+    rm_dir(output_dir)
 
 
 def test_perform_quality_control():
@@ -182,6 +188,8 @@ def test_perform_quality_control_with_different_output():
         layout_in=layout_in, confounds_tsv=confounds_tsv, layout_out=layout_out
     )
 
+    rm_dir(output_dir)
+
 
 def test_add_qc_to_sidecar():
 
@@ -199,6 +207,8 @@ def test_add_qc_to_sidecar():
     sidecar_name = create_bidsname(layout_out, confounds_tsv, "confounds_json")
 
     add_qc_to_sidecar(confounds, sidecar_name)
+
+    sidecar_name.unlink()
 
 
 def test_add_qc_to_sidecar_if_missing():

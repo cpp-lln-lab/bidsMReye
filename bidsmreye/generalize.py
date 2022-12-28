@@ -154,16 +154,19 @@ def process_subject(cfg: Config, layout_out: BIDSLayout, subject_label: str) -> 
 
     this_filter = set_this_filter(cfg, subject_label, "no_label")
 
-    data = layout_out.get(
+    bf = layout_out.get(
         return_type="filename",
         regex_search=True,
         **this_filter,
     )
 
-    to_print = [str(Path(x).relative_to(layout_out.root)) for x in data]
-    log.debug(f"Found files\n{to_print}")
+    if len(bf) == 0:
+        log.warning(f"No file found for subject {subject_label}")
+    else:
+        to_print = [str(Path(x).relative_to(layout_out.root)) for x in bf]
+        log.debug(f"Found files\n{to_print}")
 
-    for file in data:
+    for file in bf:
 
         log.info(f"Processing file: {Path(file).name}")
 

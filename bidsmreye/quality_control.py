@@ -197,16 +197,19 @@ def qc_subject(
 
     this_filter = set_this_filter(cfg, subject_label, "eyetrack")
 
-    data = layout_in.get(
+    bf = layout_in.get(
         return_type="filename",
         regex_search=True,
         **this_filter,
     )
 
-    to_print = [str(Path(x).relative_to(layout_in.root)) for x in data]
-    log.debug(f"Found files\n{to_print}")
+    if len(bf) == 0:
+        log.warning(f"No file found for subject {subject_label}")
+    else:
+        to_print = [str(Path(x).relative_to(layout_in.root)) for x in bf]
+        log.debug(f"Found files\n{to_print}")
 
-    for file in data:
+    for file in bf:
 
         perform_quality_control(layout_in, file, layout_out)
 

@@ -133,8 +133,11 @@ def process_subject(
         **this_filter,
     )
 
-    to_print = [str(Path(x).relative_to(layout_in.root)) for x in bf]
-    log.debug(f"Found files\n{to_print}")
+    if len(bf) == 0:
+        log.warning(f"No file found for subject {subject_label}")
+    else:
+        to_print = [str(Path(x).relative_to(layout_in.root)) for x in bf]
+        log.debug(f"Found files\n{to_print}")
 
     for img in bf:
 
