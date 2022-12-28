@@ -133,7 +133,7 @@ def test_quality_control_output():
     df.to_csv(confounds_tsv, sep="\t", index=False)
 
     cfg = Config(
-        output_dir,
+        output_dir.joinpath("bidsmreye"),
         output_dir,
     )
 
@@ -153,8 +153,6 @@ def test_quality_control_input():
     )
 
     quality_control_input(cfg)
-
-    rm_dir(output_dir)
 
 
 def test_perform_quality_control():
@@ -188,8 +186,6 @@ def test_perform_quality_control_with_different_output():
         layout_in=layout_in, confounds_tsv=confounds_tsv, layout_out=layout_out
     )
 
-    rm_dir(output_dir)
-
 
 def test_add_qc_to_sidecar():
 
@@ -207,8 +203,6 @@ def test_add_qc_to_sidecar():
     sidecar_name = create_bidsname(layout_out, confounds_tsv, "confounds_json")
 
     add_qc_to_sidecar(confounds, sidecar_name)
-
-    sidecar_name.unlink()
 
 
 def test_add_qc_to_sidecar_if_missing():
