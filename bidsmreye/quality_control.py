@@ -126,6 +126,7 @@ def perform_quality_control(
     add_qc_to_sidecar(confounds, sidecar_name)
 
     fig = visualize_eye_gaze_data(confounds)
+    fig.update_layout(title=Path(confounds_tsv).name)
     if log.isEnabledFor(logging.DEBUG):
         fig.show()
     visualization_html_file = create_bidsname(layout_out, confounds_tsv, "confounds_html")
