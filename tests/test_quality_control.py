@@ -11,6 +11,7 @@ from .utils import create_basic_json
 from .utils import create_confounds_tsv
 from .utils import return_bidsmreye_eyetrack_tsv
 from bidsmreye.quality_control import add_qc_to_sidecar
+from bidsmreye.quality_control import compute_displacement_and_outliers
 from bidsmreye.quality_control import compute_robust_outliers
 from bidsmreye.quality_control import get_sampling_frequency
 from bidsmreye.quality_control import perform_quality_control
@@ -167,3 +168,25 @@ def test_add_qc_to_sidecar():
     sidecar_name = create_bidsname(layout_out, confounds_tsv, "confounds_json")
 
     add_qc_to_sidecar(confounds, sidecar_name)
+
+
+def test_add_qc_to_sidecar_if_missing():
+
+    ds_location = Path().resolve().joinpath("tests", "data", "ds000201-der")
+    layout = get_dataset_layout(ds_location)
+
+    file = layout.get(
+        return_type="filename", subject="9001", suffix="eyetrack", extension=".tsv"
+    )[0]
+
+    confounds = pd.read_csv(file, sep="\t")
+
+    compute_displacement_and_outliers(confounds)
+
+    sidecar_name = create_bidsname(layout, file, "confounds_json")
+
+    add_qc_to_sidecar(confounds, sidecar_name)
+
+    assert sidecar_name.exists()
+
+    sidecar_name.unlink()

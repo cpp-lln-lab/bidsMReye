@@ -1,0 +1,25 @@
+{
+    "Name": "subsample preprocessed eyetracking data from ds000201",
+    "BIDSVersion": "1.7.0",
+    "DatasetType": "derivative",
+    "Authors": [
+        "Cemal Koba",
+        "Giuseppe Notaro",
+        "Sandra Tamm",
+        "Gustav Nilsonne",
+        "Uri Hasson"
+    ],
+    "HowToAcknowledge": "Please cite this paper: https: //doi.org/10.1162/netn_a_00186",
+    "GeneratedBy": [
+        {
+            "Name": "home made script"
+        }
+    ],
+    "SourceDatasets": [
+        {
+            "DOI": "doi:10.18112/openneuro.ds000201.v1.0.3",
+            "URL": "https://openneuro.org/datasets/ds000201/versions/1.0.3",
+            "Version": "1.0.3"
+        }
+    ]
+}
