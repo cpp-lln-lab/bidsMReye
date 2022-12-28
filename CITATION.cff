@@ -2,7 +2,7 @@ cff-version: 1.2.0
 
 title: "bidsMReye"
 
-version: 0.1.0
+version: 0.2.0
 
 abstract:
   "BIDS app using deepMReye to decode eye motion for fMRI time series data."
@@ -41,4 +41,4 @@ keywords:
   - MRI
   - Python
   - Eyetracking
-  - MAchine learning
+  - Machine learning
