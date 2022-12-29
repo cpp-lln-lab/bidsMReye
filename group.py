@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from datetime import datetime
 from pathlib import Path
 
 import numpy as np
@@ -9,6 +10,11 @@ import plotly.graph_objects as go
 from bids import BIDSLayout
 from plotly.subplots import make_subplots
 from rich import print
+
+# from bidsmreye._version import _version
+
+# __version__ = _version.get_versions()["version"]
+__version__ = "0.2.0"
 
 FONT_SIZE = dict(size=14)
 GRID_COLOR = "grey"
@@ -33,11 +39,11 @@ bf = layout.get(
     extension="json",
 )
 
+qc_data = None
 for i, file in enumerate(bf):
 
     entities = layout.parse_file_entities(file)
 
-    qc_data = None
     with open(file) as f:
         data = json.loads(f.read())
 
@@ -59,7 +65,7 @@ fig = go.FigureWidget(
         rows=2,
         cols=3,
         horizontal_spacing=0.2,
-        vertical_spacing=0.15,
+        vertical_spacing=0.2,
         specs=[
             [{"rowspan": 1, "colspan": 3}, None, None],
             [{"rowspan": 1, "colspan": 2}, None, None],
@@ -75,6 +81,7 @@ fig.add_trace(
         x=np.ones(nb_data_points) * X_POSITION_1,
         y=qc_data["NbDisplacementOutliers"],
         marker=dict(color=COLOR_1),
+        name="displacement",
     ),
     row=row,
     col=col,
@@ -84,6 +91,7 @@ fig.add_trace(
         x=np.ones(nb_data_points) * X_POSITION_2,
         y=qc_data["NbXOutliers"],
         marker=dict(color=COLOR_2),
+        name="x gaze<br>position",
     ),
     row=row,
     col=col,
@@ -93,6 +101,7 @@ fig.add_trace(
         x=np.ones(nb_data_points) * X_POSITION_3,
         y=qc_data["NbYOutliers"],
         marker=dict(color=COLOR_3),
+        name="Y gaze<br>position",
     ),
     row=row,
     col=col,
@@ -119,6 +128,7 @@ fig.add_trace(
         x=np.ones(nb_data_points) * X_POSITION_1,
         y=qc_data["eye1XVar"],
         marker=dict(color=COLOR_1),
+        name="x gaze<br>position",
     ),
     row=row,
     col=col,
@@ -128,6 +138,7 @@ fig.add_trace(
         x=np.ones(nb_data_points) * X_POSITION_2,
         y=qc_data["eye1YVar"],
         marker=dict(color=COLOR_2),
+        name="Y gaze<br>position",
     ),
     row=row,
     col=col,
@@ -182,18 +193,25 @@ fig.update_traces(
     marker=dict(size=16, opacity=1),
     fillcolor="rgb(200, 200, 200)",
     line=dict(color="black"),
+    unselected=dict(marker=dict(opacity=0.1)),
 )
 
 fig.update_layout(showlegend=False, plot_bgcolor=BG_COLOR, paper_bgcolor=BG_COLOR)
 
 fig.update_layout(
+    height=800,
+    width=800,
     title=dict(
-        text="<b>bidsmreye: group report</b>",
+        text=f"""<b>bidsmreye: group report</b><br>
+<b>Summary</b><br>
+- Date and time: {datetime.now():%Y-%m-%d, %H:%M}<br>
+- bidsmreye version: {__version__}<br>
+        """,
         x=0.05,
-        y=0.98,
-        font=dict(size=24, color="black"),
-    )
+        y=0.95,
+        font=dict(size=19, color="black"),
+    ),
+    margin=dict(t=150, pad=0),
 )
-
 
 fig.show()
