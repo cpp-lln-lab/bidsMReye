@@ -178,7 +178,7 @@ ds002799_prepare: get_ds002799
 				--action prepare \
 				--debug \
 				--participant_label 302 307 \
-				--space MNI152NLin2009cAsym T1w \
+				--space MNI152NLin2009cAsym \
 				--run 1 2
 
 
@@ -189,7 +189,7 @@ ds002799_generalize:
 				--action generalize \
 				--debug \
 				--participant_label 302 307 \
-				--space MNI152NLin2009cAsym T1w \
+				--space MNI152NLin2009cAsym \
 				--run 1 2
 
 
@@ -200,7 +200,7 @@ ds002799: clean-ds002799 get_ds002799
 				--action all \
 				--debug \
 				--participant_label 302 307 \
-				--space MNI152NLin2009cAsym T1w \
+				--space MNI152NLin2009cAsym \
 				--run 1 2 \
 				-vv
 
