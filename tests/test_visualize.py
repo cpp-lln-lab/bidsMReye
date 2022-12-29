@@ -30,8 +30,8 @@ def test_group_report():
     input_dir = Path().resolve().joinpath("tests", "data", "derivatives", "bidsmreye")
 
     cfg = Config(
-        input_dir,
-        input_dir,
+        input_dir=input_dir,
+        output_dir=input_dir.parent,
     )
 
     group_report(cfg)
@@ -43,7 +43,7 @@ def test_group_report_cli():
 
     bidsmreye(
         bids_dir=bids_dir,
-        output_dir=bids_dir,
+        output_dir=bids_dir.parent,
         analysis_level="group",
         action="qc",
         participant_label=["9001", "9008"],

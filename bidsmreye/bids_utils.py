@@ -221,7 +221,7 @@ def list_subjects(cfg: Config, layout: BIDSLayout) -> list[str]:
     subjects = layout.get(return_type="id", target="subject", subject=cfg.subjects)
 
     if subjects == [] or subjects is None:
-        raise RuntimeError("No subject found")
+        raise RuntimeError(f"No subject found in layout:\n\t{layout.root}")
 
     if cfg.debug:
         subjects = [subjects[0]]
