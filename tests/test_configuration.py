@@ -22,7 +22,7 @@ def test_Config():
     assert not cfg.non_linear_coreg
     assert cfg.input_dir == pybids_test_dataset()
     assert cfg.output_dir == Path(__file__).parent.joinpath("data", "bidsmreye")
-    assert sorted(cfg.participant) == ["01", "02", "03", "04", "05"]
+    assert sorted(cfg.subjects) == ["01", "02", "03", "04", "05"]
     assert sorted(cfg.task) == ["nback", "rest"]
     assert sorted(cfg.space) == ["MNI152NLin2009cAsym", "T1w"]
 
@@ -55,7 +55,7 @@ def test_missing_subject():
         Config(
             pybids_test_dataset(),
             Path(__file__).parent.joinpath("data"),
-            participant=["01", "07"],
+            subjects=["01", "07"],
         )
 
 
@@ -73,7 +73,7 @@ def test_no_subject():
         Config(
             pybids_test_dataset(),
             Path(__file__).parent.joinpath("data"),
-            participant=["99"],
+            subjects=["99"],
         )
     assert e_info.type == RuntimeError
 
@@ -102,9 +102,9 @@ def test_task_omit_missing_values():
         pybids_test_dataset(),
         Path(__file__).parent.joinpath("data"),
         task=["auditory", "rest"],
-        participant=["01", "07"],
+        subjects=["01", "07"],
         space=["T1w", "T2w"],
     )
-    assert cfg.participant == ["01"]
+    assert cfg.subjects == ["01"]
     assert cfg.task == ["rest"]
     assert cfg.space == ["T1w"]

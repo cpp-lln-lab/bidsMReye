@@ -18,6 +18,7 @@ from bidsmreye.bids_utils import init_dataset
 from bidsmreye.bids_utils import list_subjects
 from bidsmreye.configuration import Config
 from bidsmreye.logging import bidsmreye_log
+from bidsmreye.utils import check_if_file_found
 from bidsmreye.utils import get_deepmreye_filename
 from bidsmreye.utils import move_file
 from bidsmreye.utils import set_this_filter
@@ -133,11 +134,7 @@ def process_subject(
         **this_filter,
     )
 
-    if len(bf) == 0:
-        log.warning(f"No file found for subject {subject_label}")
-    else:
-        to_print = [str(Path(x).relative_to(layout_in.root)) for x in bf]
-        log.debug(f"Found files\n{to_print}")
+    check_if_file_found(bf, this_filter, layout_in)
 
     for img in bf:
 

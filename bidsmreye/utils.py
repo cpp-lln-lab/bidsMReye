@@ -45,12 +45,22 @@ def add_sidecar_in_root(layout_out: BIDSLayout) -> None:
     json.dump(content, open(sidecar_name, "w"), indent=4)
 
 
-def set_this_filter(cfg: Config, subject_label: str, filter_type: str) -> dict[str, Any]:
+def check_if_file_found(bf: Any, this_filter: dict[str, Any], layout: BIDSLayout) -> None:
+    if len(bf) == 0:
+        log.warning(f"No file found for filter {this_filter}")
+    else:
+        to_print = [str(Path(x).relative_to(layout.root)) for x in bf]
+        log.debug(f"Found files\n{to_print}")
+
+
+def set_this_filter(
+    cfg: Config, subject_label: str | list[str], filter_type: str
+) -> dict[str, Any]:
 
     this_filter = cfg.bids_filter[filter_type]
     this_filter["suffix"] = return_regex(this_filter["suffix"])
     this_filter["task"] = return_regex(cfg.task)
-    if filter_type not in ("eyetrack"):
+    if filter_type not in ("eyetrack", "eyetrack_qc"):
         this_filter["space"] = return_regex(cfg.space)
     this_filter["subject"] = subject_label
     if cfg.run:

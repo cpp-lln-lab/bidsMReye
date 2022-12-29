@@ -18,6 +18,7 @@ from bidsmreye.bids_utils import init_dataset
 from bidsmreye.bids_utils import list_subjects
 from bidsmreye.configuration import Config
 from bidsmreye.logging import bidsmreye_log
+from bidsmreye.utils import check_if_file_found
 from bidsmreye.utils import create_dir_for_file
 from bidsmreye.utils import set_this_filter
 from bidsmreye.visualize import visualize_eye_gaze_data
@@ -204,11 +205,7 @@ def qc_subject(
         **this_filter,
     )
 
-    if len(bf) == 0:
-        log.warning(f"No file found for subject {subject_label}")
-    else:
-        to_print = [str(Path(x).relative_to(layout_in.root)) for x in bf]
-        log.debug(f"Found files\n{to_print}")
+    check_if_file_found(bf, this_filter, layout_in)
 
     for file in bf:
 

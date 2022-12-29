@@ -2,6 +2,11 @@
 from __future__ import annotations
 
 
+def allowed_actions() -> list[str]:
+    """Return a list of allowed actions."""
+    return ["all", "prepare", "generalize", "qc"]
+
+
 def default_log_level() -> str:
     """Return default log level."""
     return "WARNING"

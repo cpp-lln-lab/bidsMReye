@@ -13,6 +13,7 @@ import rich
 
 from . import _version
 from bidsmreye.configuration import Config
+from bidsmreye.defaults import allowed_actions
 from bidsmreye.defaults import available_models
 from bidsmreye.defaults import default_log_level
 from bidsmreye.defaults import default_model
@@ -22,6 +23,7 @@ from bidsmreye.generalize import generalize
 from bidsmreye.logging import bidsmreye_log
 from bidsmreye.prepare_data import prepare_data
 from bidsmreye.quality_control import quality_control_input
+from bidsmreye.visualize import group_report
 
 __version__ = _version.get_versions()["version"]
 
@@ -92,7 +94,7 @@ def bidsmreye(
     cfg = Config(
         bids_dir,
         output_dir,
-        participant=participant_label or None,
+        subjects=participant_label or None,
         space=space or None,
         task=task or None,
         run=run or None,
@@ -121,23 +123,29 @@ def bidsmreye(
     if action in {"all", "generalize"} and isinstance(cfg.model_weights_file, str):
         cfg.model_weights_file = download(cfg.model_weights_file)
 
-    if analysis_level == "participant":
+    dispatch(analysis_level=analysis_level, action=action, cfg=cfg)
 
+
+def dispatch(analysis_level: str, action: str, cfg: Config) -> None:
+    if analysis_level == "group":
+        if action == "qc":
+            group_report(cfg=cfg)
+        else:
+            log.error("Unknown group level action")
+            sys.exit(1)
+
+    elif analysis_level == "participant":
         if action == "all":
             prepare_data(cfg)
             generalize(cfg)
-
         elif action == "prepare":
             prepare_data(cfg)
-
         elif action == "generalize":
             generalize(cfg)
-
         elif action == "qc":
             quality_control_input(cfg)
-
         else:
-            log.error("Unknown action")
+            log.error("Unknown participant level action")
             sys.exit(1)
 
 
@@ -175,7 +183,7 @@ def common_parser() -> MuhParser:
         Multiple participant level analyses can be run independently (in parallel)
         using the same output_dir.
         """,
-        choices=["participant"],
+        choices=["participant", "group"],
         default="participant",
     )
     parser.add_argument(
@@ -183,7 +191,7 @@ def common_parser() -> MuhParser:
         help="""
         What action to perform.
         """,
-        choices=["all", "prepare", "generalize", "qc"],
+        choices=allowed_actions(),
         default="all",
     )
     parser.add_argument(
