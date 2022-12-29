@@ -1,0 +1,3 @@
+subject	filename	NbDisplacementOutliers	NbXOutliers	NbYOutliers	eye1XVar	eye1YVar
+9001	sub-9001_ses-1_task-rest_desc-bidsmreye_eyetrack.json	3.0	7.0	1.0	0.00016818632287251184	0.0003536839964260474
+9008	sub-9008_ses-1_task-rest_desc-bidsmreye_eyetrack.json	11.0	13.0	3.0	0.005923704468120273	0.010185736784632825

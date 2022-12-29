@@ -43,7 +43,7 @@ COLORS = [COLOR_1, COLOR_2, COLOR_3]
 log = bidsmreye_log(name="bidsmreye")
 
 
-def collect_group_data(cfg: Config) -> pd.DataFrame:
+def collect_group_qc_data(cfg: Config) -> pd.DataFrame:
     """Collect QC metrics data from all subjects json in a BIDS dataset.
 
     :param input_dir:
@@ -77,8 +77,19 @@ def collect_group_data(cfg: Config) -> pd.DataFrame:
 
         df = pd.json_normalize(data)
         df["filename"] = Path(file).name
-        df["Subject"] = entities["subject"]
+        df["subject"] = entities["subject"]
         qc_data = df if i == 0 else pd.concat([qc_data, df], sort=False)
+
+    cols = [
+        "subject",
+        "filename",
+        "NbDisplacementOutliers",
+        "NbXOutliers",
+        "NbYOutliers",
+        "eye1XVar",
+        "eye1YVar",
+    ]
+    qc_data = qc_data[cols]  # type: ignore
 
     return qc_data
 
@@ -126,7 +137,7 @@ def group_report(cfg: Config) -> None:
     :return: Figure object
     :rtype: Any
     """
-    qc_data = collect_group_data(cfg)
+    qc_data = collect_group_qc_data(cfg)
 
     fig = go.FigureWidget(
         make_subplots(
@@ -226,6 +237,9 @@ def group_report(cfg: Config) -> None:
     fig.show()
     group_report_file = Path(cfg.input_dir).joinpath("group_eyetrack.html")
     fig.write_html(group_report_file)
+
+    qc_data_file = Path(cfg.input_dir).joinpath("group_eyetrack.tsv")
+    qc_data.to_csv(qc_data_file, sep="\t", index=False)
 
 
 def value_range(X: pd.Series) -> list[float]:
