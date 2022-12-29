@@ -3,18 +3,18 @@ from __future__ import annotations
 import shutil
 from pathlib import Path
 
+from bidsmreye.bids_utils import get_dataset_layout
 from bidsmreye.generalize import convert_confounds
-from bidsmreye.utils import get_dataset_layout
 
 
 def test_convert_confounds():
 
-    output_location = Path().resolve()
-    output_location = output_location.joinpath("tests", "data", "bidsmreye")
+    output_dir = Path().resolve()
+    output_dir = output_dir.joinpath("tests", "data", "bidsmreye")
 
-    layout_out = get_dataset_layout(output_location)
+    layout_out = get_dataset_layout(output_dir)
 
-    file = output_location.joinpath(
+    file = output_dir.joinpath(
         "sub-01",
         "func",
         "sub-01_task-nback_space-MNI152NLin2009cAsym_desc-bidsmreye_confounds.npy",

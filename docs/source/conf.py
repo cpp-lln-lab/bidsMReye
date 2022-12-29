@@ -36,9 +36,9 @@ sys.path.insert(0, os.path.abspath("../.."))
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 extensions = [
     "sphinx.ext.autodoc",
-    "sphinx.ext.viewcode",
+    "sphinx.ext.coverage",
     "sphinx.ext.intersphinx",
-    "sphinx.ext.autodoc",
+    "sphinx.ext.viewcode",
     "sphinx_copybutton",
     "myst_parser",
     "sphinxarg.ext",
@@ -82,6 +82,8 @@ pygments_style = "sphinx"
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = False
 
+# Configuration of sphinx.ext.coverage
+coverage_show_missing_items = True
 
 # -- Options for HTML output -------------------------------------------
 

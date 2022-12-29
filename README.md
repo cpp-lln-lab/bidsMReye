@@ -3,7 +3,9 @@
 [![codecov](https://codecov.io/gh/cpp-lln-lab/bidsMReye/branch/main/graph/badge.svg?token=G5fm2kaloM)](https://codecov.io/gh/cpp-lln-lab/bidsMReye)
 [![Documentation Status](https://readthedocs.org/projects/bidsmreye/badge/?version=latest)](https://bidsmreye.readthedocs.io/en/latest/?badge=latest)
 [![License](https://img.shields.io/badge/license-GPL3-blue.svg)](./LICENSE)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/bidsmreye)
 ![https://github.com/psf/black](https://img.shields.io/badge/code%20style-black-000000.svg)
+[![Sourcery](https://img.shields.io/badge/Sourcery-enabled-brightgreen)](https://sourcery.ai)
 [![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg)](#contributors)
 [![Paper_link](https://img.shields.io/badge/DOI-10.1038%2Fs41593--021--00947--w-blue)](https://doi.org/10.1038/s41593-021-00947-w)
 
@@ -31,7 +33,7 @@ Decoded gaze positions allow computing eye movements.
 
 Some basic quality control and outliers detection is also performed.
 
-![](docs/source/images/sub-01_task-auditory_space-MNI152NLin6Asym_desc-bidsmreye_eyetrack.png)
+![](https://github.com/cpp-lln-lab/bidsMReye/blob/b9b60b4ec9d1bd6904da6151f0d6c44aa425536d/docs/source/images/bidsMReye_logo.png)
 
 For more information, see the
 [User Recommendations](https://deepmreye.slite.com/p/channel/MUgmvViEbaATSrqt3susLZ/notes/kKdOXmLqe).

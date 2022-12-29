@@ -3,22 +3,25 @@
 from __future__ import annotations
 
 import argparse
+import json
 import sys
+from pathlib import Path
 from typing import Any
 from typing import IO
 
 import rich
 
 from . import _version
+from bidsmreye.configuration import Config
+from bidsmreye.defaults import available_models
+from bidsmreye.defaults import default_log_level
+from bidsmreye.defaults import default_model
+from bidsmreye.defaults import log_levels
 from bidsmreye.download import download
 from bidsmreye.generalize import generalize
+from bidsmreye.logging import bidsmreye_log
 from bidsmreye.prepare_data import prepare_data
-from bidsmreye.utils import available_models
-from bidsmreye.utils import bidsmreye_log
-from bidsmreye.utils import Config
-from bidsmreye.utils import default_log_level
-from bidsmreye.utils import default_model
-from bidsmreye.utils import log_levels
+from bidsmreye.quality_control import quality_control_input
 
 __version__ = _version.get_versions()["version"]
 
@@ -35,21 +38,7 @@ def cli(argv: Any = sys.argv) -> None:
 
     args = parser.parse_args(argv[1:])
 
-    model_weights_file = args.model or None
-
-    cfg = Config(
-        args.bids_dir,
-        args.output_dir,
-        participant=args.participant_label or None,
-        space=args.space or None,
-        task=args.task or None,
-        run=args.run or None,
-        debug=args.debug,
-        model_weights_file=model_weights_file,
-        reset_database=args.reset_database,
-        bids_filter=args.bids_filter_file,
-        non_linear_coreg=args.non_linear_coreg,
-    )  # type: ignore
+    log.debug(f"args:\n{args}")
 
     # TODO integrate as part of base config
     # https://stackoverflow.com/a/53293042/14223310
@@ -59,30 +48,93 @@ def cli(argv: Any = sys.argv) -> None:
     for adjustment in args.log_level or ():
         log_level = min(len(log_levels()) - 1, max(log_level + adjustment, 0))
     log_level_name = log_levels()[log_level]
+
+    bidsmreye(
+        bids_dir=args.bids_dir,
+        output_dir=args.output_dir,
+        analysis_level=args.analysis_level,
+        action=args.action,
+        participant_label=args.participant_label or None,
+        space=args.space or None,
+        task=args.task or None,
+        run=args.run or None,
+        debug=args.debug,
+        model_weights_file=args.model or None,
+        reset_database=args.reset_database,
+        bids_filter_file=args.bids_filter_file,
+        non_linear_coreg=args.non_linear_coreg,
+        log_level_name=log_level_name,
+    )
+
+
+def bidsmreye(
+    bids_dir: str,
+    output_dir: str,
+    analysis_level: str,
+    action: str,
+    participant_label: list[str] | None = None,
+    space: list[str] | None = None,
+    task: list[str] | None = None,
+    run: list[str] | None = None,
+    debug: bool | None = None,
+    model_weights_file: str | None = None,
+    reset_database: bool | None = None,
+    bids_filter_file: str | None = None,
+    non_linear_coreg: bool = False,
+    log_level_name: str = default_log_level(),
+) -> None:
+
+    bids_filter = None
+    if bids_filter_file is not None and Path(bids_filter_file).is_file():
+        with open(Path(bids_filter_file)) as f:
+            bids_filter = json.load(f)
+
+    cfg = Config(
+        bids_dir,
+        output_dir,
+        participant=participant_label or None,
+        space=space or None,
+        task=task or None,
+        run=run or None,
+        debug=debug,
+        model_weights_file=model_weights_file,
+        reset_database=reset_database,
+        bids_filter=bids_filter,
+        non_linear_coreg=non_linear_coreg,
+    )  # type: ignore
+
     log.setLevel(log_level_name)
 
-    log.info("Running bidsmreye version %s", __version__)
+    print(log_level_name)
+
+    log.warning(
+        f"log level: {log_level_name}",
+    )
+
+    log.info(f"Running bidsmreye version {__version__}")
 
     if cfg.debug:
         log.debug("DEBUG MODE")
 
-    log.debug(f"args:\n{args}")
     log.debug(f"Configuration:\n{cfg}")
 
-    if args.action in ["all", "generalize"] and isinstance(cfg.model_weights_file, str):
+    if action in {"all", "generalize"} and isinstance(cfg.model_weights_file, str):
         cfg.model_weights_file = download(cfg.model_weights_file)
 
-    if args.analysis_level == "participant":
+    if analysis_level == "participant":
 
-        if args.action == "all":
+        if action == "all":
             prepare_data(cfg)
             generalize(cfg)
 
-        elif args.action == "prepare":
+        elif action == "prepare":
             prepare_data(cfg)
 
-        elif args.action == "generalize":
+        elif action == "generalize":
             generalize(cfg)
+
+        elif action == "qc":
+            quality_control_input(cfg)
 
         else:
             log.error("Unknown action")
@@ -131,7 +183,7 @@ def common_parser() -> MuhParser:
         help="""
         What action to perform.
         """,
-        choices=["all", "prepare", "generalize"],
+        choices=["all", "prepare", "generalize", "qc"],
         default="all",
     )
     parser.add_argument(

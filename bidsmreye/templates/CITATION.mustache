@@ -6,6 +6,7 @@ performed using [*bidsMReye*](https://github.com/cpp-lln-lab/bidsMReye) (version
 a BIDS app relying on [deepMReye](https://github.com/DeepMReye/DeepMReye) (@deepmreye)
 to decode eye motion from fMRI time series data.
 
+{{^qc_only}}
 ### data extraction
 
 The data of each BOLD runs underwent co-registration conducted
@@ -39,6 +40,7 @@ free viewing (@julian_human_2018).
 {{^is_known_models}}
 model trained on calibration data from the current study.
 {{/is_known_models}}
+{{/qc_only}}
 
 ### quality control
 

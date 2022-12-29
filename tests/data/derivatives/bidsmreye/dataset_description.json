@@ -1,0 +1,80 @@
+{
+    "Name": "dataset name",
+    "BIDSVersion": "1.7.0",
+    "DatasetType": "derivative",
+    "License": "CCO",
+    "Authors": [
+        "",
+        ""
+    ],
+    "Acknowledgements": "Special thanks to ",
+    "HowToAcknowledge": "Please cite this paper: Frey, M., Nau, M. & Doeller, C.F.\nMagnetic resonance-based eye tracking using deep neural networks.\nNat Neurosci 24, 1772-1779 (2021).\nhttps://doi.org/10.1038/s41593-021-00947-w",
+    "Funding": [
+        "",
+        ""
+    ],
+    "ReferencesAndLinks": [
+        "https://doi.org/10.1038/s41593-021-00947-w"
+    ],
+    "DatasetDOI": "doi:",
+    "GeneratedBy": [
+        {
+            "Name": "bidsmreye",
+            "Version": "0.2.0+14.gb873b72.dirty",
+            "Container": {
+                "Type": "",
+                "Tag": ""
+            },
+            "Description": "",
+            "CodeURL": "https://github.com/cpp-lln-lab/bidsMReye.git",
+            "config": {
+                "input_dir": "/home/remi/github/bidsMReye/tests/data/ds000201-der",
+                "output_dir": "/home/remi/github/bidsMReye/tests/data/ds000201-der/derivatives/bidsmreye/bidsmreye",
+                "participant": [
+                    "9007",
+                    "9013",
+                    "9022",
+                    "9008",
+                    "9016",
+                    "9001"
+                ],
+                "space": [],
+                "task": [
+                    "rest"
+                ],
+                "run": [],
+                "model_weights_file": null,
+                "bids_filter": {
+                    "bold": {
+                        "datatype": "func",
+                        "suffix": "^bold$",
+                        "extension": "nii.*"
+                    },
+                    "mask": {
+                        "suffix": "mask",
+                        "extension": "p"
+                    },
+                    "no_label": {
+                        "desc": "nolabel",
+                        "suffix": "^bidsmreye$$",
+                        "extension": "npz"
+                    },
+                    "eyetrack": {
+                        "suffix": "^eyetrack$$",
+                        "extension": "tsv"
+                    }
+                },
+                "debug": false,
+                "reset_database": false,
+                "non_linear_coreg": false
+            }
+        }
+    ],
+    "SourceDatasets": [
+        {
+            "DOI": "doi:",
+            "URL": "",
+            "Version": ""
+        }
+    ]
+}

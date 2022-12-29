@@ -3,155 +3,38 @@ from __future__ import annotations
 import shutil
 from pathlib import Path
 
-import pytest
-from bids.tests import get_test_data_path
-
-from bidsmreye.utils import Config
-from bidsmreye.utils import config_to_dict
+from .utils import pybids_test_dataset
+from bidsmreye.bids_utils import get_dataset_layout
+from bidsmreye.configuration import Config
 from bidsmreye.utils import copy_license
-from bidsmreye.utils import create_bidsname
-from bidsmreye.utils import get_bidsname_config
-from bidsmreye.utils import get_config
-from bidsmreye.utils import get_dataset_layout
 from bidsmreye.utils import get_deepmreye_filename
-from bidsmreye.utils import get_pybids_config
-from bidsmreye.utils import init_derivatives_layout
-from bidsmreye.utils import list_subjects
 from bidsmreye.utils import return_deepmreye_output_filename
 from bidsmreye.utils import return_regex
+from bidsmreye.utils import set_this_filter
 
 
-def pybids_test_dataset():
-    return Path(get_test_data_path()).joinpath("synthetic", "derivatives", "fmriprep")
+def test_copy_license():
 
+    output_dir = Path().resolve()
+    output_dir = output_dir.joinpath("derivatives")
 
-def test_Config():
+    shutil.rmtree(output_dir, ignore_errors=True)
 
-    cfg = Config(
-        pybids_test_dataset(),
-        Path(__file__).parent.joinpath("data"),
-    )
-    assert not cfg.debug
-    assert not cfg.non_linear_coreg
-    assert cfg.input_folder == pybids_test_dataset()
-    assert cfg.output_folder == Path(__file__).parent.joinpath("data", "bidsmreye")
-    assert sorted(cfg.participant) == ["01", "02", "03", "04", "05"]
-    assert sorted(cfg.task) == ["nback", "rest"]
-    assert sorted(cfg.space) == ["MNI152NLin2009cAsym", "T1w"]
+    license_file = copy_license(output_dir)
 
+    assert license_file.is_file()
+    assert str(license_file) == str(output_dir.joinpath("LICENSE"))
 
-def test_config_to_dict_smoke():
-    cfg = Config(
-        pybids_test_dataset(),
-        Path(__file__).parent.joinpath("data"),
-    )
-    cfg_dict = config_to_dict(cfg)
+    copy_license(output_dir)
 
-
-def test_Config_task_omit_missing_values():
-    cfg = Config(
-        pybids_test_dataset(),
-        Path(__file__).parent.joinpath("data"),
-        task=["auditory", "rest"],
-        participant=["01", "07"],
-        space=["T1w", "T2w"],
-    )
-    assert cfg.participant == ["01"]
-    assert cfg.task == ["rest"]
-    assert cfg.space == ["T1w"]
-
-
-def test_missing_subject():
-    with pytest.warns(UserWarning):
-        Config(
-            pybids_test_dataset(),
-            Path(__file__).parent.joinpath("data"),
-            participant=["01", "07"],
-        )
-
-
-def test_no_subject():
-    with pytest.raises(Exception) as e_info:
-        Config(
-            pybids_test_dataset(),
-            Path(__file__).parent.joinpath("data"),
-            participant=["99"],
-        )
-    assert e_info.type == RuntimeError
-
-
-def test_missing_task():
-    with pytest.warns(UserWarning):
-        Config(
-            pybids_test_dataset(),
-            Path(__file__).parent.joinpath("data"),
-            task=["auditory", "rest"],
-        )
-
-
-def test_no_task():
-    with pytest.raises(Exception) as e_info:
-        Config(
-            pybids_test_dataset(),
-            Path(__file__).parent.joinpath("data"),
-            task=["foo"],
-        )
-    assert e_info.type == RuntimeError
-
-
-def test_missing_space():
-    with pytest.warns(UserWarning):
-        Config(
-            pybids_test_dataset(),
-            Path(__file__).parent.joinpath("data"),
-            space=["T1w", "T2w"],
-        )
-
-
-def test_no_subject():
-    with pytest.raises(Exception) as e_info:
-        Config(
-            pybids_test_dataset(),
-            Path(__file__).parent.joinpath("data"),
-            space=["T2w"],
-        )
-    assert e_info.type == RuntimeError
-
-
-def test_return_regex():
-    assert return_regex("foo") == "^foo$"
-    assert return_regex("^foo") == "^foo$"
-    assert return_regex("foo$") == "^foo$"
-    assert return_regex(["foo", "bar"]) == "^foo$|^bar$"
-
-
-def test_list_subjects():
-
-    cfg = Config(
-        pybids_test_dataset(),
-        Path(__file__).parent.joinpath("data"),
-    )
-
-    layout = get_dataset_layout(pybids_test_dataset())
-
-    subjects = list_subjects(cfg, layout)
-    assert len(subjects) == 5
-
-
-def test_get_dataset_layout_smoke_test():
-    get_dataset_layout(Path("data"))
-
-    shutil.rmtree("data")
+    shutil.rmtree(output_dir)
 
 
 def test_get_deepmreye_filename():
 
     layout = get_dataset_layout(pybids_test_dataset())
 
-    output_file = Path(get_test_data_path()).joinpath(
-        "synthetic",
-        "derivatives",
-        "fmriprep",
+    output_file = Path(pybids_test_dataset()).joinpath(
         "sub-01",
         "ses-01",
         "func",
@@ -185,68 +68,78 @@ def test_return_deepmreye_output_filename():
     assert output_filename == expected_output_file
 
 
-def test_get_config_error():
-    with pytest.raises(FileNotFoundError):
-        get_config("", "foo.json")
+def test_return_regex():
+    assert return_regex("foo") == "^foo$"
+    assert return_regex("^foo") == "^foo$"
+    assert return_regex("foo$") == "^foo$"
+    assert return_regex(["foo", "bar"]) == "^foo$|^bar$"
 
 
-def test_get_bidsname_config_smoke():
-    cfg = get_bidsname_config()
-    assert cfg is not None
-
-
-def test_get_pybids_config_smoke():
-    cfg = get_pybids_config()
-    assert cfg is not None
-
-
-def test_write_dataset_description():
-
-    output_location = Path().resolve()
-    output_location = Path.joinpath(output_location, "derivatives")
-
-    init_derivatives_layout(output_location)
-
-    shutil.rmtree(output_location)
-
-
-def test_copy_license():
+def test_set_this_filter_bold():
 
     output_dir = Path().resolve()
-    output_location = output_dir.joinpath("derivatives")
+    output_dir = Path.joinpath(output_dir, "derivatives")
 
-    shutil.rmtree(output_location, ignore_errors=True)
-
-    license_file = copy_license(output_location)
-
-    assert license_file.is_file()
-    assert str(license_file) == str(output_location.joinpath("LICENSE"))
-
-    copy_license(output_location)
-
-    shutil.rmtree(output_location)
-
-
-def test_create_bidsname():
-
-    output_location = Path().resolve()
-    output_location = Path.joinpath(output_location, "derivatives")
-
-    layout = get_dataset_layout(output_location)
-    filename = Path("inputs").joinpath(
-        "raw",
-        "sub-01",
-        "ses-01",
-        "func",
-        "sub-01_ses-01_task-motion_run-1_bold.nii",
+    cfg = Config(
+        pybids_test_dataset(),
+        output_dir,
     )
 
-    output_file = create_bidsname(layout, filename=filename, filetype="mask")
+    this_filter = set_this_filter(cfg, subject_label="001", filter_type="bold")
 
-    rel_path = output_file.relative_to(layout.root)
+    # remove keys that are not always sorted
+    this_filter.pop("space")
+    this_filter.pop("task")
 
-    assert rel_path == Path("sub-01").joinpath(
-        "ses-01", "func", "sub-01_ses-01_task-motion_run-1_desc-eye_mask.p"
-    )
+    assert this_filter == {
+        "datatype": "func",
+        "extension": "nii.*",
+        "run": "1|2",
+        "subject": "001",
+        "suffix": "^bold$",
+    }
 
-    shutil.rmtree(output_location)
+
+def test_set_this_filter_bidsmreye():
+
+    output_dir = Path().resolve()
+    output_dir = Path.joinpath(output_dir, "data", "bidsmreye")
+
+    cfg = Config(pybids_test_dataset(), output_dir, run="1")
+
+    this_filter = set_this_filter(cfg, subject_label="001", filter_type="eyetrack")
+
+    # remove keys that are not always sorted
+    this_filter.pop("task")
+
+    assert this_filter == {
+        "extension": "tsv",
+        "run": "1",
+        "subject": "001",
+        "suffix": "^eyetrack$$",
+    }
+
+
+def test_set_this_filter_with_bids_filter_file():
+
+    bids_filter = {
+        "eyetrack": {"suffix": "^eyetrack$$", "extension": "tsv", "desc": "preproc"}
+    }
+
+    output_dir = Path().resolve()
+    output_dir = Path.joinpath(output_dir, "data", "bidsmreye")
+
+    cfg = Config(pybids_test_dataset(), output_dir, run="1", bids_filter=bids_filter)
+
+    this_filter = set_this_filter(cfg, subject_label="001", filter_type="eyetrack")
+
+    # remove keys that are not always sorted
+    this_filter.pop("task")
+
+    assert this_filter == {
+        "extension": "tsv",
+        "run": "1",
+        "subject": "001",
+        "suffix": "^eyetrack$$",
+        "desc": "preproc",
+    }

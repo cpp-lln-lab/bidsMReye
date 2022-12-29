@@ -8,15 +8,19 @@ from pathlib import Path
 import chevron
 
 from . import _version
-from bidsmreye.utils import available_models
+from bidsmreye.defaults import available_models
+from bidsmreye.defaults import default_model
 from bidsmreye.utils import create_dir_for_file
-from bidsmreye.utils import default_model
 
 
 __version__ = _version.get_versions()["version"]
 
 
-def methods(output_dir: str | Path = Path("."), model_name: str | None = None) -> Path:
+def methods(
+    output_dir: str | Path = Path("."),
+    model_name: str | None = None,
+    qc_only: bool = False,
+) -> Path:
     """Write method section.
 
     :param output_dir: Defaults to Path(".")
@@ -61,6 +65,7 @@ def methods(output_dir: str | Path = Path("."), model_name: str | None = None) -
                 "model_name": model_name,
                 "is_default_model": is_default_model,
                 "is_known_models": is_known_models,
+                "qc_only": qc_only,
             },
             warn=True,
         )

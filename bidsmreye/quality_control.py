@@ -11,16 +11,18 @@ import pandas as pd
 from bids import BIDSLayout  # type: ignore
 from scipy.stats.distributions import chi2
 
-from bidsmreye.utils import check_layout
-from bidsmreye.utils import Config
-from bidsmreye.utils import create_bidsname
+from bidsmreye.bids_utils import check_layout
+from bidsmreye.bids_utils import create_bidsname
+from bidsmreye.bids_utils import get_dataset_layout
+from bidsmreye.bids_utils import init_dataset
+from bidsmreye.bids_utils import list_subjects
+from bidsmreye.configuration import Config
+from bidsmreye.logging import bidsmreye_log
 from bidsmreye.utils import create_dir_for_file
-from bidsmreye.utils import get_dataset_layout
-from bidsmreye.utils import list_subjects
 from bidsmreye.utils import set_this_filter
 from bidsmreye.visualize import visualize_eye_gaze_data
 
-log = logging.getLogger("bidsmreye")
+log = bidsmreye_log("bidsmreye")
 
 
 def compute_displacement(x: pd.Series, y: pd.Series) -> pd.Series:
@@ -28,57 +30,39 @@ def compute_displacement(x: pd.Series, y: pd.Series) -> pd.Series:
     return np.sqrt((x.diff() ** 2) + (y.diff() ** 2))
 
 
-def add_qc_to_sidecar(layout: BIDSLayout, confounds_tsv: str | Path) -> Path:
-    """_summary_
+def add_qc_to_sidecar(confounds: pd.DataFrame, sidecar_name: Path) -> None:
+    """Add quality control metrics to the sidecar json file.
 
-    :param layout: _description_
-    :type layout: BIDSLayout
+    :param layout: Layout of the BIDS dataset to which the confounds tsv file belongs to
+    :type  layout: BIDSLayout
 
-    :param confounds_tsv: _description_
-    :type confounds_tsv: str | Path
+    :param confounds_tsv: path the the confounds tsv file
+    :type  confounds_tsv: str | Path
 
-    :return: _description_
+    :return: Path to the sidecar json file
     :rtype: Path
     """
-    confounds_tsv = Path(confounds_tsv)
-    confounds = pd.read_csv(confounds_tsv, sep="\t")
+    log.info(f"Quality control data added to {sidecar_name}")
 
-    sidecar_name = create_bidsname(layout, confounds_tsv, "confounds_json")
+    if sidecar_name.exists():
+        with open(sidecar_name) as f:
+            content = json.load(f)
+    # In case we are adding the metrics for a file that has its metadata
+    # in the root of the dataset
+    else:
+        create_dir_for_file(file=sidecar_name)
+        content = {}
 
-    with open(sidecar_name) as f:
-        content = json.load(f)
-
-        content["NbDisplacementOutliers"] = confounds["displacement_outliers"].sum()
-        content["NbXOutliers"] = confounds["eye1_x_outliers"].sum()
-        content["NbYOutliers"] = confounds["eye1_y_outliers"].sum()
-        content["eye1XVar"] = confounds["eye1_x_coordinate"].var()
-        content["eye1YVar"] = confounds["eye1_y_coordinate"].var()
+    content["NbDisplacementOutliers"] = confounds["displacement_outliers"].sum()
+    content["NbXOutliers"] = confounds["eye1_x_outliers"].sum()
+    content["NbYOutliers"] = confounds["eye1_y_outliers"].sum()
+    content["eye1XVar"] = confounds["eye1_x_coordinate"].var()
+    content["eye1YVar"] = confounds["eye1_y_coordinate"].var()
 
     json.dump(content, open(sidecar_name, "w"), indent=4)
 
-    return sidecar_name
 
-
-def perform_quality_control(layout: BIDSLayout, confounds_tsv: str | Path) -> None:
-    """Perform quality control on the confounds.
-
-    :param layout: pybids layout to of the dataset to act on.
-    :type layout: BIDSLayout
-
-    :param confounds_tsv: Path to the confounds TSV file.
-    :type confounds_tsv: str | Path
-    """
-    confounds_tsv = Path(confounds_tsv)
-    confounds = pd.read_csv(confounds_tsv, sep="\t")
-
-    repetition_time = get_repetition_time(layout, confounds_tsv)
-    nb_timepoints = confounds.shape[0]
-    eye_timestamp = np.arange(0, repetition_time * nb_timepoints, repetition_time)
-    confounds["eye_timestamp"] = eye_timestamp
-
-    cols = confounds.columns.tolist()
-    cols.insert(0, cols.pop(cols.index("eye_timestamp")))
-    confounds = confounds[cols]
+def compute_displacement_and_outliers(confounds: pd.DataFrame) -> pd.DataFrame:
 
     confounds["displacement"] = compute_displacement(
         confounds["eye1_x_coordinate"], confounds["eye1_y_coordinate"]
@@ -87,7 +71,6 @@ def perform_quality_control(layout: BIDSLayout, confounds_tsv: str | Path) -> No
     confounds["displacement_outliers"] = compute_robust_outliers(
         confounds["displacement"], outlier_type="Carling"
     )
-    log.debug(f"Found {confounds['displacement_outliers'].sum()} displacement outliers")
 
     confounds["eye1_x_outliers"] = compute_robust_outliers(
         confounds["eye1_x_coordinate"], outlier_type="Carling"
@@ -99,41 +82,84 @@ def perform_quality_control(layout: BIDSLayout, confounds_tsv: str | Path) -> No
     )
     log.debug(f"Found {confounds['eye1_y_outliers'].sum()} y outliers")
 
-    confounds.to_csv(confounds_tsv, sep="\t", index=False)
+    return confounds
 
-    sidecar_name = add_qc_to_sidecar(layout, confounds_tsv)
-    log.info(f"Quality control data added to {sidecar_name}")
+
+def perform_quality_control(
+    layout_in: BIDSLayout, confounds_tsv: str | Path, layout_out: BIDSLayout | None = None
+) -> None:
+    """Perform quality control on the confounds.
+
+    Compute displacement and outlier for a given eyetrack.tsv file
+    and create a visualization for it that is saved as an html file.
+
+    :param layout: pybids layout to of the dataset to act on.
+    :type  layout: BIDSLayout
+
+    :param confounds_tsv: Path to the confounds TSV file.
+    :type  confounds_tsv: str | Path
+    """
+    if layout_out is None:
+        layout_out = layout_in
+
+    confounds_tsv = Path(confounds_tsv)
+    confounds = pd.read_csv(confounds_tsv, sep="\t")
+
+    if "eye_timestamp" not in confounds.columns:
+
+        sampling_frequency = get_sampling_frequency(layout_in, confounds_tsv)
+
+        if sampling_frequency is not None:
+            nb_timepoints = confounds.shape[0]
+            eye_timestamp = np.arange(
+                0, 1 / sampling_frequency * nb_timepoints, 1 / sampling_frequency
+            )
+            confounds["eye_timestamp"] = eye_timestamp
+
+            cols = confounds.columns.tolist()
+            cols.insert(0, cols.pop(cols.index("eye_timestamp")))
+            confounds = confounds[cols]
+
+    compute_displacement_and_outliers(confounds)
+
+    sidecar_name = create_bidsname(layout_out, confounds_tsv, "confounds_json")
+    add_qc_to_sidecar(confounds, sidecar_name)
 
     fig = visualize_eye_gaze_data(confounds)
+    fig.update_layout(title=Path(confounds_tsv).name)
     if log.isEnabledFor(logging.DEBUG):
         fig.show()
-    visualization_html_file = create_bidsname(layout, confounds_tsv, "confounds_html")
+    visualization_html_file = create_bidsname(layout_out, confounds_tsv, "confounds_html")
     create_dir_for_file(visualization_html_file)
     fig.write_html(visualization_html_file)
 
+    confounds_tsv = create_bidsname(layout_out, confounds_tsv, "confounds_tsv")
+    confounds.to_csv(confounds_tsv, sep="\t", index=False)
 
-def get_repetition_time(layout: BIDSLayout, file: str | Path) -> float | None:
-    """Get the repetition time from the sidecar JSON file."""
-    repetition_time = None
+
+def get_sampling_frequency(layout: BIDSLayout, file: str | Path) -> float | None:
+    """Get the sampling frequency from the sidecar JSON file."""
+    sampling_frequency = None
 
     sidecar_name = create_bidsname(layout, file, "confounds_json")
 
+    # TODO: deal with cases where the sidecar is in the root of the dataset
     if sidecar_name.is_file():
         with open(sidecar_name) as f:
             content = json.load(f)
             SamplingFrequency = content.get("SamplingFrequency", None)
             if SamplingFrequency is not None and SamplingFrequency > 0:
-                repetition_time = 1 / SamplingFrequency
+                sampling_frequency = SamplingFrequency
 
-    return repetition_time
+    return sampling_frequency
 
 
-def quality_control(cfg: Config) -> None:
+def quality_control_output(cfg: Config) -> None:
     """Run quality control on the output dataset."""
 
     log.info("QUALITY CONTROL")
 
-    layout_out = get_dataset_layout(cfg.output_folder)
+    layout_out = get_dataset_layout(cfg.output_dir)
     check_layout(cfg, layout_out)
 
     subjects = list_subjects(cfg, layout_out)
@@ -143,25 +169,50 @@ def quality_control(cfg: Config) -> None:
         qc_subject(cfg, layout_out, subject_label)
 
 
-def qc_subject(cfg: Config, layout_out: BIDSLayout, subject_label: str) -> None:
+def quality_control_input(cfg: Config) -> None:
+    """Run quality control on the input dataset."""
+
+    log.info("QUALITY CONTROL")
+
+    layout_in = get_dataset_layout(cfg.input_dir)
+    check_layout(cfg, layout_in, "eyetrack")
+
+    layout_out = init_dataset(cfg, qc_only=True)
+
+    subjects = list_subjects(cfg, layout_in)
+
+    for subject_label in subjects:
+
+        qc_subject(cfg, layout_in, subject_label, layout_out)
+
+
+def qc_subject(
+    cfg: Config,
+    layout_in: BIDSLayout,
+    subject_label: str,
+    layout_out: BIDSLayout | None = None,
+) -> None:
     """Run quality control for one subject."""
 
     log.info(f"Running subject: {subject_label}")
 
     this_filter = set_this_filter(cfg, subject_label, "eyetrack")
 
-    data = layout_out.get(
+    bf = layout_in.get(
         return_type="filename",
         regex_search=True,
         **this_filter,
     )
 
-    to_print = [str(Path(x).relative_to(layout_out.root)) for x in data]
-    log.debug(f"Found files\n{to_print}")
+    if len(bf) == 0:
+        log.warning(f"No file found for subject {subject_label}")
+    else:
+        to_print = [str(Path(x).relative_to(layout_in.root)) for x in bf]
+        log.debug(f"Found files\n{to_print}")
 
-    for file in data:
+    for file in bf:
 
-        perform_quality_control(layout_out, file)
+        perform_quality_control(layout_in, file, layout_out)
 
 
 def compute_robust_outliers(
@@ -178,8 +229,9 @@ def compute_robust_outliers(
     :return: Series of booleans indicating the outliers.
     :rtype: pd.Series
 
-    Adapted from spmup:
-    https://github.com/CPernet/spmup/blob/master/QA/spmup_comp_robust_outliers.m
+    Adapted from
+    `spmup <https://github.com/CPernet/spmup/blob/master/QA/spmup_comp_robust_outliers.m>`_
+
 
     S-outliers is the default options, it is independent of a measure of
     centrality as this is based on the median of pair-wise distances. This is
@@ -194,17 +246,17 @@ def compute_robust_outliers(
 
     References:
 
-    - Rousseeuw, P. J., and Croux, C. (1993). Alternatives to the the median
-    absolute deviation. J. Am. Stat. Assoc. 88, 1273-1263.
-    <https://www.tandfonline.com/doi/abs/10.1080/01621459.1993.10476408>
+    - `Rousseeuw, P. J., and Croux, C. (1993). Alternatives to the the median
+      absolute deviation. J. Am. Stat. Assoc. 88, 1273-1263.
+      <https://www.tandfonline.com/doi/abs/10.1080/01621459.1993.10476408>`_
 
-    - Carling, K. (2000). Resistant outlier rules and the non-Gaussian case.
-    Stat. Data Anal. 33, 249:258.
-    <http://www.sciencedirect.com/science/article/pii/S0167947399000572>
+    - `Carling, K. (2000). Resistant outlier rules and the non-Gaussian case.
+      Stat. Data Anal. 33, 249:258.
+      <http://www.sciencedirect.com/science/article/pii/S0167947399000572>`_
 
-    - Hoaglin, D.C., Iglewicz, B. (1987) Fine-tuning some resistant rules for
-    outlier labelling. J. Amer. Statist. Assoc., 82 , 1147:1149
-    <http://www.tandfonline.com/doi/abs/10.1080/01621459.1986.10478363>
+    - `Hoaglin, D.C., Iglewicz, B. (1987) Fine-tuning some resistant rules for
+      outlier labelling. J. Amer. Statist. Assoc., 82 , 1147:1149
+      <http://www.tandfonline.com/doi/abs/10.1080/01621459.1986.10478363>`_
     """
 
     if outlier_type is None:

@@ -26,3 +26,14 @@ def test_methods_calibration_data():
     assert output_file.is_file()
 
     shutil.rmtree(output_dir)
+
+
+def test_methods_qc_only():
+
+    output_dir = Path.cwd().joinpath("temp")
+    output_file = methods(output_dir=output_dir, qc_only=True)
+
+    assert output_dir.is_dir()
+    assert output_file.is_file()
+
+    shutil.rmtree(output_dir)

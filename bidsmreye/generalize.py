@@ -16,18 +16,19 @@ from deepmreye.util import data_generator
 from deepmreye.util import model_opts
 from rich import print
 
-from bidsmreye.quality_control import quality_control
+from bidsmreye.bids_utils import check_layout
+from bidsmreye.bids_utils import create_bidsname
+from bidsmreye.bids_utils import get_dataset_layout
+from bidsmreye.bids_utils import list_subjects
+from bidsmreye.configuration import Config
+from bidsmreye.logging import bidsmreye_log
+from bidsmreye.quality_control import quality_control_output
 from bidsmreye.utils import add_sidecar_in_root
-from bidsmreye.utils import check_layout
-from bidsmreye.utils import Config
-from bidsmreye.utils import create_bidsname
 from bidsmreye.utils import create_dir_for_file
-from bidsmreye.utils import get_dataset_layout
-from bidsmreye.utils import list_subjects
 from bidsmreye.utils import move_file
 from bidsmreye.utils import set_this_filter
 
-log = logging.getLogger("bidsmreye")
+log = bidsmreye_log(name="bidsmreye")
 
 
 def create_and_save_figure(
@@ -153,16 +154,19 @@ def process_subject(cfg: Config, layout_out: BIDSLayout, subject_label: str) -> 
 
     this_filter = set_this_filter(cfg, subject_label, "no_label")
 
-    data = layout_out.get(
+    bf = layout_out.get(
         return_type="filename",
         regex_search=True,
         **this_filter,
     )
 
-    to_print = [str(Path(x).relative_to(layout_out.root)) for x in data]
-    log.debug(f"Found files\n{to_print}")
+    if len(bf) == 0:
+        log.warning(f"No file found for subject {subject_label}")
+    else:
+        to_print = [str(Path(x).relative_to(layout_out.root)) for x in bf]
+        log.debug(f"Found files\n{to_print}")
 
-    for file in data:
+    for file in bf:
 
         log.info(f"Processing file: {Path(file).name}")
 
@@ -210,7 +214,7 @@ def generalize(cfg: Config) -> None:
     log.info("GENERALIZING")
     log.info(f"Using model: {cfg.model_weights_file}")
 
-    layout_out = get_dataset_layout(cfg.output_folder)
+    layout_out = get_dataset_layout(cfg.output_dir)
     check_layout(cfg, layout_out)
 
     add_sidecar_in_root(layout_out)
@@ -221,4 +225,4 @@ def generalize(cfg: Config) -> None:
 
         process_subject(cfg, layout_out, subject_label)
 
-    quality_control(cfg)
+    quality_control_output(cfg)

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from bidsmreye.bidsmreye import args_to_dict
 from bidsmreye.bidsmreye import common_parser
 
 

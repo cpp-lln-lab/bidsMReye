@@ -12,9 +12,9 @@ import pkg_resources
 import pooch
 import rich
 
-from bidsmreye.utils import available_models
-from bidsmreye.utils import bidsmreye_log
-from bidsmreye.utils import default_model
+from bidsmreye.defaults import available_models
+from bidsmreye.defaults import default_model
+from bidsmreye.logging import bidsmreye_log
 
 log = bidsmreye_log(name="bidsmreye")
 
