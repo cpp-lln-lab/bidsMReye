@@ -51,7 +51,7 @@ def collect_group_qc_data(cfg: Config) -> pd.DataFrame:
     :return:
     :rtype: pd.DataFrame
     """
-    layout = get_dataset_layout(cfg.input_dir, use_database=False)
+    layout = get_dataset_layout(cfg.output_dir, use_database=False)
 
     subjects = list_subjects(cfg, layout)
 
@@ -235,10 +235,10 @@ def group_report(cfg: Config) -> None:
     )
 
     fig.show()
-    group_report_file = Path(cfg.input_dir).joinpath("group_eyetrack.html")
+    group_report_file = Path(cfg.output_dir).joinpath("group_eyetrack.html")
     fig.write_html(group_report_file)
 
-    qc_data_file = Path(cfg.input_dir).joinpath("group_eyetrack.tsv")
+    qc_data_file = Path(cfg.output_dir).joinpath("group_eyetrack.tsv")
     qc_data.to_csv(qc_data_file, sep="\t", index=False)
 
 
