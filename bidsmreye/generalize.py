@@ -24,6 +24,7 @@ from bidsmreye.configuration import Config
 from bidsmreye.logging import bidsmreye_log
 from bidsmreye.quality_control import quality_control_output
 from bidsmreye.utils import add_sidecar_in_root
+from bidsmreye.utils import check_if_file_found
 from bidsmreye.utils import create_dir_for_file
 from bidsmreye.utils import move_file
 from bidsmreye.utils import set_this_filter
@@ -160,11 +161,7 @@ def process_subject(cfg: Config, layout_out: BIDSLayout, subject_label: str) -> 
         **this_filter,
     )
 
-    if len(bf) == 0:
-        log.warning(f"No file found for subject {subject_label}")
-    else:
-        to_print = [str(Path(x).relative_to(layout_out.root)) for x in bf]
-        log.debug(f"Found files\n{to_print}")
+    check_if_file_found(bf, this_filter, layout_out)
 
     for file in bf:
 

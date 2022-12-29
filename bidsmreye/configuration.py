@@ -46,7 +46,7 @@ No dataset_description.json found:
 
     output_dir: Path = field(default=None, converter=Path)
 
-    participant: Any | None = field(kw_only=True, default=None)
+    subjects: Any | None = field(kw_only=True, default=None)
 
     space: Any | None = field(kw_only=True, default=None)
     task: Any | None = field(kw_only=True, default=None)
@@ -101,7 +101,7 @@ No dataset_description.json found:
         if not database_path.is_dir():
             layout_in.save(database_path)
 
-        self.check_argument(attribute="participant", layout_in=layout_in)
+        self.check_argument(attribute="subjects", layout_in=layout_in)
         self.check_argument(attribute="task", layout_in=layout_in)
         self.check_argument(attribute="run", layout_in=layout_in)
         self.check_argument(attribute="space", layout_in=layout_in)
@@ -120,7 +120,7 @@ No dataset_description.json found:
         :return:
         :rtype: Config
         """
-        if attribute == "participant":
+        if attribute == "subjects":
             value = layout_in.get_subjects()
         elif attribute == "task":
             value = layout_in.get_tasks()

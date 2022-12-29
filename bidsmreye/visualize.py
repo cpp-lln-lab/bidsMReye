@@ -8,20 +8,27 @@ from typing import Any
 import numpy as np
 import pandas as pd
 import plotly.graph_objs as go
-from bids import BIDSLayout  # type: ignore
 from plotly.subplots import make_subplots
 
 from . import _version
+from bidsmreye.bids_utils import get_dataset_layout
+from bidsmreye.bids_utils import list_subjects
+from bidsmreye.configuration import Config
+from bidsmreye.logging import bidsmreye_log
+from bidsmreye.utils import check_if_file_found
+from bidsmreye.utils import set_this_filter
 
 __version__ = _version.get_versions()["version"]
 
-OPACITY = 1
 LINE_WIDTH = 3
 FONT_SIZE = dict(size=14)
 GRID_COLOR = "grey"
 LINE_COLOR = "rgb(0, 150, 175)"
 BG_COLOR = "rgb(255,255,255)"
 HEAT_MAP_COLOR = "gnbu"
+MARKER_SIZE = 10
+
+TICK_FONT = dict(family="arial", color="black", size=14)
 
 X_POSITION_1 = 1
 X_POSITION_2 = 1.5
@@ -33,20 +40,35 @@ COLOR_2 = "rgba(255, 130, 15, 0.6)"
 COLOR_3 = "rgba(45, 160, 45, 0.6)"
 COLORS = [COLOR_1, COLOR_2, COLOR_3]
 
+log = bidsmreye_log(name="bidsmreye")
 
-def collect_group_data(input_dir: str | Path) -> pd.DataFrame:
 
-    layout = BIDSLayout(input_dir)
+def collect_group_data(cfg: Config) -> pd.DataFrame:
+    """Collect QC metrics data from all subjects json in a BIDS dataset.
+
+    :param input_dir:
+    :type input_dir: str | Path
+    :return:
+    :rtype: pd.DataFrame
+    """
+    layout = get_dataset_layout(cfg.input_dir, use_database=False)
+
+    subjects = list_subjects(cfg, layout)
+
+    this_filter = set_this_filter(cfg, subjects, "eyetrack_qc")
 
     bf = layout.get(
         return_type="filename",
-        desc="bidsmreye",
-        suffix="eyetrack",
-        extension="json",
+        regex_search=True,
+        **this_filter,
     )
+
+    check_if_file_found(bf, this_filter, layout)
 
     qc_data = None
     for i, file in enumerate(bf):
+
+        log.info(f"Processing file: {file}")
 
         entities = layout.parse_file_entities(file)
 
@@ -79,7 +101,7 @@ def plot_group_boxplot(
             go.Box(
                 x=np.ones(nb_data_points) * X_POSITION[i],
                 y=qc_data[this_column],
-                marker=dict(color=COLORS[i]),
+                marker=dict(size=MARKER_SIZE, color=COLORS[i]),
                 name=trace_names[i],
             ),
             row=row,
@@ -98,9 +120,13 @@ def plot_group_boxplot(
     )
 
 
-def group_report(input_dir: str | Path) -> Any:
+def group_report(cfg: Config) -> None:
+    """Create a group level report figure for eyetracking data.
 
-    qc_data = collect_group_data(input_dir)
+    :return: Figure object
+    :rtype: Any
+    """
+    qc_data = collect_group_data(cfg)
 
     fig = go.FigureWidget(
         make_subplots(
@@ -146,24 +172,24 @@ def group_report(input_dir: str | Path) -> Any:
     fig.update_yaxes(
         title=dict(standoff=0, font=FONT_SIZE),
         showline=True,
-        linewidth=2,
+        linewidth=LINE_WIDTH - 1,
         linecolor="black",
         gridcolor=GRID_COLOR,
         griddash="dot",
         gridwidth=0.5,
-        tickfont=dict(family="arial", color="black", size=FONT_SIZE["size"]),
+        tickfont=TICK_FONT,
     )
 
     fig.update_xaxes(
         showline=True,
-        linewidth=2,
+        linewidth=LINE_WIDTH - 1,
         linecolor="black",
         ticks="outside",
         tickangle=-45,
         ticklen=5,
         tickwidth=2,
         tickcolor="black",
-        tickfont=dict(family="arial", color="black", size=FONT_SIZE["size"]),
+        tickfont=TICK_FONT,
     )
 
     fig.update_traces(
@@ -173,7 +199,7 @@ def group_report(input_dir: str | Path) -> Any:
         boxmean=True,
         width=0.2,
         hovertext=qc_data["filename"],
-        marker=dict(size=16),
+        marker=dict(size=MARKER_SIZE),
         fillcolor="rgb(200, 200, 200)",
         line=dict(color="black"),
     )
@@ -198,8 +224,8 @@ def group_report(input_dir: str | Path) -> Any:
     )
 
     fig.show()
-
-    return fig
+    group_report_file = Path(cfg.input_dir).joinpath("group_eyetrack.html")
+    fig.write_html(group_report_file)
 
 
 def value_range(X: pd.Series) -> list[float]:
@@ -218,13 +244,13 @@ def visualize_eye_gaze_data(
         make_subplots(
             rows=3,
             cols=4,
-            horizontal_spacing=0.05,
-            vertical_spacing=0.1,
-            shared_xaxes="columns",
+            shared_xaxes=True,
+            horizontal_spacing=0.1,
+            vertical_spacing=0.05,
             specs=[
                 [{"colspan": 2}, None, {"rowspan": 2, "colspan": 2}, None],
                 [{"colspan": 2}, None, None, None],
-                [{"colspan": 2}, None, {"colspan": 2}, None],
+                [{"colspan": 2}, None, None, None],
             ],
         )
     )
@@ -245,7 +271,7 @@ def visualize_eye_gaze_data(
         row=3,
         col=1,
         title=dict(text="Time (s)", standoff=16, font=FONT_SIZE),
-        tickfont=FONT_SIZE,
+        tickfont=TICK_FONT,
     )
 
     plot_heat_map(fig, eye_gaze_data)
@@ -285,7 +311,6 @@ def plot_time_series(
             y=[0, 0],
             mode="lines",
             line_color="black",
-            opacity=OPACITY,
             line_width=LINE_WIDTH - 1,
         ),
         row=row,
@@ -298,7 +323,6 @@ def plot_time_series(
             y=values_to_plot,
             mode="lines",
             line_color=line_color,
-            opacity=OPACITY,
             line_width=LINE_WIDTH,
         ),
         row=row,
@@ -312,8 +336,7 @@ def plot_time_series(
                 y=values_to_plot[outliers == 1],
                 mode="markers",
                 marker_color=outlier_color,
-                marker_size=10,
-                opacity=OPACITY,
+                marker_size=MARKER_SIZE,
             ),
             row=row,
             col=col,
@@ -324,19 +347,27 @@ def plot_time_series(
         row=row,
         col=col,
         gridcolor=GRID_COLOR,
-        tickfont=FONT_SIZE,
+        griddash="dot",
+        gridwidth=0.5,
+        tickfont=TICK_FONT,
     )
     fig.update_yaxes(
         range=plotting_range,
         row=row,
         col=col,
         gridcolor=GRID_COLOR,
+        griddash="dot",
+        gridwidth=0.5,
         ticksuffix="°",
         title=dict(text=title_text, standoff=0, font=FONT_SIZE),
         tickfont=FONT_SIZE,
     )
 
-    fig.update_layout(showlegend=False, plot_bgcolor=BG_COLOR, paper_bgcolor=BG_COLOR)
+    fig.update_layout(
+        showlegend=False,
+        plot_bgcolor=BG_COLOR,
+        paper_bgcolor=BG_COLOR,
+    )
 
 
 def plot_heat_map(fig: Any, eye_gaze_data: pd.DataFrame) -> None:
@@ -359,7 +390,6 @@ def plot_heat_map(fig: Any, eye_gaze_data: pd.DataFrame) -> None:
             y=[0, 0],
             mode="lines",
             line_color="black",
-            opacity=OPACITY,
             line_width=LINE_WIDTH - 2,
         ),
         row=1,
@@ -371,7 +401,6 @@ def plot_heat_map(fig: Any, eye_gaze_data: pd.DataFrame) -> None:
             y=y_range,
             mode="lines",
             line_color="black",
-            opacity=OPACITY,
             line_width=LINE_WIDTH - 2,
         ),
         row=1,
@@ -404,7 +433,7 @@ def plot_heat_map(fig: Any, eye_gaze_data: pd.DataFrame) -> None:
         range=value_range(X),
         ticksuffix="°",
         title=dict(text="X", standoff=16, font=FONT_SIZE),
-        tickfont=FONT_SIZE,
+        tickfont=TICK_FONT,
     )
     fig.update_yaxes(
         row=1,
@@ -412,7 +441,7 @@ def plot_heat_map(fig: Any, eye_gaze_data: pd.DataFrame) -> None:
         range=value_range(Y),
         ticksuffix="°",
         title=dict(text="Y", standoff=16, font=FONT_SIZE),
-        tickfont=FONT_SIZE,
+        tickfont=TICK_FONT,
     )
 
     fig.update_layout(showlegend=False)
@@ -427,8 +456,7 @@ def add_outliers_to_heatmap(
             y=Y[outliers == 1],
             mode="markers",
             marker_color=outlier_color,
-            marker_size=8,
-            opacity=OPACITY,
+            marker_size=MARKER_SIZE / 2,
         ),
         row=1,
         col=3,

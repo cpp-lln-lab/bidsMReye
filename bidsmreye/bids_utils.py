@@ -218,7 +218,7 @@ def list_subjects(cfg: Config, layout: BIDSLayout) -> list[str]:
     :return: _description_
     :rtype: list
     """
-    subjects = layout.get(return_type="id", target="subject", subject=cfg.participant)
+    subjects = layout.get(return_type="id", target="subject", subject=cfg.subjects)
 
     if subjects == [] or subjects is None:
         raise RuntimeError("No subject found")

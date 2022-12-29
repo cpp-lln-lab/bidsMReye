@@ -16,5 +16,9 @@
     "eyetrack": {
         "suffix": "^eyetrack$$",
         "extension": "tsv"
+    },
+    "eyetrack_qc": {
+        "suffix": "^eyetrack$$",
+        "extension": "json"
     }
 }
