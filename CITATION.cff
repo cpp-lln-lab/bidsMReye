@@ -2,7 +2,7 @@ cff-version: 1.2.0
 
 title: "bidsMReye"
 
-version: 0.2.0
+version: 0.3.0
 
 abstract:
   "BIDS app using deepMReye to decode eye motion for fMRI time series data."
@@ -15,6 +15,9 @@ identifiers:
   - description: deepMReye paper
     type: doi
     value: "10.1038/s41593-021-00947-w"
+  - description: zenodo code
+    type: doi
+    value: "10.5281/zenodo.7493322"
 
 contact:
   - affiliation: "Université catholique de Louvain"

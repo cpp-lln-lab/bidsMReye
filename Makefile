@@ -207,6 +207,7 @@ ds002799: clean-ds002799 get_ds002799
 ## DOCKER
 .PHONY: docker/Dockerfile docker/Dockerfile_dev
 
+# TODO update to see if we can use bidsmreye to download the models
 docker/Dockerfile: ## Dockerfile for the bidsmreye docker image
 	docker run --rm repronim/neurodocker:0.7.0 generate docker \
 	--base debian:stretch-slim \
@@ -214,17 +215,19 @@ docker/Dockerfile: ## Dockerfile for the bidsmreye docker image
 	--install "git wget" \
 	--run "mkdir -p /home/neuro/bidsMReye/models" \
 	--workdir /home/neuro/bidsMReye \
- 	--run "wget -q https://osf.io/download/cqf74/ -O models/dataset1_guided_fixations.h5" \
+	--run "wget -q https://osf.io/download/cqf74/ -O models/dataset1_guided_fixations.h5" \
 	--run "wget -q https://osf.io/download/4f6m7/ -O models/dataset2_pursuit.h5" \
 	--run "wget -q https://osf.io/download/8cr2j/ -O models/dataset3_openclosed.h5" \
 	--run "wget -q https://osf.io/download/e89wp/ -O models/dataset3_pursuit.h5" \
 	--run "wget -q https://osf.io/download/96nyp/ -O models/dataset4_pursuit.h5" \
 	--run "wget -q https://osf.io/download/89nky/ -O models/dataset5_free_viewing.h5" \
+	--run "wget -q https://osf.io/download/23t5v/ -O models/dataset_1to5.h5" \
+	--run "wget -q https://osf.io/download/mr87v/ -O models/dataset_1to6.h5" \
 	--miniconda \
 		create_env="bidsmreye" \
 		conda_install="python=3.9 pip" \
 		activate="true" \
-		pip_install="git+https://github.com/cpp-lln-lab/bidsMReye.git" \
+		pip_install="bidsmreye" \
 	--copy ./docker/entrypoint.sh /neurodocker/startup.sh \
 	--run "chmod +x /neurodocker/startup.sh" \
 	--cmd bidsmreye \
@@ -240,12 +243,14 @@ docker/Dockerfile_dev: ## Dockerfile for the bidsmreye docker image using local 
 	--install "git wget make" \
 	--run "mkdir -p /home/neuro/bidsMReye/models" \
 	--workdir /home/neuro/bidsMReye \
- 	--run "wget -q https://osf.io/download/cqf74/ -O models/dataset1_guided_fixations.h5" \
+	--run "wget -q https://osf.io/download/cqf74/ -O models/dataset1_guided_fixations.h5" \
 	--run "wget -q https://osf.io/download/4f6m7/ -O models/dataset2_pursuit.h5" \
 	--run "wget -q https://osf.io/download/8cr2j/ -O models/dataset3_openclosed.h5" \
 	--run "wget -q https://osf.io/download/e89wp/ -O models/dataset3_pursuit.h5" \
 	--run "wget -q https://osf.io/download/96nyp/ -O models/dataset4_pursuit.h5" \
 	--run "wget -q https://osf.io/download/89nky/ -O models/dataset5_free_viewing.h5" \
+	--run "wget -q https://osf.io/download/23t5v/ -O models/dataset_1to5.h5" \
+	--run "wget -q https://osf.io/download/mr87v/ -O models/dataset_1to6.h5" \
 	--copy . /home/neuro/bidsMReye \
 	--miniconda \
 		create_env="bidsmreye" \
