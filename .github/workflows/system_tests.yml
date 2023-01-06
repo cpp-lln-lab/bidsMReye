@@ -1,49 +1,50 @@
+---
 name: System tests
 
 on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ "*" ]
+    push:
+        branches: [main]
+    pull_request:
+        branches: ['*']
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
 
 jobs:
-  system_test:
+    system_test:
 
-    runs-on: ubuntu-22.04
+        runs-on: ubuntu-22.04
 
-    strategy:
-      matrix:
-        python-version: ["3.9"]
-        dataset: ["demo", "ds002799"]
+        strategy:
+            matrix:
+                python-version: ['3.9']
+                dataset: [demo, ds002799]
 
-    steps:
+        steps:
 
-    - name: Clone repo
-      uses: actions/checkout@v3
+        -   name: Clone repo
+            uses: actions/checkout@v3
 
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ matrix.python-version }}
+        -   name: Set up Python ${{ matrix.python-version }}
+            uses: actions/setup-python@v4
+            with:
+                python-version: ${{ matrix.python-version }}
 
-    - name: Install dependencies
-      run: |
-        sudo apt-get update -y
-        sudo apt-get install -y git-annex
-        python -m pip install --upgrade pip setuptools
-        pip install datalad
+        -   name: Install dependencies
+            run: |
+                sudo apt-get update -y
+                sudo apt-get install -y git-annex
+                python -m pip install --upgrade pip setuptools
+                pip install datalad
 
-    - name: Install bidsmreye
-      run: |
-        pip install .
+        -   name: Install bidsmreye
+            run: |
+                pip install .
 
-    - name: Datalad WTF
-      run: |
-        datalad wtf
+        -   name: Datalad WTF
+            run: |
+                datalad wtf
 
-    - name: Run ${{ matrix.dataset }}
-      run: make ${{ matrix.dataset }}
+        -   name: Run ${{ matrix.dataset }}
+            run: make ${{ matrix.dataset }}
