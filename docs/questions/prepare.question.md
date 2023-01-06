@@ -1,7 +1,7 @@
 ---
-title: Is the `prepare` only suitable for the datasets that have eye-tracking info?
+title: Is the "prepare" only suitable for the datasets that have eye-tracking info?
 alt_titles:
-  - If want to only guess the eye position, should I use `generalize`?
+  - If want to only guess the eye position, should I use "generalize"?
 ---
 
 No the `prepare` action is necessary for all datasets,

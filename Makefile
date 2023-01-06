@@ -101,12 +101,14 @@ validate_cff: ## Validate the citation file
 
 
 ## DOC
-.PHONY: docs
+.PHONY: docs docs/source/FAQ.md
 
-docs: ## generate Sphinx HTML documentation, including API docs
+docs/source/FAQ.md:
+	faqtory build
+
+docs: docs/source/FAQ.md ## generate Sphinx HTML documentation, including API docs
 	rm -f docs/source/bidsmreye.rst
 	rm -f docs/source/modules.rst
-	faqtory build
 	sphinx-apidoc -o docs/source bidsmreye
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
