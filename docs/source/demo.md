@@ -1,7 +1,8 @@
 # Demo
 
-This will run bidsMReye on the fmriprep preprocessed data of the SPM MOAE
-dataset (that you can find on the open science framework).
+This deom will run the docker image of bidsMReye
+on the fmriprep preprocessed data of the SPM MOAE dataset
+(that you can find on the open science framework).
 
 For Linux or MacOS you can use `make` to get the data of the demo.
 
@@ -19,8 +20,6 @@ For Windows you will have to download the data manually.
 The directory where you want to run the demo should look like this:
 
 ```bash
-├── models
-│   └── dataset1_guided_fixations.h5
 └── tests
     └── data
         └── moae_fmriprep
@@ -31,57 +30,35 @@ The directory where you want to run the demo should look like this:
                  └── func
 ```
 
-## Using docker
+## Preparing the data
 
-For Linux or MacOS you can use `make` to get run all the steps of the demo.
-
-```bash
-make docker_demo
-```
+Extracts the timeseries from the eye mask in the preprocessed fMRI images.
 
 ```bash
 docker run --rm -it \
       --user "$(id -u):$(id -g)" \
       -v $PWD/tests/data/moae_fmriprep:/home/neuro/data \
       -v $PWD/outputs/moae_fmriprep/derivatives:/home/neuro/outputs/ \
-      cpplab/bidsmreye:latest \
-      /home/neuro/data/ \
-      /home/neuro/outputs/ \
-      participant \
-      --action prepare
+            cpplab/bidsmreye:latest \
+            /home/neuro/data/ \
+            /home/neuro/outputs/ \
+            participant \
+            --action prepare
 ```
+
+## Computing the eye movements
+
+This step will use the extracted timeseries to predict the eye movements
+using the default pre-trained model of deepmreye.
 
 ```bash
 docker run --rm -it \
       --user "$(id -u):$(id -g)" \
       -v $PWD/tests/data/moae_fmriprep:/home/neuro/data \
       -v $PWD/outputs/moae_fmriprep/derivatives:/home/neuro/outputs/ \
-      cpplab/bidsmreye:latest \
-      /home/neuro/data/ \
-      /home/neuro/outputs/ \
-      participant \
-      --action generalize
-```
-
-## After installing the package locally
-
-For Linux or MacOS you can use `make` to get run all the steps of the demo.
-
-```bash
-make demo
-```
-
-This will run the different steps of the demo:
-
-```bash
-bids_dir="$PWD/tests/data/moae_fmriprep "
-output_dir="$PWD/outputs "
-
-bidsmreye --action prepare \
-          $bids_dir \
-          $output_dir
-
-bidsmreye --action generalize \
-          $bids_dir \
-          $output_dir
+            cpplab/bidsmreye:latest \
+            /home/neuro/data/ \
+            /home/neuro/outputs/ \
+            participant \
+            --action generalize
 ```
