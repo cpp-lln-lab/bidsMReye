@@ -14,7 +14,7 @@ COPY [".", "/home/neuro/bidsMReye"]
 RUN pip install --upgrade pip && \
     pip3 install .
 
-ENV MPLCONFIGDIR=/home/neuro/bidsMReye/.config/matplotlib
+ENV MPLCONFIGDIR=/tmp/.config/matplotlib
 
 RUN bidsmreye_model && \
     bidsmreye_model --model_name 1_guided_fixations && \
