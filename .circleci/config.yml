@@ -56,6 +56,7 @@ jobs:
                         bids/${CIRCLE_PROJECT_REPONAME,,} --version
 
         -   run:
+                name: run all
                 command: |
                     docker run -ti --rm --read-only \
                       -v /tmp/workspace/data/ds114_test<< parameters.dataset >>:/bids_dataset \
