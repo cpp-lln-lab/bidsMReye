@@ -2,6 +2,8 @@
 
 FROM ubuntu:jammy
 
+USER  root
+
 ARG DEBIAN_FRONTEND="noninteractive"
 
 RUN apt-get update -qq \
@@ -37,6 +39,8 @@ WORKDIR /home/neuro/bidsMReye
 
 COPY [".", "/home/neuro/bidsMReye"]
 RUN pip3 install .
+
+ENV MPLCONFIGDIR=/home/neuro/.config/matplotlib
 
 RUN bidsmreye_model
 RUN bidsmreye_model --model_name 1_guided_fixations && \
