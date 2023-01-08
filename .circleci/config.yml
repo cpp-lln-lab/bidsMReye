@@ -52,6 +52,7 @@ jobs:
                 name: print version
                 command: |
                     docker run -ti --rm --read-only \
+                      -v /tmp:/tmp -v /var/tmp:/var/tmp \
                       -v /tmp/workspace/data/ds114_test1:/bids_dataset \
                         cpp-lln-lab/bidsmreye --version
 
@@ -59,6 +60,7 @@ jobs:
                 name: run all
                 command: |
                     docker run -ti --rm --read-only \
+                      -v /tmp:/tmp -v /var/tmp:/var/tmp \
                       -v /tmp/workspace/data/ds114_test<< parameters.dataset >>:/bids_dataset \
                       -v ${HOME}/outputs<< parameters.dataset >>:/outputs \
                         cpp-lln-lab/bidsmreye \
