@@ -205,40 +205,11 @@ ds002799: clean-ds002799 get_ds002799
 				-vv
 
 ## DOCKER
-.PHONY: docker/Dockerfile docker/Dockerfile_dev
+.PHONY: Dockerfile Dockerfile
 
-# TODO update to see if we can use bidsmreye to download the models
-docker/Dockerfile: ## Dockerfile for the bidsmreye docker image
-	docker run --rm repronim/neurodocker:0.7.0 generate docker \
-	--base debian:stretch-slim \
-	--pkg-manager apt \
-	--install "git wget" \
-	--run "mkdir -p /home/neuro/bidsMReye/models" \
-	--workdir /home/neuro/bidsMReye \
-	--run "wget -q https://osf.io/download/cqf74/ -O models/dataset1_guided_fixations.h5" \
-	--run "wget -q https://osf.io/download/4f6m7/ -O models/dataset2_pursuit.h5" \
-	--run "wget -q https://osf.io/download/8cr2j/ -O models/dataset3_openclosed.h5" \
-	--run "wget -q https://osf.io/download/e89wp/ -O models/dataset3_pursuit.h5" \
-	--run "wget -q https://osf.io/download/96nyp/ -O models/dataset4_pursuit.h5" \
-	--run "wget -q https://osf.io/download/89nky/ -O models/dataset5_free_viewing.h5" \
-	--run "wget -q https://osf.io/download/23t5v/ -O models/dataset_1to5.h5" \
-	--run "wget -q https://osf.io/download/mr87v/ -O models/dataset_1to6.h5" \
-	--miniconda \
-		create_env="bidsmreye" \
-		conda_install="python=3.9 pip" \
-		activate="true" \
-		pip_install="bidsmreye" \
-	--copy ./docker/entrypoint.sh /neurodocker/startup.sh \
-	--run "chmod +x /neurodocker/startup.sh" \
-	--cmd bidsmreye \
-	> docker/Dockerfile
-
-docker_build: docker/Dockerfile
-	docker build --tag cpplab/bidsmreye:latest --file docker/Dockerfile .
-
-docker/Dockerfile_dev: ## Dockerfile for the bidsmreye docker image using local package
-	docker run --rm repronim/neurodocker:0.7.0 generate docker \
-	--base debian:stretch-slim \
+Dockerfile: ## Dockerfile for the bidsmreye docker image using local package
+	docker run --rm kaczmarj/neurodocker:0.9.1 generate docker \
+	--base-image ubuntu:jammy \
 	--pkg-manager apt \
 	--install "git wget make" \
 	--run "mkdir -p /home/neuro/bidsMReye/models" \
@@ -253,22 +224,19 @@ docker/Dockerfile_dev: ## Dockerfile for the bidsmreye docker image using local 
 	--run "wget -q https://osf.io/download/mr87v/ -O models/dataset_1to6.h5" \
 	--copy . /home/neuro/bidsMReye \
 	--miniconda \
-		create_env="bidsmreye" \
-		conda_install="python=3.9 pip" \
-		activate="true" \
+		conda_install="python=3.10 pip" \
+		version="latest" \
 		pip_install="-e ." \
 	--copy ./docker/entrypoint.sh /neurodocker/startup.sh \
-	--run "chmod +x /neurodocker/startup.sh" \
-	--cmd bidsmreye \
-	> docker/Dockerfile_dev
+	--run "chmod +x /neurodocker/startup.sh" > Dockerfile
 
-docker_dev_build: docker/Dockerfile_dev
-	docker build --tag cpplab/bidsmreye:dev --file docker/Dockerfile_dev .
+docker_build: Dockerfile
+	docker build --tag cpplab/bidsmreye:unstable --file Dockerfile .
 
-docker_dev_build_no_cache: docker/Dockerfile_dev
-	docker build --tag cpplab/bidsmreye:dev --no-cache --file docker/Dockerfile_dev .
+docker_build_no_cache: Dockerfile
+	docker build --tag cpplab/bidsmreye:unstable --no-cache --file Dockerfile .
 
-docker_demo: docker_dev_build clean-demo
+docker_demo: docker_build clean-demo
 	make docker_prepare_data
 	make docker_generalize
 
@@ -277,7 +245,7 @@ docker_prepare_data:
 				--user "$$(id -u):$$(id -g)" \
 				-v $$PWD/tests/data/moae_fmriprep:/home/neuro/data \
 				-v $$PWD/outputs/moae_fmriprep/derivatives:/home/neuro/outputs/ \
-				cpplab/bidsmreye:dev \
+				cpplab/bidsmreye:unstable \
 				/home/neuro/data/ \
 				/home/neuro/outputs/ \
 				participant \
@@ -290,7 +258,7 @@ docker_generalize:
 				--user "$$(id -u):$$(id -g)" \
 				-v $$PWD/tests/data/moae_fmriprep:/home/neuro/data \
 				-v $$PWD/outputs/moae_fmriprep/derivatives:/home/neuro/outputs/ \
-				cpplab/bidsmreye:dev \
+				cpplab/bidsmreye:unstable \
 				/home/neuro/data/ \
 				/home/neuro/outputs/ \
 				participant \
