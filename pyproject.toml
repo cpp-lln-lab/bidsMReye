@@ -8,3 +8,9 @@ line-length = 90
 [tool.codespell]
 skip = "*.svg,*.eps,.git,env,*build,.mypy*"
 builtin = "clear,rare"
+
+[tool.vulture]
+exclude = ["bidsmreye/_version.py"]
+min_confidence = 70
+paths = ["bidsmreye"]
+sort_by_size = true

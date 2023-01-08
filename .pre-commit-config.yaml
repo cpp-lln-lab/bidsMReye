@@ -61,6 +61,11 @@ repos:
     -   id: pyupgrade
         args: [--py37-plus]
 
+-   repo: https://github.com/jendrikseipp/vulture
+    rev: v2.6
+    hooks:
+    -   id: vulture
+
     # -   repo: https://github.com/MarcoGorelli/auto-walrus
     #     rev: v0.2.1
     #     hooks:
