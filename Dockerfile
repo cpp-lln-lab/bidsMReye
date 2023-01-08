@@ -34,6 +34,10 @@ RUN : \
     pip3 list && \
     echo '\n'
 
+RUN test "$(getent passwd neuro)" || useradd --no-user-group --create-home --shell /bin/bash neuro
+
+USER neuro
+
 RUN mkdir -p /home/neuro/bidsMReye/models
 WORKDIR /home/neuro/bidsMReye
 
