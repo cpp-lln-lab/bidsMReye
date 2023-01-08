@@ -25,10 +25,9 @@ RUN bidsmreye_model && \
     bidsmreye_model --model_name 5_free_viewing && \
     bidsmreye_model --model_name 1to5
 
-RUN chmod -R 777 /home/neuro
-
 ENTRYPOINT [ "/home/neuro/entrypoint.sh" ]
 COPY ["./docker/entrypoint.sh", \
       "/home/neuro/entrypoint.sh"]
+RUN chmod +x /home/neuro/entrypoint.sh
 
-RUN chmod +x /neurodocker/startup.sh
+RUN chmod -R 777 /home/neuro
