@@ -7,6 +7,13 @@ jobs:
             image: ubuntu-2204:2022.10.2
         steps:
         -   checkout
+        -   run:
+                name: Install dependencies
+                command: |
+                    sudo apt-get update
+                    sudo apt-get install -y git-annex
+                    python -m pip install --upgrade pip setuptools
+                    pip install datalad
         -   restore_cache:
                 keys:
                 -   my_cache
