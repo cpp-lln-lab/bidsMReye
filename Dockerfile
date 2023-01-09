@@ -12,7 +12,7 @@ WORKDIR /home/neuro/bidsMReye
 
 COPY [".", "/home/neuro/bidsMReye"]
 RUN pip install --upgrade pip && \
-    pip3 install .
+    pip3 install -e .
 
 ENV MPLCONFIGDIR=/tmp/.config/matplotlib
 

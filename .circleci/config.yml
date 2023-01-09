@@ -8,6 +8,21 @@ jobs:
         steps:
         -   checkout
         -   run:
+                name: Build Docker image
+                command: |
+                    wget https://raw.githubusercontent.com/bids-apps/maintenance-tools/main/circleci/build_docker.sh
+                    bash build_docker.sh
+        -   persist_to_workspace:
+                root: /home/circleci
+                paths:
+                -   docker/image.tar
+
+    get_data:
+        machine:
+            image: ubuntu-2204:2022.10.2
+        steps:
+        -   checkout
+        -   run:
                 name: Install dependencies
                 command: |
                     sudo apt-get update
@@ -18,27 +33,28 @@ jobs:
                 keys:
                 -   my_cache
         -   run:
+                name: Get ds002799
+                command: |
+                    mkdir -p ${HOME}/data/
+                    datalad install -s ///openneuro/ds002799 ${HOME}/data/ds002799
+                    cd ${HOME}/data/ds002799/derivatives/fmriprep
+                    datalad get sub-30[27]/ses-*/func/*run-*preproc*bold*
+        -   run:
                 name: Get test data ds114_test1
                 command: |
                     wget https://raw.githubusercontent.com/bids-apps/maintenance-tools/main/utils/get_data_from_osf.sh
                     bash get_data_from_osf.sh ds114_test1
                     bash get_data_from_osf.sh ds114_test2
-        -   run:
-                name: Build Docker image
-                command: |
-                    wget https://raw.githubusercontent.com/bids-apps/maintenance-tools/main/circleci/build_docker.sh
-                    bash build_docker.sh
         -   save_cache:
                 key: my_cache
                 paths:
-                -   ~/docker
                 -   ~/data
         -   persist_to_workspace:
                 root: /home/circleci
                 paths:
                 -   data/ds114_test1
                 -   data/ds114_test2
-                -   docker/image.tar
+                -   data/ds002799
 
     test:
         machine:
@@ -101,9 +117,11 @@ workflows:
     build-test-deploy:
         jobs:
         -   build
+        -   get_data
         -   test:
                 requires:
                 -   build
+                -   get_data
                 matrix:
                     parameters:
                         dataset: ['1', '2']
