@@ -70,11 +70,9 @@ jobs:
         -   run: docker load -i /tmp/workspace/docker/image.tar
 
         -   run: mkdir -p ${HOME}/outputs<< parameters.dataset >>
-        -   run: mkdir -p ${HOME}/models
 
         -   run:
                 name: print version
-                    #   -v /tmp:/tmp -v /var/tmp:/var/tmp \
                 command: |
                     docker run -ti --rm \
                       -v /tmp/workspace/data/ds114_test1:/bids_dataset \
@@ -82,12 +80,10 @@ jobs:
 
         -   run:
                 name: run all
-                    #   -v /tmp:/tmp -v /var/tmp:/var/tmp \
                 command: |
                     docker run -ti --rm \
                       -v /tmp/workspace/data/ds114_test<< parameters.dataset >>:/bids_dataset \
                       -v ${HOME}/outputs<< parameters.dataset >>:/outputs \
-                      -v ${HOME}/models://home/neuro/bidsMReye/models \
                         cpp-lln-lab/bidsmreye \
                           /bids_dataset \
                           /outputs participant \

@@ -14,8 +14,6 @@ COPY [".", "/home/neuro/bidsMReye"]
 RUN pip install --upgrade pip && \
     pip3 install -e .
 
-ENV MPLCONFIGDIR=/tmp/.config/matplotlib
-
 RUN bidsmreye_model && \
     bidsmreye_model --model_name 1_guided_fixations && \
     bidsmreye_model --model_name 2_pursuit && \
@@ -29,5 +27,3 @@ ENTRYPOINT [ "//home/neuro/bidsMReye/entrypoint.sh" ]
 COPY ["./docker/entrypoint.sh", \
       "//home/neuro/bidsMReye/entrypoint.sh"]
 RUN chmod +x /home/neuro/bidsMReye/entrypoint.sh
-
-RUN chmod -R 777 /home/neuro/bidsMReye
