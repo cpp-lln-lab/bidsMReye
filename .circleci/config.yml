@@ -7,11 +7,13 @@ jobs:
             image: ubuntu-2204:2022.10.2
         steps:
         -   checkout
+
         -   run:
                 name: Build Docker image
                 command: |
                     wget https://raw.githubusercontent.com/bids-apps/maintenance-tools/main/circleci/build_docker.sh
                     bash build_docker.sh
+
         -   persist_to_workspace:
                 root: /home/circleci
                 paths:
@@ -42,11 +44,14 @@ jobs:
         -   save_cache:
                 key: my_cache
                 paths:
+
                 -   ~/data
         -   persist_to_workspace:
                 root: /home/circleci
                 paths:
+
                 -   data/ds002799
+
 
     test:
         machine:
@@ -55,6 +60,7 @@ jobs:
         -   attach_workspace:
                 at: /tmp/workspace
         -   run: docker load -i /tmp/workspace/docker/image.tar
+
         -   run: mkdir -p ${HOME}/outputs
         -   run:
                 name: print version
@@ -83,6 +89,7 @@ jobs:
         steps:
         -   attach_workspace:
                 at: /tmp/workspace
+
         -   run: docker load -i /tmp/workspace/docker/image.tar
         -   run:
                 name: push to dockerhub
@@ -94,16 +101,20 @@ workflows:
     build-test-deploy:
         jobs:
         -   build
+
         -   get_data
         -   test:
                 requires:
                 -   build
                 -   get_data
+
         -   deploy:
                 requires:
                 -   test
                 filters:
                     tags:
                         only: /.*/
+
+
 
 # VS Code Extension Version: 1.5.1
