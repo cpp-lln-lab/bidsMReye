@@ -96,10 +96,6 @@ lint/mypy: ## check style with mypy
 
 lint: lint/black lint/mypy lint/flake8  ## check style
 
-validate_cff: ## Validate the citation file
-	cffconvert --validate
-
-
 ## DOC
 .PHONY: docs
 
