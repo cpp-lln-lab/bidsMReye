@@ -39,12 +39,6 @@ jobs:
                     datalad install -s ///openneuro/ds002799 ${HOME}/data/ds002799
                     cd ${HOME}/data/ds002799/derivatives/fmriprep
                     datalad get sub-30[27]/ses-*/func/*run-*preproc*bold*
-        -   run:
-                name: Get test data ds114_test1
-                command: |
-                    wget https://raw.githubusercontent.com/bids-apps/maintenance-tools/main/utils/get_data_from_osf.sh
-                    bash get_data_from_osf.sh ds114_test1
-                    bash get_data_from_osf.sh ds114_test2
         -   save_cache:
                 key: my_cache
                 paths:
@@ -52,56 +46,43 @@ jobs:
         -   persist_to_workspace:
                 root: /home/circleci
                 paths:
-                -   data/ds114_test1
-                -   data/ds114_test2
                 -   data/ds002799
 
     test:
         machine:
             image: ubuntu-2204:2022.10.2
-
-        parameters:
-            dataset:
-                type: string
-
         steps:
         -   attach_workspace:
                 at: /tmp/workspace
         -   run: docker load -i /tmp/workspace/docker/image.tar
-
-        -   run: mkdir -p ${HOME}/outputs<< parameters.dataset >>
-
+        -   run: mkdir -p ${HOME}/outputs
         -   run:
                 name: print version
                 command: |
                     docker run -ti --rm \
-                      -v /tmp/workspace/data/ds114_test1:/bids_dataset \
+                      -v /tmp/workspace/data/ds002799/derivatives/fmriprep:/bids_dataset \
                         cpp-lln-lab/bidsmreye --version
-
         -   run:
                 name: run all
                 command: |
                     docker run -ti --rm \
-                      -v /tmp/workspace/data/ds114_test<< parameters.dataset >>:/bids_dataset \
-                      -v ${HOME}/outputs<< parameters.dataset >>:/outputs \
+                      -v /tmp/workspace/data/ds002799/derivatives/fmriprep:/bids_dataset \
+                      -v ${HOME}/outputs:/outputs \
                         cpp-lln-lab/bidsmreye \
                           /bids_dataset \
                           /outputs participant \
+                          --participant_label 302 307 \
                           --action all
                 no_output_timeout: 6h
-
         -   store_artifacts:
-                path: ~/output<< parameters.dataset >>
+                path: ~/output
 
     deploy:
-
         machine:
             image: ubuntu-2204:2022.10.2
-
         steps:
         -   attach_workspace:
                 at: /tmp/workspace
-
         -   run: docker load -i /tmp/workspace/docker/image.tar
         -   run:
                 name: push to dockerhub
@@ -118,9 +99,6 @@ workflows:
                 requires:
                 -   build
                 -   get_data
-                matrix:
-                    parameters:
-                        dataset: ['1', '2']
         -   deploy:
                 requires:
                 -   test
