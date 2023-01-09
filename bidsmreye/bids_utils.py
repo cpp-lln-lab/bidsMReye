@@ -41,7 +41,7 @@ def check_layout(cfg: Config, layout: BIDSLayout, for_file: str = "bold") -> Non
         or "DatasetType" in desc
         and desc["DatasetType"] != "derivative"
     ):
-        raise RuntimeError("Input dataset should be BIDS derivative")
+        raise RuntimeError("DatasetType must be 'derivative' in dataset_description.json")
 
     this_filter = get_bids_filter_config()[for_file]
 
