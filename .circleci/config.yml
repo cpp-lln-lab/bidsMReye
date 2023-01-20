@@ -31,9 +31,6 @@ jobs:
                     sudo apt-get install -y python3 git-annex
                     python3 -m pip install --upgrade pip setuptools
                     pip3 install datalad
-                    python --version
-                    git-annex version
-                    pip list
                     datalad wtf
         -   restore_cache:
                 keys:
@@ -48,7 +45,7 @@ jobs:
                     datalad install -s ///openneuro/ds002799 ${HOME}/data/ds002799
                     cd ${HOME}/data/ds002799/derivatives/fmriprep
                     datalad get sub-30[27]/ses-*/func/*run-*MNI152NLin2009cAsym*preproc*bold*
-                    # datalad unlock sub-30[27]/ses-*/func/*run-*MNI152NLin2009cAsym*preproc*bold*
+                    datalad unlock sub-30[27]/ses-*/func/*run-*MNI152NLin2009cAsym*preproc*bold*
         -   save_cache:
                 key: my_cache
                 paths:
