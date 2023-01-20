@@ -40,16 +40,14 @@ jobs:
                     mkdir -p ${HOME}/data/
                     datalad install -s ///openneuro/ds002799 ${HOME}/data/ds002799
                     cd ${HOME}/data/ds002799/derivatives/fmriprep
-                    datalad get sub-30[27]/ses-*/func/*run-*preproc*bold*
+                    datalad get sub-30[27]/ses-*/func/*run-*MNI152NLin2009cAsym*preproc*bold*
         -   save_cache:
                 key: my_cache
                 paths:
-
                 -   ~/data
         -   persist_to_workspace:
                 root: /home/circleci
                 paths:
-
                 -   data/ds002799
 
 
@@ -76,8 +74,10 @@ jobs:
                       -v ${HOME}/outputs:/outputs \
                         cpp-lln-lab/bidsmreye \
                           /bids_dataset \
-                          /outputs participant \
+                          /outputs \
+                          participant \
                           --participant_label 302 307 \
+                          --space MNI152NLin2009cAsym \
                           --action all
                 no_output_timeout: 6h
         -   store_artifacts:
