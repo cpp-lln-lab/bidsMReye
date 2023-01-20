@@ -43,10 +43,6 @@ For more information, see the
 [User Recommendations](https://deepmreye.slite.com/p/channel/MUgmvViEbaATSrqt3susLZ/notes/kKdOXmLqe).
 If you have other questions, please reach out to the developer team.
 
-## Requirements
-
-At the moment bidsmreye only supports python 3.8 and 3.9.
-
 ## Install
 
 Better to use the docker image as there are known install issues
@@ -83,7 +79,7 @@ pip install bidsmreye
 To encapsulate bidsMReye in a virtual environment install with the following commands:
 
 ```bash
-conda create --name bidsmreye python=3.9
+conda create --name bidsmreye python=3.10
 conda activate bidsmreye
 conda install pip
 pip install bidsmreye
@@ -96,6 +92,8 @@ Note that you might need to install cudnn first
 ```bash
 conda install -c conda-forge cudnn
 ```
+
+#### ANTsPy installation issues
 
 If installation of [ANTsPy](https://github.com/ANTsX/ANTsPy) fails try to manually install it via:
 
@@ -125,6 +123,22 @@ make install_dev
 
 ## Usage
 
+## Requirements
+
+bidsmreye requires your input fmri data:
+
+ - to be minimally preprocessed (at least realigned),
+ - with filenames and structure that conforms to a BIDS derivative dataset.
+
+Two bids apps are available to generate those types of preprocessed data:
+
+- [fmriprep](https://fmriprep.org/en/stable/)
+- [bidspm](https://bidspm.readthedocs.io/en/latest/general_information.html)
+
+Obviousvly your fmri data must include the eyes of your participant for bidsmreye to work.
+
+<!-- old fmriprep versions may not work -->
+
 ### CLI
 
 Type the following for more information:
@@ -133,8 +147,12 @@ Type the following for more information:
 bidsmreye --help
 ```
 
+## Preparing the data
+
 `--action prepapre` means that bidsmreye will extract the data coming from the
 eyes from the fMRI images.
+
+If your data is not in MNI space, bidsmreye will also register the data to MNI.
 
 ```bash
 bidsmreye --action prepapre \
@@ -142,17 +160,21 @@ bidsmreye --action prepapre \
           output_dir
 ```
 
-`--action generalize` means that the extracted data will be used as input and
-that bidsmeye will use it to predict what were the eye movements of your
-participants.
+## Computing the eye movements
+
+`--action generalize` use the extracted timeseries to predict the eye movements
+using the default pre-trained model of deepmreye.
+
+This will also generate a quality control report of the decoded eye movements.
 
 ```bash
 bidsmreye --action generalize \
           bids_dir \
           output_dir
 ```
+## Doing it all at once
 
-"all" does "prepare" then "generalize".
+`--action all` does "prepare" then "generalize".
 
 ```bash
 bidsmreye --action all \

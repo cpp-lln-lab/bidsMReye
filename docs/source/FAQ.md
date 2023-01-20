@@ -1,6 +1,37 @@
 
 # Frequently Asked Questions
+- [How I should structure my input data?](#how-i-should-structure-my-input-data)
+- [Is the "prepare" only suitable for the datasets that have eye-tracking info?](#is-the-"prepare"-only-suitable-for-the-datasets-that-have-eye-tracking-info)
 - [Should I use the automatically generated methods section?](#should-i-use-the-automatically-generated-methods-section)
+
+<a name="how-i-should-structure-my-input-data"></a>
+## How I should structure my input data?
+
+bidsmreye requires your input fmri data:
+
+ - to be minimally preprocessed
+ - with filenames and structure that conforms to a BIDS derivative dataset.
+
+Two bids apps are available to generate those types of preprocessed data:
+
+- [fmriprep](https://fmriprep.org/en/stable/)
+- [bidspm](https://bidspm.readthedocs.io/en/latest/general_information.html)
+
+<a name="is-the-"prepare"-only-suitable-for-the-datasets-that-have-eye-tracking-info"></a>
+## Is the "prepare" only suitable for the datasets that have eye-tracking info?
+
+No the `prepare` action is necessary for all datasets,
+whether they have eye-tracking info or not.
+
+This action:
+
+- registers the data to MNI if this is not the case already
+- registers the data the the deepmreye template
+- extracts data from the eyes mask
+
+In future versions of bidsmreye, this action should also be able to combine
+the extracted data with the eye gaze position coming
+from preprocessed eyetracking data.
 
 <a name="should-i-use-the-automatically-generated-methods-section"></a>
 ## Should I use the automatically generated methods section?
