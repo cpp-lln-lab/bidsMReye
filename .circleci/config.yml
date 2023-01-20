@@ -41,6 +41,7 @@ jobs:
                     datalad install -s ///openneuro/ds002799 ${HOME}/data/ds002799
                     cd ${HOME}/data/ds002799/derivatives/fmriprep
                     datalad get sub-30[27]/ses-*/func/*run-*MNI152NLin2009cAsym*preproc*bold*
+                    datalad unlock sub-30[27]/ses-*/func/*run-*MNI152NLin2009cAsym*preproc*bold*
         -   save_cache:
                 key: my_cache
                 paths:
