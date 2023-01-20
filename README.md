@@ -155,7 +155,7 @@ eyes from the fMRI images.
 If your data is not in MNI space, bidsmreye will also register the data to MNI.
 
 ```bash
-bidsmreye --action prepapre \
+bidsmreye --action prepare \
           bids_dir \
           output_dir
 ```
