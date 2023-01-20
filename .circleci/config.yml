@@ -37,6 +37,9 @@ jobs:
         -   run:
                 name: Get ds002799
                 command: |
+                    # Git set up: to keep datalad warnings away
+                    git config --global --add user.name "Ford Escort"
+                    git config --global --add user.email 42@H2G2.com
                     mkdir -p ${HOME}/data/
                     datalad install -s ///openneuro/ds002799 ${HOME}/data/ds002799
                     cd ${HOME}/data/ds002799/derivatives/fmriprep
