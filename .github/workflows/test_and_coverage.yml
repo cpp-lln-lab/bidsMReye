@@ -19,6 +19,7 @@ jobs:
             matrix:
                 os: [ubuntu-latest, macOS-latest] # windows-latest: does not work because antspyx is not available for windows
                 python-version: ['3.8', '3.9', '3.10'] # '3.11' : some dependencies are not yet available for python 3.11
+            fail-fast: false
 
         steps:
 
@@ -45,3 +46,4 @@ jobs:
                 flags: tests
                 name: codecov-umbrella
                 fail_ci_if_error: true
+                token: ${{ secrets.CODECOV_TOKEN }}
