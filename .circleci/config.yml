@@ -28,28 +28,31 @@ jobs:
                 name: Install dependencies
                 command: |
                     sudo apt-get update
-                    sudo apt-get install -y git-annex
-                    python -m pip install --upgrade pip setuptools
-                    pip install datalad
+                    sudo apt-get install -y python3 git-annex
+                    python3 -m pip install --upgrade pip setuptools
+                    pip3 install datalad
+                    datalad wtf
         -   restore_cache:
                 keys:
                 -   my_cache
         -   run:
                 name: Get ds002799
                 command: |
+                    # Git set up: to keep datalad warnings away
+                    git config --global --add user.name "Ford Escort"
+                    git config --global --add user.email 42@H2G2.com
                     mkdir -p ${HOME}/data/
                     datalad install -s ///openneuro/ds002799 ${HOME}/data/ds002799
                     cd ${HOME}/data/ds002799/derivatives/fmriprep
-                    datalad get sub-30[27]/ses-*/func/*run-*preproc*bold*
+                    datalad get sub-30[27]/ses-*/func/*run-*MNI152NLin2009cAsym*preproc*bold*
+                    datalad unlock sub-30[27]/ses-*/func/*run-*MNI152NLin2009cAsym*preproc*bold*
         -   save_cache:
                 key: my_cache
                 paths:
-
                 -   ~/data
         -   persist_to_workspace:
                 root: /home/circleci
                 paths:
-
                 -   data/ds002799
 
 
@@ -76,8 +79,10 @@ jobs:
                       -v ${HOME}/outputs:/outputs \
                         cpp-lln-lab/bidsmreye \
                           /bids_dataset \
-                          /outputs participant \
+                          /outputs \
+                          participant \
                           --participant_label 302 307 \
+                          --space MNI152NLin2009cAsym \
                           --action all
                 no_output_timeout: 6h
         -   store_artifacts:

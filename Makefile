@@ -217,7 +217,6 @@ docker_demo: docker_build clean-demo
 
 docker_prepare_data:
 	docker run --rm -it \
-				--user "$$(id -u):$$(id -g)" \
 				-v $$PWD/tests/data/moae_fmriprep:/home/neuro/data \
 				-v $$PWD/outputs/moae_fmriprep/derivatives:/home/neuro/outputs/ \
 				cpplab/bidsmreye:unstable \
@@ -230,7 +229,6 @@ docker_prepare_data:
 
 docker_generalize:
 	docker run --rm -it \
-				--user "$$(id -u):$$(id -g)" \
 				-v $$PWD/tests/data/moae_fmriprep:/home/neuro/data \
 				-v $$PWD/outputs/moae_fmriprep/derivatives:/home/neuro/outputs/ \
 				cpplab/bidsmreye:unstable \
@@ -238,3 +236,19 @@ docker_generalize:
 				/home/neuro/outputs/ \
 				participant \
 				--action generalize
+
+docker_ds002799: get_ds002799
+	datalad unlock $$PWD/tests/data/ds002799/derivatives/fmriprep/sub-30[27]/ses-*/func/*run-*preproc*bold*
+	docker run --rm -it \
+				-v $$PWD/tests/data/ds002799/derivatives/fmriprep:/home/neuro/data \
+				-v $$PWD/outputs/ds002799/derivatives:/home/neuro/outputs/ \
+				cpplab/bidsmreye:unstable \
+				/home/neuro/data/ \
+				/home/neuro/outputs/ \
+				participant \
+				--action all \
+				--debug \
+				--participant_label 302 307 \
+				--space MNI152NLin2009cAsym \
+				--run 1 2 \
+				-vv
