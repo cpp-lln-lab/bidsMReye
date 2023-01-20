@@ -32,7 +32,9 @@ jobs:
                     python -m pip install --upgrade pip setuptools
                     pip install datalad
                     python --version
+                    git-annex version
                     pip list
+                    datalad wtf
         -   restore_cache:
                 keys:
                 -   my_cache
