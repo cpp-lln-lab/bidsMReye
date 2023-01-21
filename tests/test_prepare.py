@@ -56,14 +56,9 @@ def test_save_sampling_frequency_to_json():
         regex_search=True,
         **this_filter,
     )
-    save_sampling_frequency_to_json(layout_in, bf[0])
+    source = "foo"
+    save_sampling_frequency_to_json(layout_in, bf[0], source)
     sidecar_name = create_bidsname(layout_in, bf[0], "confounds_json")
     with open(sidecar_name) as f:
         content = json.load(f)
-    assert (
-        content["Sources"][0]
-        == "sub-01"
-        + "/ses-01"
-        + "/func"
-        + "/sub-01_ses-01_task-nback_run-01_space-MNI152NLin2009cAsym_desc-preproc_bold.nii"
-    )
+    assert content["Sources"][0] == "foo"
