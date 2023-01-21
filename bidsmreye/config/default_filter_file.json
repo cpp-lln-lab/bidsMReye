@@ -1,6 +1,7 @@
 {
     "bold": {
         "datatype": "func",
+        "desc": "preproc",
         "suffix": "^bold$",
         "extension": "nii.*"
     },

@@ -119,9 +119,11 @@ def create_sidecar(
         SamplingFrequency = 0
     content = {
         "SamplingFrequency": SamplingFrequency,
+        "Sources": [str(Path(filename).relative_to(layout.root))],
     }
     sidecar_name = create_bidsname(layout, filename, "confounds_json")
     json.dump(content, open(sidecar_name, "w"), indent=4)
+    log.debug(f"sidecar saved to {sidecar_name}")
 
 
 def get_dataset_layout(
