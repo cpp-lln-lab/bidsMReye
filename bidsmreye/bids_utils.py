@@ -132,7 +132,7 @@ def create_sidecar(
 
 def get_dataset_layout(
     dataset_path: str | Path,
-    config: dict[str, str] | None = None,
+    config: str | dict[str, str] | None = None,
     use_database: bool = False,
 ) -> BIDSLayout:
     """Return a BIDSLayout object for the dataset at the given path.
@@ -155,6 +155,7 @@ def get_dataset_layout(
 
     dataset_path = dataset_path.resolve()
 
+    pybids_config = config
     if config is None:
         pybids_config = get_pybids_config()
 

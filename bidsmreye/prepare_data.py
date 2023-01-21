@@ -179,7 +179,7 @@ def prepare_data(cfg: Config) -> None:
     """
     log.info("PREPARING DATA")
 
-    layout_in = get_dataset_layout(cfg.input_dir, use_database=True)
+    layout_in = get_dataset_layout(cfg.input_dir, use_database=True, config="derivatives")
     check_layout(cfg, layout_in)
 
     layout_out = init_dataset(cfg)

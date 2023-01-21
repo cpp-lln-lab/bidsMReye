@@ -93,7 +93,7 @@ def test_set_this_filter_bold():
 
     assert this_filter == {
         "datatype": "func",
-        "description": "preproc",
+        "desc": "preproc",
         "extension": "nii.*",
         "run": "1|2",
         "subject": "001",
@@ -127,7 +127,7 @@ def test_set_this_filter_with_bids_filter_file():
         "eyetrack": {
             "suffix": "^eyetrack$$",
             "extension": "tsv",
-            "description": "preproc",
+            "desc": "preproc",
         }
     }
 
@@ -146,5 +146,5 @@ def test_set_this_filter_with_bids_filter_file():
         "run": "1",
         "subject": "001",
         "suffix": "^eyetrack$$",
-        "description": "preproc",
+        "desc": "preproc",
     }

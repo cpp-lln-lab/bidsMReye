@@ -95,7 +95,7 @@
             "pattern": "[_/\\\\]+chunk-([0-9]+)"
         },
         {
-            "name": "description",
+            "name": "desc",
             "pattern": "desc-([a-zA-Z0-9]+)"
         },
         {

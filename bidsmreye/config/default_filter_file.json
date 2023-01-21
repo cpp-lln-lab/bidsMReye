@@ -1,7 +1,7 @@
 {
     "bold": {
         "datatype": "func",
-        "description": "preproc",
+        "desc": "preproc",
         "suffix": "^bold$",
         "extension": "nii.*"
     },
@@ -10,7 +10,7 @@
         "extension": "p"
     },
     "no_label": {
-        "description": "nolabel",
+        "desc": "nolabel",
         "suffix": "^bidsmreye$$",
         "extension": "npz"
     },
