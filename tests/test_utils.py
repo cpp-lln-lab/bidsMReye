@@ -93,6 +93,7 @@ def test_set_this_filter_bold():
 
     assert this_filter == {
         "datatype": "func",
+        "desc": "preproc",
         "extension": "nii.*",
         "run": "1|2",
         "subject": "001",
