@@ -112,15 +112,19 @@ def create_bidsname(
 
 
 def create_sidecar(
-    layout: BIDSLayout, filename: str, SamplingFrequency: float | None = None
+    layout: BIDSLayout,
+    filename: str,
+    SamplingFrequency: float | None = None,
+    source: str | None = None,
 ) -> None:
     """Create sidecar for the eye motion timeseries."""
     if SamplingFrequency is None:
         SamplingFrequency = 0
     content = {
         "SamplingFrequency": SamplingFrequency,
-        "Sources": [str(Path(filename).relative_to(layout.root))],
     }
+    if source is not None:
+        content["Sources"] = [source]  # type: ignore
     sidecar_name = create_bidsname(layout, filename, "confounds_json")
     json.dump(content, open(sidecar_name, "w"), indent=4)
     log.debug(f"sidecar saved to {sidecar_name}")

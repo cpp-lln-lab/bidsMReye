@@ -142,26 +142,33 @@ def process_subject(
 
         coregister_and_extract_data(img, non_linear_coreg=cfg.non_linear_coreg)
 
-        report_name = create_bidsname(layout_out, img, "report")
-        deepmreye_mask_report = get_deepmreye_filename(layout_in, img, "report")
+        report_name = create_bidsname(layout_out, filename=img, filetype="report")
+        deepmreye_mask_report = get_deepmreye_filename(
+            layout_in, img=img, filetype="report"
+        )
         move_file(deepmreye_mask_report, report_name)
 
-        mask_name = create_bidsname(layout_out, img, "mask")
-        deepmreye_mask_name = get_deepmreye_filename(layout_in, img, "mask")
+        mask_name = create_bidsname(layout_out, filename=img, filetype="mask")
+        deepmreye_mask_name = get_deepmreye_filename(layout_in, img=img, filetype="mask")
         move_file(deepmreye_mask_name, mask_name)
 
-        save_sampling_frequency_to_json(layout_out, img)
+        source = str(Path(img).relative_to(layout_in.root))
+        save_sampling_frequency_to_json(layout_out, img=img, source=source)
 
         combine_data_with_empty_labels(layout_out, mask_name)
 
 
-def save_sampling_frequency_to_json(layout_out: BIDSLayout, img: str) -> None:
+def save_sampling_frequency_to_json(
+    layout_out: BIDSLayout, img: str, source: str
+) -> None:
     func_img = nib.load(img)
     header = func_img.header
     sampling_frequency = header.get_zooms()[3]
     if sampling_frequency <= 1:
         log.warning(f"Found a repetition time of {sampling_frequency} seconds.")
-    create_sidecar(layout_out, img, SamplingFrequency=1 / float(sampling_frequency))
+    create_sidecar(
+        layout_out, img, SamplingFrequency=1 / float(sampling_frequency), source=source
+    )
 
 
 def prepare_data(cfg: Config) -> None:
