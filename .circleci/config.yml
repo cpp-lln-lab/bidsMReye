@@ -114,6 +114,8 @@ workflows:
                 -   get_data
 
         -   deploy:
+                context:
+                -   DOCKER_HUB
                 requires:
                 -   test
                 filters:
