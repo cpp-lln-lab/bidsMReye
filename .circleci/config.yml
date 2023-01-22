@@ -11,8 +11,18 @@ jobs:
         -   run:
                 name: Build Docker image
                 command: |
-                    wget https://raw.githubusercontent.com/bids-apps/maintenance-tools/main/circleci/build_docker.sh
-                    bash build_docker.sh
+                    set -eux -o pipefail
+                    # make sure we have a lowercase repo
+                    user_name=cpplab
+                    repo_name=$(echo "${CIRCLE_PROJECT_REPONAME}" | tr '[:upper:]' '[:lower:]')
+                    if [[ -e "${HOME}/docker/image.tar" ]]; then
+                        docker load -i "${HOME}/docker/image.tar"
+                    fi
+                    git describe --tags --always > version
+                    docker build -t "${user_name}/${repo_name}" .
+                    mkdir -p "${HOME}/docker"
+                    docker save "${user_name}/${repo_name}" > "${HOME}/docker/image.tar"
+                    docker images
 
         -   persist_to_workspace:
                 root: /home/circleci
@@ -83,6 +93,7 @@ jobs:
                           participant \
                           --participant_label 302 307 \
                           --space MNI152NLin2009cAsym \
+                          --reset_database \
                           --action all
                 no_output_timeout: 6h
         -   store_artifacts:
@@ -99,8 +110,27 @@ jobs:
         -   run:
                 name: push to dockerhub
                 command: |
-                    wget https://raw.githubusercontent.com/bids-apps/maintenance-tools/main/circleci/push_docker.sh
-                    bash push_docker.sh
+                    set -ex -o pipefail
+                    if [[ -n "${DOCKER_TOKEN}" ]]; then
+                        # make sure we have a lowercase repo
+                        user_name=cpplab
+                        repo_name=$(echo "${CIRCLE_PROJECT_REPONAME}" | tr '[:upper:]' '[:lower:]')
+                        if [[ -n "${DOCKER_TOKEN}" ]]; then
+                            echo "${DOCKER_TOKEN}" | docker login -u "${DOCKER_USER}" --password-stdin
+                            : "Pushing to DockerHub ${user_name}/${repo_name}:unstable"
+                            docker tag "${user_name}/${repo_name}" "${user_name}/${repo_name}:unstable"
+                            docker push "${user_name}/${repo_name}:unstable"
+                            if [[ -n "${CIRCLE_TAG}" ]]; then
+                                : "Pushing to DockerHub ${user_name}/${repo_name}:${CIRCLE_TAG}"
+                                docker push "${user_name}/${repo_name}:latest"
+                                docker tag "${user_name}/${repo_name}" "${user_name}/${repo_name}:${CIRCLE_TAG}"
+                                docker push "${user_name}/${repo_name}:${CIRCLE_TAG}"
+                            fi
+                        fi
+                    else
+                        : "No DOCKER_TOKEN, skipping push to DockerHub"
+                        exit 1
+                    fi
 
 workflows:
     build-test-deploy:

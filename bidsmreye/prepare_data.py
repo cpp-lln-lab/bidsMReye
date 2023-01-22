@@ -5,17 +5,16 @@ import pickle
 from pathlib import Path
 from typing import Any
 
-import nibabel as nib
 import numpy as np
 from bids import BIDSLayout  # type: ignore
 from deepmreye import preprocess
 
 from bidsmreye.bids_utils import check_layout
 from bidsmreye.bids_utils import create_bidsname
-from bidsmreye.bids_utils import create_sidecar
 from bidsmreye.bids_utils import get_dataset_layout
 from bidsmreye.bids_utils import init_dataset
 from bidsmreye.bids_utils import list_subjects
+from bidsmreye.bids_utils import save_sampling_frequency_to_json
 from bidsmreye.configuration import Config
 from bidsmreye.logging import bidsmreye_log
 from bidsmreye.utils import check_if_file_found
@@ -158,19 +157,6 @@ def process_subject(
         combine_data_with_empty_labels(layout_out, mask_name)
 
 
-def save_sampling_frequency_to_json(
-    layout_out: BIDSLayout, img: str, source: str
-) -> None:
-    func_img = nib.load(img)
-    header = func_img.header
-    sampling_frequency = header.get_zooms()[3]
-    if sampling_frequency <= 1:
-        log.warning(f"Found a repetition time of {sampling_frequency} seconds.")
-    create_sidecar(
-        layout_out, img, SamplingFrequency=1 / float(sampling_frequency), source=source
-    )
-
-
 def prepare_data(cfg: Config) -> None:
     """Run coregistration and extract data for all subjects.
 
@@ -179,7 +165,12 @@ def prepare_data(cfg: Config) -> None:
     """
     log.info("PREPARING DATA")
 
-    layout_in = get_dataset_layout(cfg.input_dir, use_database=True, config="derivatives")
+    layout_in = get_dataset_layout(
+        cfg.input_dir,
+        use_database=True,
+        config=["bids", "derivatives"],
+        reset_database=cfg.reset_database,
+    )
     check_layout(cfg, layout_in)
 
     layout_out = init_dataset(cfg)

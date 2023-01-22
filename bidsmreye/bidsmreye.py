@@ -91,6 +91,9 @@ def bidsmreye(
         with open(Path(bids_filter_file)) as f:
             bids_filter = json.load(f)
 
+    if reset_database is None:
+        reset_database = False
+
     cfg = Config(
         bids_dir,
         output_dir,
