@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 from typing import Any
 
+import nibabel as nib
 from bids import BIDSLayout  # type: ignore
 
 from . import _version
@@ -112,7 +113,10 @@ def create_bidsname(
 
 
 def create_sidecar(
-    layout: BIDSLayout, filename: str, SamplingFrequency: float | None = None
+    layout: BIDSLayout,
+    filename: str,
+    SamplingFrequency: float | None = None,
+    source: str | None = None,
 ) -> None:
     """Create sidecar for the eye motion timeseries."""
     if SamplingFrequency is None:
@@ -120,14 +124,31 @@ def create_sidecar(
     content = {
         "SamplingFrequency": SamplingFrequency,
     }
+    if source is not None:
+        content["Sources"] = [source]  # type: ignore
     sidecar_name = create_bidsname(layout, filename, "confounds_json")
     json.dump(content, open(sidecar_name, "w"), indent=4)
+    log.debug(f"sidecar saved to {sidecar_name}")
+
+
+def save_sampling_frequency_to_json(
+    layout_out: BIDSLayout, img: str, source: str
+) -> None:
+    func_img = nib.load(img)
+    header = func_img.header
+    sampling_frequency = header.get_zooms()[3]
+    if sampling_frequency <= 1:
+        log.warning(f"Found a repetition time of {sampling_frequency} seconds.")
+    create_sidecar(
+        layout_out, img, SamplingFrequency=1 / float(sampling_frequency), source=source
+    )
 
 
 def get_dataset_layout(
     dataset_path: str | Path,
-    config: dict[str, str] | None = None,
+    config: str | list[str] | dict[str, str] | None = None,
     use_database: bool = False,
+    reset_database: bool = False,
 ) -> BIDSLayout:
     """Return a BIDSLayout object for the dataset at the given path.
 
@@ -149,6 +170,7 @@ def get_dataset_layout(
 
     dataset_path = dataset_path.resolve()
 
+    pybids_config = config
     if config is None:
         pybids_config = get_pybids_config()
 
@@ -156,10 +178,7 @@ def get_dataset_layout(
 
     if not use_database:
         return BIDSLayout(
-            dataset_path,
-            validate=False,
-            derivatives=False,
-            config=pybids_config,
+            dataset_path, validate=False, derivatives=False, config=pybids_config
         )
 
     database_path = dataset_path.joinpath("pybids_db")
@@ -169,6 +188,7 @@ def get_dataset_layout(
         derivatives=False,
         config=pybids_config,
         database_path=database_path,
+        reset_database=reset_database,
     )
 
 

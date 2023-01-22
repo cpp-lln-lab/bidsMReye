@@ -141,7 +141,6 @@ prepare: tests/data/moae_fmriprep ## demo: prepares the data of MOAE dataset
 				participant \
 				--action prepare \
 				-vv \
-				--debug \
 				--reset_database \
 				--non_linear_coreg
 
@@ -151,8 +150,6 @@ generalize: ## demo: predicts labels of MOAE dataset
 				participant \
 				--action generalize \
 				-vv \
-				--debug \
-				--reset_database \
 				--non_linear_coreg
 
 
@@ -174,9 +171,9 @@ ds002799_prepare: get_ds002799
 				$$PWD/outputs/ds002799/derivatives \
 				participant \
 				--action prepare \
-				--debug \
 				--participant_label 302 307 \
 				--space MNI152NLin2009cAsym \
+				--reset_database \
 				--run 1 2
 
 
@@ -185,7 +182,6 @@ ds002799_generalize:
 				$$PWD/outputs/ds002799/derivatives \
 				participant \
 				--action generalize \
-				--debug \
 				--participant_label 302 307 \
 				--space MNI152NLin2009cAsym \
 				--run 1 2
@@ -196,10 +192,10 @@ ds002799: clean-ds002799 get_ds002799
 				$$PWD/outputs/ds002799/derivatives \
 				participant \
 				--action all \
-				--debug \
 				--participant_label 302 307 \
 				--space MNI152NLin2009cAsym \
 				--run 1 2 \
+				--reset_database \
 				-vv
 
 ## DOCKER
@@ -224,7 +220,6 @@ docker_prepare_data:
 				/home/neuro/outputs/ \
 				participant \
 				--action prepare \
-				--debug \
 				--reset_database
 
 docker_generalize:
@@ -238,7 +233,7 @@ docker_generalize:
 				--action generalize
 
 docker_ds002799: get_ds002799
-	datalad unlock $$PWD/tests/data/ds002799/derivatives/fmriprep/sub-30[27]/ses-*/func/*run-*preproc*bold*
+# datalad unlock $$PWD/tests/data/ds002799/derivatives/fmriprep/sub-30[27]/ses-*/func/*run-*preproc*bold*
 	docker run --rm -it \
 				-v $$PWD/tests/data/ds002799/derivatives/fmriprep:/home/neuro/data \
 				-v $$PWD/outputs/ds002799/derivatives:/home/neuro/outputs/ \
@@ -247,8 +242,8 @@ docker_ds002799: get_ds002799
 				/home/neuro/outputs/ \
 				participant \
 				--action all \
-				--debug \
 				--participant_label 302 307 \
 				--space MNI152NLin2009cAsym \
 				--run 1 2 \
+				--reset_database \
 				-vv

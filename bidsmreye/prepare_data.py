@@ -5,17 +5,16 @@ import pickle
 from pathlib import Path
 from typing import Any
 
-import nibabel as nib
 import numpy as np
 from bids import BIDSLayout  # type: ignore
 from deepmreye import preprocess
 
 from bidsmreye.bids_utils import check_layout
 from bidsmreye.bids_utils import create_bidsname
-from bidsmreye.bids_utils import create_sidecar
 from bidsmreye.bids_utils import get_dataset_layout
 from bidsmreye.bids_utils import init_dataset
 from bidsmreye.bids_utils import list_subjects
+from bidsmreye.bids_utils import save_sampling_frequency_to_json
 from bidsmreye.configuration import Config
 from bidsmreye.logging import bidsmreye_log
 from bidsmreye.utils import check_if_file_found
@@ -142,26 +141,20 @@ def process_subject(
 
         coregister_and_extract_data(img, non_linear_coreg=cfg.non_linear_coreg)
 
-        report_name = create_bidsname(layout_out, img, "report")
-        deepmreye_mask_report = get_deepmreye_filename(layout_in, img, "report")
+        report_name = create_bidsname(layout_out, filename=img, filetype="report")
+        deepmreye_mask_report = get_deepmreye_filename(
+            layout_in, img=img, filetype="report"
+        )
         move_file(deepmreye_mask_report, report_name)
 
-        mask_name = create_bidsname(layout_out, img, "mask")
-        deepmreye_mask_name = get_deepmreye_filename(layout_in, img, "mask")
+        mask_name = create_bidsname(layout_out, filename=img, filetype="mask")
+        deepmreye_mask_name = get_deepmreye_filename(layout_in, img=img, filetype="mask")
         move_file(deepmreye_mask_name, mask_name)
 
-        save_sampling_frequency_to_json(layout_out, img)
+        source = str(Path(img).relative_to(layout_in.root))
+        save_sampling_frequency_to_json(layout_out, img=img, source=source)
 
         combine_data_with_empty_labels(layout_out, mask_name)
-
-
-def save_sampling_frequency_to_json(layout_out: BIDSLayout, img: str) -> None:
-    func_img = nib.load(img)
-    header = func_img.header
-    sampling_frequency = header.get_zooms()[3]
-    if sampling_frequency <= 1:
-        log.warning(f"Found a repetition time of {sampling_frequency} seconds.")
-    create_sidecar(layout_out, img, SamplingFrequency=1 / float(sampling_frequency))
 
 
 def prepare_data(cfg: Config) -> None:
@@ -172,7 +165,12 @@ def prepare_data(cfg: Config) -> None:
     """
     log.info("PREPARING DATA")
 
-    layout_in = get_dataset_layout(cfg.input_dir, use_database=True)
+    layout_in = get_dataset_layout(
+        cfg.input_dir,
+        use_database=True,
+        config=["bids", "derivatives"],
+        reset_database=cfg.reset_database,
+    )
     check_layout(cfg, layout_in)
 
     layout_out = init_dataset(cfg)

@@ -93,6 +93,7 @@ def test_set_this_filter_bold():
 
     assert this_filter == {
         "datatype": "func",
+        "desc": "preproc",
         "extension": "nii.*",
         "run": "1|2",
         "subject": "001",
@@ -123,7 +124,11 @@ def test_set_this_filter_bidsmreye():
 def test_set_this_filter_with_bids_filter_file():
 
     bids_filter = {
-        "eyetrack": {"suffix": "^eyetrack$$", "extension": "tsv", "desc": "preproc"}
+        "eyetrack": {
+            "suffix": "^eyetrack$$",
+            "extension": "tsv",
+            "desc": "preproc",
+        }
     }
 
     output_dir = Path().resolve()

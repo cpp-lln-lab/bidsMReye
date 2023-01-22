@@ -56,7 +56,7 @@ No dataset_description.json found:
     bids_filter: Any = field(kw_only=True, default=None)
 
     debug: str | bool | None = field(kw_only=True, default=None)
-    reset_database: str | bool | None = field(kw_only=True, default=None)
+    reset_database: bool = field(kw_only=True, default=False)
     non_linear_coreg: bool = field(kw_only=True, default=False)
 
     has_GPU: bool = False
@@ -69,11 +69,6 @@ No dataset_description.json found:
             self.debug = False
         if not isinstance(self.debug, (bool)):
             self.debug = converters.to_bool(self.debug)
-
-        if not self.reset_database:
-            self.reset_database = False
-        if not isinstance(self.reset_database, (bool)):
-            self.reset_database = converters.to_bool(self.reset_database)
 
         if not self.run:
             self.run = []
