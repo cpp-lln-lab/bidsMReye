@@ -78,16 +78,20 @@ jobs:
         -   run:
                 name: print version
                 command: |
+                    user_name=cpplab
+                    repo_name=$(echo "${CIRCLE_PROJECT_REPONAME}" | tr '[:upper:]' '[:lower:]')
                     docker run -ti --rm \
                       -v /tmp/workspace/data/ds002799/derivatives/fmriprep:/bids_dataset \
-                        cpp-lln-lab/bidsmreye --version
+                        ${user_name}/${repo_name} --version
         -   run:
                 name: run all
                 command: |
+                    user_name=cpplab
+                    repo_name=$(echo "${CIRCLE_PROJECT_REPONAME}" | tr '[:upper:]' '[:lower:]')
                     docker run -ti --rm \
                       -v /tmp/workspace/data/ds002799/derivatives/fmriprep:/bids_dataset \
                       -v ${HOME}/outputs:/outputs \
-                        cpp-lln-lab/bidsmreye \
+                        ${user_name}/${repo_name} \
                           /bids_dataset \
                           /outputs \
                           participant \
