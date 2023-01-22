@@ -98,7 +98,8 @@ jobs:
                           --participant_label 302 307 \
                           --space MNI152NLin2009cAsym \
                           --reset_database \
-                          --action all
+                          --action all \
+                          -vv
                 no_output_timeout: 6h
         -   store_artifacts:
                 path: ~/output
