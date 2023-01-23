@@ -35,9 +35,16 @@ This can be used also for other multivariate pattern
 analyses in the absence of eye-tracking data.
 Decoded gaze positions allow computing eye movements.
 
-Some basic quality control and outliers detection is also performed.
+Some basic quality control and outliers detection is also performed:
+
+- for each run
 
 ![](https://github.com/cpp-lln-lab/bidsMReye/blob/main/docs/source/images/sub-01_task-auditory_space-MNI152NLin6Asym_desc-bidsmreye_eyetrack.png)
+
+
+- at the group level
+
+![](https://github.com/cpp-lln-lab/bidsMReye/blob/main/docs/source/images/group_eyetrack.png)
 
 For more information, see the
 [User Recommendations](https://deepmreye.slite.com/p/channel/MUgmvViEbaATSrqt3susLZ/notes/kKdOXmLqe).
@@ -56,7 +63,7 @@ of deepmreye on Apple M1 for example.
 docker build --tag cpplab/bidsmreye:latest --file docker/Dockerfile .
 ```
 
-#### Pull (work in progress)
+#### Pull
 
 Pull the latest docker image:
 
@@ -157,7 +164,8 @@ If your data is not in MNI space, bidsmreye will also register the data to MNI.
 ```bash
 bidsmreye --action prepare \
           bids_dir \
-          output_dir
+          output_dir \
+          participant
 ```
 
 ## Computing the eye movements
@@ -170,7 +178,8 @@ This will also generate a quality control report of the decoded eye movements.
 ```bash
 bidsmreye --action generalize \
           bids_dir \
-          output_dir
+          output_dir \
+          participant
 ```
 ## Doing it all at once
 
@@ -179,8 +188,16 @@ bidsmreye --action generalize \
 ```bash
 bidsmreye --action all \
           bids_dir \
-          output_dir
+          output_dir \
+          participant
 ```
+
+## Group level summary
+
+bidsmreye --action qc \
+          bids_dir \
+          output_dir \
+          group
 
 ## Demo
 
