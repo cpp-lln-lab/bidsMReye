@@ -8,7 +8,6 @@ from bidsmreye.generalize import convert_confounds
 
 
 def test_convert_confounds():
-
     output_dir = Path().resolve()
     output_dir = output_dir.joinpath("tests", "data", "bidsmreye")
 

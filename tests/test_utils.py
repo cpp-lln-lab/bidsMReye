@@ -14,7 +14,6 @@ from bidsmreye.utils import set_this_filter
 
 
 def test_copy_license():
-
     output_dir = Path().resolve()
     output_dir = output_dir.joinpath("derivatives")
 
@@ -31,7 +30,6 @@ def test_copy_license():
 
 
 def test_get_deepmreye_filename():
-
     layout = get_dataset_layout(pybids_test_dataset())
 
     output_file = Path(pybids_test_dataset()).joinpath(
@@ -55,7 +53,6 @@ def test_get_deepmreye_filename():
 
 
 def test_return_deepmreye_output_filename():
-
     input_file = "sub-01_task-rest_space-MNI152NLin2009cAsym_desc-preproc_bold.nii.gz"
     output_filename = return_deepmreye_output_filename(input_file, "mask")
     expected_output_file = (
@@ -76,7 +73,6 @@ def test_return_regex():
 
 
 def test_set_this_filter_bold():
-
     output_dir = Path().resolve()
     output_dir = Path.joinpath(output_dir, "derivatives")
 
@@ -102,7 +98,6 @@ def test_set_this_filter_bold():
 
 
 def test_set_this_filter_bidsmreye():
-
     output_dir = Path().resolve()
     output_dir = Path.joinpath(output_dir, "data", "bidsmreye")
 
@@ -122,7 +117,6 @@ def test_set_this_filter_bidsmreye():
 
 
 def test_set_this_filter_with_bids_filter_file():
-
     bids_filter = {
         "eyetrack": {
             "suffix": "^eyetrack$$",

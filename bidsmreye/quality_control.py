@@ -27,7 +27,6 @@ log = bidsmreye_log("bidsmreye")
 
 
 def compute_displacement(x: pd.Series, y: pd.Series) -> pd.Series:
-
     return np.sqrt((x.diff() ** 2) + (y.diff() ** 2))
 
 
@@ -64,7 +63,6 @@ def add_qc_to_sidecar(confounds: pd.DataFrame, sidecar_name: Path) -> None:
 
 
 def compute_displacement_and_outliers(confounds: pd.DataFrame) -> pd.DataFrame:
-
     confounds["displacement"] = compute_displacement(
         confounds["eye1_x_coordinate"], confounds["eye1_y_coordinate"]
     )
@@ -107,7 +105,6 @@ def perform_quality_control(
     confounds = pd.read_csv(confounds_tsv, sep="\t")
 
     if "eye_timestamp" not in confounds.columns:
-
         sampling_frequency = get_sampling_frequency(layout_in, confounds_tsv)
 
         if sampling_frequency is not None:
@@ -166,7 +163,6 @@ def quality_control_output(cfg: Config) -> None:
     subjects = list_subjects(cfg, layout_out)
 
     for subject_label in subjects:
-
         qc_subject(cfg, layout_out, subject_label)
 
 
@@ -183,7 +179,6 @@ def quality_control_input(cfg: Config) -> None:
     subjects = list_subjects(cfg, layout_in)
 
     for subject_label in subjects:
-
         qc_subject(cfg, layout_in, subject_label, layout_out)
 
 
@@ -208,7 +203,6 @@ def qc_subject(
     check_if_file_found(bf, this_filter, layout_in)
 
     for file in bf:
-
         perform_quality_control(layout_in, file, layout_out)
 
 
@@ -260,14 +254,12 @@ def compute_robust_outliers(
         outlier_type = "S-outliers"
 
     if outlier_type == "S-outliers":
-
         k = np.sqrt(chi2.ppf(0.975, df=1))
 
         non_nan_idx = time_series.index[~time_series.isnull()].tolist()
 
         distance = []
         for i in non_nan_idx:
-
             this_timepoint = time_series[i]
 
             # all but current data point
@@ -293,7 +285,6 @@ def compute_robust_outliers(
         return outliers.tolist()
 
     elif outlier_type == "Carling":
-
         # interquartile range
         nan_less = time_series.dropna()
         nb_timepoints = len(nan_less)

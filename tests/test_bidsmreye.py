@@ -25,7 +25,6 @@ def test_parser() -> None:
 
 
 def test_parser_basic() -> None:
-
     parser = common_parser()
 
     assert (

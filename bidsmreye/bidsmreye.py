@@ -85,7 +85,6 @@ def bidsmreye(
     non_linear_coreg: bool = False,
     log_level_name: str = default_log_level(),
 ) -> None:
-
     bids_filter = None
     if bids_filter_file is not None and Path(bids_filter_file).is_file():
         with open(Path(bids_filter_file)) as f:

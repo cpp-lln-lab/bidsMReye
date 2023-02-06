@@ -13,7 +13,6 @@ from bidsmreye.configuration import get_pybids_config
 
 
 def test_Config():
-
     cfg = Config(
         pybids_test_dataset(),
         Path(__file__).parent.joinpath("data"),

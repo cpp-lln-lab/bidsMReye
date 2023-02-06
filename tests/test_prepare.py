@@ -7,7 +7,6 @@ from bidsmreye.prepare_data import combine_data_with_empty_labels
 
 
 def test_combine_data_with_empty_labels():
-
     output_dir = Path().resolve()
     output_dir = output_dir.joinpath("tests", "data", "bidsmreye")
 

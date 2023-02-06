@@ -13,7 +13,6 @@ from bidsmreye.visualize import visualize_eye_gaze_data
 
 
 def test_visualize_eye_gaze_data():
-
     confounds_tsv = return_bidsmreye_eyetrack_tsv()
 
     create_confounds_tsv()
@@ -26,7 +25,6 @@ def test_visualize_eye_gaze_data():
 
 
 def test_group_report():
-
     input_dir = Path().resolve().joinpath("tests", "data", "derivatives", "bidsmreye")
 
     cfg = Config(
@@ -38,7 +36,6 @@ def test_group_report():
 
 
 def test_group_report_cli():
-
     bids_dir = Path().resolve().joinpath("tests", "data", "derivatives", "bidsmreye")
 
     bidsmreye(

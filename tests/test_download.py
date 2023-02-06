@@ -10,7 +10,6 @@ from bidsmreye.download import download_parser
 
 
 def test_download_parser():
-
     parser = download_parser()
 
     assert parser.description == "Download deepmreye pretrained model from OSF."
@@ -28,7 +27,6 @@ def test_download_parser():
 
 
 def test_download():
-
     output_dir = Path().joinpath("tmp")
 
     download(model_name="1_guided_fixations", output_dir=str(output_dir))
@@ -40,7 +38,6 @@ def test_download():
 
 
 def test_download_basic():
-
     download()
     output_file = download()
 
@@ -53,6 +50,5 @@ def test_download_basic():
 
 
 def test_download_unknown_model():
-
     with pytest.warns(UserWarning):
         download(model_name="foo")

@@ -56,7 +56,6 @@ def check_if_file_found(bf: Any, this_filter: dict[str, Any], layout: BIDSLayout
 def set_this_filter(
     cfg: Config, subject_label: str | list[str], filter_type: str
 ) -> dict[str, Any]:
-
     this_filter = cfg.bids_filter[filter_type]
     this_filter["suffix"] = return_regex(this_filter["suffix"])
     this_filter["task"] = return_regex(cfg.task)

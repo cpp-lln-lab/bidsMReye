@@ -67,7 +67,6 @@ def collect_group_qc_data(cfg: Config) -> pd.DataFrame:
 
     qc_data = None
     for i, file in enumerate(bf):
-
         log.info(f"Processing file: {file}")
 
         entities = layout.parse_file_entities(file)
@@ -104,7 +103,6 @@ def plot_group_boxplot(
     ticktext: list[str],
     yaxes_title: str,
 ) -> None:
-
     nb_data_points = qc_data.shape[0]
 
     for i, this_column in enumerate(column_names):
@@ -253,7 +251,6 @@ def time_range(time_stamps: pd.Series) -> list[float]:
 def visualize_eye_gaze_data(
     eye_gaze_data: pd.DataFrame,
 ) -> Any:
-
     fig = go.FigureWidget(
         make_subplots(
             rows=3,
@@ -302,7 +299,6 @@ def plot_time_series(
     plotting_range: list[float] | None = None,
     line_color: str = LINE_COLOR,
 ) -> None:
-
     outliers = None
 
     values_to_plot = eye_gaze_data["eye1_x_coordinate"]
@@ -385,7 +381,6 @@ def plot_time_series(
 
 
 def plot_heat_map(fig: Any, eye_gaze_data: pd.DataFrame) -> None:
-
     X = eye_gaze_data["eye1_x_coordinate"]
     Y = eye_gaze_data["eye1_y_coordinate"]
 

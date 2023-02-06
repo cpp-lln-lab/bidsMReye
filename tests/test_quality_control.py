@@ -24,7 +24,6 @@ from bidsmreye.quality_control import quality_control_output
 
 
 def time_series():
-
     return [
         0.6876,
         0.9751,
@@ -50,7 +49,6 @@ def time_series():
 
 
 def test_get_sampling_frequency():
-
     ds_location = Path().resolve().joinpath("tests", "data", "bidsmreye")
     layout = get_dataset_layout(ds_location)
 
@@ -63,7 +61,6 @@ def test_get_sampling_frequency():
 
 @pytest.mark.xfail(reason="not implemented yet")
 def test_get_sampling_frequency_in_root():
-
     ds_location = Path().resolve().joinpath("tests", "data", "ds000201-der")
     layout = get_dataset_layout(ds_location)
 
@@ -75,7 +72,6 @@ def test_get_sampling_frequency_in_root():
 
 
 def test_compute_robust_outliers():
-
     outliers = compute_robust_outliers(pd.Series(time_series()))
 
     expected_outliers = [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -84,7 +80,6 @@ def test_compute_robust_outliers():
 
 
 def test_compute_robust_outliers_carling():
-
     series = time_series()
     series[8] = 10
     outliers = compute_robust_outliers(pd.Series(series), outlier_type="Carling")
@@ -95,7 +90,6 @@ def test_compute_robust_outliers_carling():
 
 
 def test_compute_robust_outliers_carling_with_nan():
-
     series = time_series()
     series[1] = np.nan
     series[8] = 10
@@ -107,7 +101,6 @@ def test_compute_robust_outliers_carling_with_nan():
 
 
 def test_compute_robust_with_nan():
-
     series = time_series()
     series[1] = np.nan
     series[8] = 10
@@ -120,7 +113,6 @@ def test_compute_robust_with_nan():
 
 
 def test_quality_control_output():
-
     create_basic_json()
 
     output_dir = Path().resolve()
@@ -140,7 +132,6 @@ def test_quality_control_output():
 
 
 def test_quality_control_input():
-
     input_dir = Path().resolve().joinpath("tests", "data", "ds000201-der")
     output_dir = input_dir.joinpath("derivatives")
 
@@ -157,7 +148,6 @@ def test_quality_control_input():
 
 
 def test_perform_quality_control():
-
     create_basic_json()
 
     output_dir = Path().resolve()
@@ -172,7 +162,6 @@ def test_perform_quality_control():
 
 
 def test_perform_quality_control_with_different_output():
-
     input_dir = Path().resolve().joinpath("tests", "data", "ds000201-der")
     layout_in = get_dataset_layout(input_dir)
 
@@ -191,7 +180,6 @@ def test_perform_quality_control_with_different_output():
 
 
 def test_add_qc_to_sidecar():
-
     create_basic_json()
 
     create_confounds_tsv()
@@ -209,7 +197,6 @@ def test_add_qc_to_sidecar():
 
 
 def test_add_qc_to_sidecar_if_missing():
-
     ds_location = Path().resolve().joinpath("tests", "data", "ds000201-der")
     layout = get_dataset_layout(ds_location)
 

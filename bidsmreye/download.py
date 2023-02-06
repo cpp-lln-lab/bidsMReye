@@ -105,7 +105,6 @@ def download(
     output_file = output_dir.joinpath(f"dataset_{model_name}")
 
     if not output_file.is_file():
-
         file_idx = available_models().index(model_name)
         filename = f"dataset_{available_models()[file_idx]}.h5"
         output_file = POOCH.fetch(filename, progressbar=True)

@@ -7,7 +7,6 @@ from bidsmreye.methods import methods
 
 
 def test_methods():
-
     output_dir = Path.cwd().joinpath("temp")
     output_file = methods(output_dir=output_dir)
 
@@ -18,7 +17,6 @@ def test_methods():
 
 
 def test_methods_calibration_data():
-
     output_dir = Path.cwd().joinpath("temp")
     output_file = methods(output_dir=output_dir, model_name="calibration_data")
 
@@ -29,7 +27,6 @@ def test_methods_calibration_data():
 
 
 def test_methods_qc_only():
-
     output_dir = Path.cwd().joinpath("temp")
     output_file = methods(output_dir=output_dir, qc_only=True)
 
