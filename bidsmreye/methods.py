@@ -57,7 +57,6 @@ def methods(
 
     template_file = str(Path(__file__).parent.joinpath("templates", "CITATION.mustache"))
     with open(template_file) as template:
-
         output = chevron.render(
             template=template,
             data={

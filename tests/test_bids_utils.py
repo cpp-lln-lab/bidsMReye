@@ -16,7 +16,6 @@ from bidsmreye.utils import set_this_filter
 
 
 def test_create_bidsname():
-
     output_dir = Path().resolve()
     output_dir = Path.joinpath(output_dir, "derivatives")
 
@@ -46,7 +45,6 @@ def test_get_dataset_layout_smoke_test():
 
 
 def test_init_dataset():
-
     output_dir = Path().resolve()
     output_dir = Path.joinpath(output_dir, "derivatives")
 
@@ -61,7 +59,6 @@ def test_init_dataset():
 
 
 def test_list_subjects():
-
     cfg = Config(
         pybids_test_dataset(),
         Path(__file__).parent.joinpath("data"),
@@ -74,7 +71,6 @@ def test_list_subjects():
 
 
 def test_save_sampling_frequency_to_json():
-
     layout_in = get_dataset_layout(pybids_test_dataset())
 
     cfg = Config(
@@ -98,7 +94,6 @@ def test_save_sampling_frequency_to_json():
 
 
 def test_check_layout_prepare_data():
-
     cfg = Config(
         pybids_test_dataset(),
         Path(__file__).parent.joinpath("data"),

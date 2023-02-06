@@ -136,7 +136,6 @@ def process_subject(
     check_if_file_found(bf, this_filter, layout_in)
 
     for img in bf:
-
         log.info(f"Processing file: {Path(img).name}")
 
         coregister_and_extract_data(img, non_linear_coreg=cfg.non_linear_coreg)
@@ -181,5 +180,4 @@ def prepare_data(cfg: Config) -> None:
         log.debug("Using non-linear coregistration")
 
     for subject_label in subjects:
-
         process_subject(cfg, layout_in, layout_out, subject_label)

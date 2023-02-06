@@ -164,7 +164,6 @@ def process_subject(cfg: Config, layout_out: BIDSLayout, subject_label: str) -> 
     check_if_file_found(bf, this_filter, layout_out)
 
     for file in bf:
-
         log.info(f"Processing file: {Path(file).name}")
 
         print("\n")
@@ -219,7 +218,6 @@ def generalize(cfg: Config) -> None:
     subjects = list_subjects(cfg, layout_out)
 
     for subject_label in subjects:
-
         process_subject(cfg, layout_out, subject_label)
 
     quality_control_output(cfg)

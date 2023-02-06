@@ -20,7 +20,6 @@ def create_basic_data():
 
 
 def create_basic_json():
-
     output_dir = Path().resolve()
     output_dir = output_dir.joinpath("tests", "data", "bidsmreye")
 
@@ -36,7 +35,6 @@ def create_basic_json():
 
 
 def create_confounds_tsv():
-
     confounds_tsv = return_bidsmreye_eyetrack_tsv()
 
     df = pd.DataFrame(create_data_with_outliers())
@@ -63,7 +61,6 @@ def create_confounds_tsv():
 
 
 def create_data_with_outliers():
-
     data = create_basic_data()
 
     data["eye_timestamp"] = np.arange(400)
@@ -88,7 +85,6 @@ def pybids_test_dataset():
 
 
 def return_bidsmreye_eyetrack_tsv():
-
     output_dir = Path().resolve()
     output_dir = output_dir.joinpath("tests", "data", "bidsmreye")
 
@@ -100,6 +96,5 @@ def return_bidsmreye_eyetrack_tsv():
 
 
 def rm_dir(some_dir):
-
     if Path(some_dir).is_dir():
         shutil.rmtree(some_dir, ignore_errors=False)
