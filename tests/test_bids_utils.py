@@ -15,9 +15,8 @@ from bidsmreye.prepare_data import save_sampling_frequency_to_json
 from bidsmreye.utils import set_this_filter
 
 
-def test_create_bidsname():
-    output_dir = Path().resolve()
-    output_dir = Path.joinpath(output_dir, "derivatives")
+def test_create_bidsname(tmp_path):
+    output_dir = tmp_path / "derivatives"
 
     layout = get_dataset_layout(output_dir)
     filename = Path("inputs").joinpath(
@@ -25,7 +24,7 @@ def test_create_bidsname():
         "sub-01",
         "ses-01",
         "func",
-        "sub-01_ses-01_task-motion_run-1_bold.nii",
+        "sub-01_ses-01_task-motion_run-01_bold.nii",
     )
 
     output_file = create_bidsname(layout, filename=filename, filetype="mask")
@@ -33,10 +32,8 @@ def test_create_bidsname():
     rel_path = output_file.relative_to(layout.root)
 
     assert rel_path == Path("sub-01").joinpath(
-        "ses-01", "func", "sub-01_ses-01_task-motion_run-1_desc-eye_mask.p"
+        "ses-01", "func", "sub-01_ses-01_task-motion_run-01_desc-eye_mask.p"
     )
-
-    shutil.rmtree(output_dir)
 
 
 def test_get_dataset_layout_smoke_test():
