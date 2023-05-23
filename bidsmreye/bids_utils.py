@@ -100,6 +100,13 @@ def create_bidsname(
         entities = filename
     elif isinstance(filename, (Path, str)):
         entities = layout.parse_file_entities(filename)
+        if "run" in entities:
+            tokens = str(filename).split("_")
+            for x in tokens:
+                if x.startswith("run-"):
+                    padding = len(x.split("-")[1])
+            entities["run"] = f"{entities['run']:0{padding}d}"
+
     else:
         raise TypeError(f"filename must be a dict or a Path, not {type(filename)}")
 
