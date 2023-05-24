@@ -6,8 +6,10 @@ build-backend = "setuptools.build_meta"
 line-length = 90
 
 [tool.codespell]
-skip = "*.svg,*.eps,.git,env,*build,.mypy*"
+skip = "*.svg,*.eps,.git,env,*build,.mypy*,outputs,.mypy_cache,moae_fmriprep,bidsmreye/templates/CITATION.bib"
 builtin = "clear,rare"
+ignore-words-list = "fo,slite"
+
 
 [tool.vulture]
 exclude = ["bidsmreye/_version.py"]

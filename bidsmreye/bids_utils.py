@@ -71,9 +71,8 @@ def check_layout(cfg: Config, layout: BIDSLayout, for_file: str = "bold") -> Non
 
     if bf == []:
         raise RuntimeError(
-            f"""
-            Input dataset {layout.root} does not have any data to process for filter\n{this_filter}
-            """
+            f"Input dataset {layout.root} does not have "
+            "any data to process for filter\n{this_filter}"
         )
 
 

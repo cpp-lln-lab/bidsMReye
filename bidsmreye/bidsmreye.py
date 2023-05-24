@@ -161,7 +161,9 @@ class MuhParser(argparse.ArgumentParser):
 def common_parser() -> MuhParser:
     """Execute the main script."""
     parser = MuhParser(
-        description="BIDS app using deepMReye to decode eye motion for fMRI time series data.",
+        description=(
+            "BIDS app using deepMReye to decode " "eye motion for fMRI time series data."
+        ),
         epilog="""
         For a more readable version of this help section,
         see the online https://bidsmreye.readthedocs.io/.
@@ -169,9 +171,10 @@ def common_parser() -> MuhParser:
     )
     parser.add_argument(
         "bids_dir",
-        help="""
-        The directory with the input dataset formatted according to the BIDS standard.
-        """,
+        help=(
+            "The directory with the input dataset "
+            "formatted according to the BIDS standard."
+        ),
     )
     parser.add_argument(
         "output_dir",
@@ -270,9 +273,8 @@ def common_parser() -> MuhParser:
     prepare_only = parser.add_argument_group("prepare only arguments")
     prepare_only.add_argument(
         "--non_linear_coreg",
-        help="""
-        Uses a more aggressive (and non-linear) alignment procedure to the deepmreye template.
-        """,
+        help="Uses a more aggressive (and non-linear) alignment procedure "
+        "to the deepmreye template.",
         action="store_true",
     )
     # TODO make it possible to pass path to a model ?
@@ -288,5 +290,5 @@ def common_parser() -> MuhParser:
 
 
 def args_to_dict(args: argparse.Namespace) -> dict[str, Any]:
-    """Converts a argparse.Namespace object to a dictionary."""
+    """Convert a argparse.Namespace object to a dictionary."""
     return vars(args)
