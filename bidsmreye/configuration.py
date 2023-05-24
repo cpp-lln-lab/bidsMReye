@@ -94,7 +94,13 @@ No dataset_description.json found:
 
         value = layout_in.get(return_type="id", target="space", datatype="func")
         if not value:
-            raise RuntimeError(f"No space entity found in {layout_in.root}")
+            raise RuntimeError(
+                f"Input dataset {layout_in.root} does not have "
+                f"any data to process with a space entity.\n"
+                "Is your dataset a BIDS derivative dataset?\n"
+                "Check the FAQ for more information: "
+                "https://bidsmreye.readthedocs.io/en/latest/FAQ.html"
+            )
 
         if not database_path.is_dir():
             layout_in.save(database_path)
