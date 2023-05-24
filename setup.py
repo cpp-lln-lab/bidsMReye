@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 from __future__ import annotations
 
-E402 = "E402: module level import not at top of file"
+import sys
 
 # see https://github.com/python-versioneer/python-versioneer/issues/249#issuecomment-1038184056
-import sys
 
 sys.path.insert(0, ".")
 

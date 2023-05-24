@@ -1,0 +1,19 @@
+[flake8]
+max-line-length = 90
+count = True
+show-source = True
+statistics = True
+exclude =
+    *build
+    .git
+    __pycache__
+    tests/*
+    _version.py
+    versioneer.py
+    tests_.*.py
+	version.*.py
+	setup.py
+max-complexity = 10
+ignore = D100, D103, W503
+per-file-ignores =
+    setup.py:E121

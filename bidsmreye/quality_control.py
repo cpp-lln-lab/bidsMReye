@@ -154,7 +154,6 @@ def get_sampling_frequency(layout: BIDSLayout, file: str | Path) -> float | None
 
 def quality_control_output(cfg: Config) -> None:
     """Run quality control on the output dataset."""
-
     log.info("QUALITY CONTROL")
 
     layout_out = get_dataset_layout(cfg.output_dir)
@@ -168,7 +167,6 @@ def quality_control_output(cfg: Config) -> None:
 
 def quality_control_input(cfg: Config) -> None:
     """Run quality control on the input dataset."""
-
     log.info("QUALITY CONTROL")
 
     layout_in = get_dataset_layout(cfg.input_dir)
@@ -189,7 +187,6 @@ def qc_subject(
     layout_out: BIDSLayout | None = None,
 ) -> None:
     """Run quality control for one subject."""
-
     log.info(f"Running subject: {subject_label}")
 
     this_filter = set_this_filter(cfg, subject_label, "eyetrack")
@@ -220,9 +217,7 @@ def compute_robust_outliers(
     :return: Series of booleans indicating the outliers.
     :rtype: pd.Series
 
-    Adapted from
-    `spmup <https://github.com/CPernet/spmup/blob/master/QA/spmup_comp_robust_outliers.m>`_
-
+    Adapted from spmup by Cyril Pernet.
 
     S-outliers is the default options, it is independent of a measure of
     centrality as this is based on the median of pair-wise distances. This is
@@ -236,7 +231,6 @@ def compute_robust_outliers(
     points (assuming we don't want to 'remove' too many).
 
     References:
-
     - `Rousseeuw, P. J., and Croux, C. (1993). Alternatives to the the median
       absolute deviation. J. Am. Stat. Assoc. 88, 1273-1263.
       <https://www.tandfonline.com/doi/abs/10.1080/01621459.1993.10476408>`_
@@ -249,7 +243,6 @@ def compute_robust_outliers(
       outlier labelling. J. Amer. Statist. Assoc., 82 , 1147:1149
       <http://www.tandfonline.com/doi/abs/10.1080/01621459.1986.10478363>`_
     """
-
     if outlier_type is None:
         outlier_type = "S-outliers"
 

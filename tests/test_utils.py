@@ -13,11 +13,8 @@ from bidsmreye.utils import return_regex
 from bidsmreye.utils import set_this_filter
 
 
-def test_copy_license():
-    output_dir = Path().resolve()
-    output_dir = output_dir.joinpath("derivatives")
-
-    shutil.rmtree(output_dir, ignore_errors=True)
+def test_copy_license(tmp_path):
+    output_dir = tmp_path / "derivatives"
 
     license_file = copy_license(output_dir)
 
@@ -25,8 +22,6 @@ def test_copy_license():
     assert str(license_file) == str(output_dir.joinpath("LICENSE"))
 
     copy_license(output_dir)
-
-    shutil.rmtree(output_dir)
 
 
 def test_get_deepmreye_filename():

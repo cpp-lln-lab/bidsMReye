@@ -1,16 +1,150 @@
 [build-system]
-requires = ["setuptools"]
+requires = ["setuptools", "versioneer[toml]"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "bidsmreye"
+description = "bids app using deepMReye to decode eye motion for fMRI time series data"
+readme = "README.md"
+requires-python = ">=3.8.0, <3.11"
+license = { file="LICENSE" }
+authors = [
+  { name = "Remi Gau", email = "remi.gau@gmail.com" },
+]
+keywords = [
+    "BIDS",
+    "brain imaging data structure",
+    "neuroimaging",
+    "automated pipeline",
+    "MRI",
+    "Eyetracking",
+    "Machine learning",
+    ]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)",
+    "Operating System :: MacOS :: MacOS X",
+    "Operating System :: Unix",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Image Processing",
+]
+dependencies = [
+    "attrs",
+    "chevron",
+    "deepmreye",
+    "kaleido",
+    "pooch",
+    "pybids",
+    "rich",
+    "tqdm",
+    "tomli; python_version < '3.11'"
+]
+dynamic = ["version"]
+
+[project.optional-dependencies]
+# also stored in docs/requirements.txt
+# to speed up readthedocs build
+doc = [
+    "faqtory",
+    "myst-parser",
+    "rstcheck",
+    "sphinx",
+    "sphinx-argparse",
+    "sphinx-copybutton",
+    "sphinx-rtd-theme",
+]
+style =[
+    "black",
+    "codespell",
+    "flake8",
+    "flake8-docstrings",
+    "mypy",
+    "pre-commit",
+    "sourcery",
+]
+test = [
+    "pytest",
+    "pytest-cov",
+]
+dev = ["bidsmreye[doc,test,style]"]
+docs = ["bidsmreye[doc]"]
+tests = ["bidsmreye[test]"]
+
+[project.urls]
+Homepage = "https://github.com/cpp-lln-lab/bidsMReye"
+"Bug Tracker" = "https://github.com/cpp-lln-lab/bidsMReye/issues"
+
+[project.scripts]
+bidsmreye = "bidsmreye.bidsmreye:cli"
+bidsmreye_model = "bidsmreye.download:cli"
+
+[tool.setuptools.packages]
+find = {}  # Scan the project directory with the default parameters
+
+[tool.versioneer]
+VCS = "git"
+style = "pep440"
+versionfile_source = "bidsmreye/_version.py"
+tag_prefix = ""
 
 [tool.black]
 line-length = 90
 
 [tool.codespell]
-skip = "*.svg,*.eps,.git,env,*build,.mypy*"
+skip = "*.svg,*.eps,.git,env,*build,.mypy*,outputs,.mypy_cache,moae_fmriprep,bidsmreye/templates/CITATION.bib"
 builtin = "clear,rare"
+ignore-words-list = "fo,slite"
 
 [tool.vulture]
 exclude = ["bidsmreye/_version.py"]
 min_confidence = 70
 paths = ["bidsmreye"]
 sort_by_size = true
+
+[tool.mypy]
+exclude = ['tests/']
+plugins = "pydantic.mypy"
+check_untyped_defs = true
+disallow_any_generics = true
+disallow_incomplete_defs = true
+disallow_untyped_defs = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+
+[tool.pydantic-mypy]
+init_forbid_extra = true
+init_typed = true
+warn_required_dynamic_aliases = true
+warn_untyped_fields = true
+
+[[tool.mypy.overrides]]
+module = [
+    'bids.*',
+    'bidsmreye._version',
+]
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = [
+    'attrs.*',
+    'chevron.*',
+    'nibabel.*',
+    'numpy.*',
+    'pandas.*',
+    'deepmreye.*',
+    'pkg_resources.*',
+    'plotly.*',
+    'pooch.*',
+    'rich.*',
+    'scipy.*',
+]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+addopts = "--cov bidsmreye -ra -vv"
