@@ -90,8 +90,11 @@ No dataset_description.json found:
             database_path=database_path,
             reset_database=self.reset_database,
         )
+        log.debug(f"Layout in:\n{layout_in.root}")
 
-        log.debug(f"Layout in:\n{layout_in}")
+        value = layout_in.get(return_type="id", target="space", datatype="func")
+        if not value:
+            raise RuntimeError(f"No space entity found in {layout_in.root}")
 
         if not database_path.is_dir():
             layout_in.save(database_path)
@@ -143,7 +146,7 @@ No dataset_description.json found:
         setattr(self, attribute, value)
 
         # run and space can be empty if their entity are not used
-        if attribute not in ["run", "space"] and not getattr(self, attribute):
+        if attribute not in ["run"] and not getattr(self, attribute):
             raise RuntimeError(f"No {attribute} found in {self.input_dir}")
 
         return self

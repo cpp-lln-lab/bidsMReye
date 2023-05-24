@@ -4,6 +4,8 @@ import json
 import shutil
 from pathlib import Path
 
+import pytest
+
 from .utils import pybids_test_dataset
 from bidsmreye.bids_utils import check_layout
 from bidsmreye.bids_utils import create_bidsname
@@ -99,3 +101,28 @@ def test_check_layout_prepare_data():
         reset_database=True,
     )
     check_layout(cfg, layout_in)
+
+
+def test_check_layout_error_no_space_entity(tmp_path):
+    shutil.copytree(pybids_test_dataset(), tmp_path, dirs_exist_ok=True)
+    for file in tmp_path.rglob("*_space-*"):
+        file.unlink()
+
+    cfg = Config(
+        tmp_path,
+        tmp_path / "foo",
+    )
+
+    print(cfg.input_dir)
+
+    layout_in = get_dataset_layout(
+        cfg.input_dir,
+        use_database=False,
+        config=["bids", "derivatives"],
+        reset_database=True,
+    )
+
+    with pytest.raises(
+        RuntimeError, match="does not have any data to process for filter"
+    ):
+        check_layout(cfg, layout_in)
