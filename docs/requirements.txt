@@ -1,0 +1,7 @@
+faqtory
+myst-parser
+rstcheck
+sphinx
+sphinx-argparse
+sphinx-copybutton
+sphinx-rtd-theme
