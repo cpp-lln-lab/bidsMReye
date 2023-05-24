@@ -1,12 +1,11 @@
 from __future__ import annotations
 
-from bidsmreye.bidsmreye import bidsmreye
 from bidsmreye.bidsmreye import common_parser
 
 
 def test_parser() -> None:
     parser = common_parser()
-    args, unknowns = parser.parse_known_args(
+    args, _ = parser.parse_known_args(
         [
             "/path/to/bids",
             "/path/to/output",
@@ -32,7 +31,7 @@ def test_parser_basic() -> None:
         == "BIDS app using deepMReye to decode eye motion for fMRI time series data."
     )
 
-    args, unknowns = parser.parse_known_args(
+    args, _ = parser.parse_known_args(
         [
             "/path/to/bids",
             "/path/to/output",

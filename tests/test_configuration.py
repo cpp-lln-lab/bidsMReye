@@ -31,7 +31,7 @@ def test_config_to_dict_smoke():
         pybids_test_dataset(),
         Path(__file__).parent.joinpath("data"),
     )
-    cfg_dict = config_to_dict(cfg)
+    config_to_dict(cfg)
 
 
 def test_get_config_error():
@@ -68,23 +68,21 @@ def test_missing_task():
 
 
 def test_no_subject():
-    with pytest.raises(Exception) as e_info:
+    with pytest.raises(RuntimeError):
         Config(
             pybids_test_dataset(),
             Path(__file__).parent.joinpath("data"),
             subjects=["99"],
         )
-    assert e_info.type == RuntimeError
 
 
 def test_no_task():
-    with pytest.raises(Exception) as e_info:
+    with pytest.raises(RuntimeError):
         Config(
             pybids_test_dataset(),
             Path(__file__).parent.joinpath("data"),
             task=["foo"],
         )
-    assert e_info.type == RuntimeError
 
 
 def test_missing_space():

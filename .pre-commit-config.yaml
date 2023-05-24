@@ -49,7 +49,7 @@ repos:
     -   id: mypy
         additional_dependencies: [types-all, pydantic]
         files: bidsmreye
-        args: [--config-file, setup.cfg]
+        args: [--config-file, pyproject.toml]
 
 -   repo: https://github.com/codespell-project/codespell
     rev: v2.2.4

@@ -14,7 +14,7 @@ def test_download_parser():
 
     assert parser.description == "Download deepmreye pretrained model from OSF."
 
-    args, unknowns = parser.parse_known_args(
+    args, _ = parser.parse_known_args(
         [
             "--model_name",
             "1_guided_fixations",
@@ -26,15 +26,11 @@ def test_download_parser():
     assert args.output_dir == "/home/bob/models"
 
 
-def test_download():
-    output_dir = Path().joinpath("tmp")
+def test_download(tmp_path):
+    download(model_name="1_guided_fixations", output_dir=str(tmp_path))
 
-    download(model_name="1_guided_fixations", output_dir=str(output_dir))
-
-    assert output_dir.is_dir()
-    assert output_dir.joinpath("dataset_1_guided_fixations.h5").is_file()
-
-    shutil.rmtree(output_dir)
+    assert tmp_path.is_dir()
+    assert (tmp_path / "dataset_1_guided_fixations.h5").is_file()
 
 
 def test_download_basic():

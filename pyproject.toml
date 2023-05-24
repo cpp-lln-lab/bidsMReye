@@ -86,7 +86,6 @@ bidsmreye_model = "bidsmreye.download:cli"
 [tool.setuptools.packages]
 find = {}  # Scan the project directory with the default parameters
 
-
 [tool.versioneer]
 VCS = "git"
 style = "pep440"
@@ -106,3 +105,46 @@ exclude = ["bidsmreye/_version.py"]
 min_confidence = 70
 paths = ["bidsmreye"]
 sort_by_size = true
+
+[tool.mypy]
+exclude = ['tests/']
+plugins = "pydantic.mypy"
+check_untyped_defs = true
+disallow_any_generics = true
+disallow_incomplete_defs = true
+disallow_untyped_defs = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+
+[tool.pydantic-mypy]
+init_forbid_extra = true
+init_typed = true
+warn_required_dynamic_aliases = true
+warn_untyped_fields = true
+
+[[tool.mypy.overrides]]
+module = [
+    'bids.*',
+    'bidsmreye._version',
+]
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = [
+    'attrs.*',
+    'chevron.*',
+    'nibabel.*',
+    'numpy.*',
+    'pandas.*',
+    'deepmreye.*',
+    'pkg_resources.*',
+    'plotly.*',
+    'pooch.*',
+    'rich.*',
+    'scipy.*',
+]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+addopts = "--cov bidsmreye -ra -vv"

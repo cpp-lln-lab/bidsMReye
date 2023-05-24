@@ -36,14 +36,12 @@ def test_create_bidsname(tmp_path):
     )
 
 
-def test_get_dataset_layout_smoke_test():
-    get_dataset_layout(Path("data"))
-    shutil.rmtree("data")
+def test_get_dataset_layout_smoke_test(tmp_path):
+    get_dataset_layout(tmp_path / "data")
 
 
-def test_init_dataset():
-    output_dir = Path().resolve()
-    output_dir = Path.joinpath(output_dir, "derivatives")
+def test_init_dataset(tmp_path):
+    output_dir = tmp_path / "derivatives"
 
     cfg = Config(
         pybids_test_dataset(),
@@ -51,8 +49,6 @@ def test_init_dataset():
     )
 
     init_dataset(cfg)
-
-    shutil.rmtree(output_dir)
 
 
 def test_list_subjects():

@@ -6,31 +6,17 @@ from pathlib import Path
 from bidsmreye.methods import methods
 
 
-def test_methods():
-    output_dir = Path.cwd().joinpath("temp")
-    output_file = methods(output_dir=output_dir)
+def test_methods(tmp_path):
+    output_file = methods(output_dir=tmp_path)
 
-    assert output_dir.is_dir()
     assert output_file.is_file()
 
-    shutil.rmtree(output_dir)
 
-
-def test_methods_calibration_data():
-    output_dir = Path.cwd().joinpath("temp")
-    output_file = methods(output_dir=output_dir, model_name="calibration_data")
-
-    assert output_dir.is_dir()
+def test_methods_calibration_data(tmp_path):
+    output_file = methods(output_dir=tmp_path, model_name="calibration_data")
     assert output_file.is_file()
 
-    shutil.rmtree(output_dir)
 
-
-def test_methods_qc_only():
-    output_dir = Path.cwd().joinpath("temp")
-    output_file = methods(output_dir=output_dir, qc_only=True)
-
-    assert output_dir.is_dir()
+def test_methods_qc_only(tmp_path):
+    output_file = methods(output_dir=tmp_path, qc_only=True)
     assert output_file.is_file()
-
-    shutil.rmtree(output_dir)
