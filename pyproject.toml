@@ -134,9 +134,10 @@ ignore_errors = true
 [[tool.mypy.overrides]]
 module = [
     'attrs.*',
+    "bidsmreye._version",
     'chevron.*',
-    'nibabel.*',
     'deepmreye.*',
+    'nibabel.*',
     'pandas.*',
     'plotly.*',
     'pooch.*',
