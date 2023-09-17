@@ -64,6 +64,8 @@ style =[
     "flake8",
     "flake8-docstrings",
     "mypy",
+    'types-all',
+    'pandas-stubs',
     "pre-commit",
     "sourcery",
 ]
@@ -125,6 +127,7 @@ warn_untyped_fields = true
 [[tool.mypy.overrides]]
 module = [
     'bids.*',
+    "bidsmreye._version"
 ]
 ignore_errors = true
 
@@ -133,10 +136,8 @@ module = [
     'attrs.*',
     'chevron.*',
     'nibabel.*',
-    'numpy.*',
-    'pandas.*',
     'deepmreye.*',
-    'pkg_resources.*',
+    'pandas.*',
     'plotly.*',
     'pooch.*',
     'rich.*',
