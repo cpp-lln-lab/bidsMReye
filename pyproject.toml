@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "bidsmreye"
 description = "bids app using deepMReye to decode eye motion for fMRI time series data"
 readme = "README.md"
-requires-python = ">=3.8.0, <3.11"
+requires-python = ">=3.8.0"
 license = { file="LICENSE" }
 authors = [
   { name = "Remi Gau", email = "remi.gau@gmail.com" },
