@@ -10,7 +10,7 @@ import pandas as pd
 import plotly.graph_objs as go
 from plotly.subplots import make_subplots
 
-from . import _version
+from bidsmreye._version import __version__
 from bidsmreye.bids_utils import get_dataset_layout
 from bidsmreye.bids_utils import list_subjects
 from bidsmreye.configuration import Config
@@ -18,7 +18,6 @@ from bidsmreye.logging import bidsmreye_log
 from bidsmreye.utils import check_if_file_found
 from bidsmreye.utils import set_this_filter
 
-__version__ = _version.get_versions()["version"]
 
 LINE_WIDTH = 3
 FONT_SIZE = dict(size=14)
