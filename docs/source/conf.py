@@ -21,7 +21,7 @@ from __future__ import annotations
 import os
 import sys
 
-import bidsmreye
+from bidsmreye._version import __version__
 
 sys.path.insert(0, os.path.abspath("../.."))
 
@@ -67,10 +67,10 @@ author = "Remi Gau"
 # the built documents.
 #
 # The short X.Y version.
-version = bidsmreye.__version__
+version = __version__
 
 # The full version, including alpha/beta/rc tags.
-release = bidsmreye.__version__
+release = __version__
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.

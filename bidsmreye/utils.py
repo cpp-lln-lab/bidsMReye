@@ -8,14 +8,10 @@ from typing import Any
 
 from bids import BIDSLayout  # type: ignore
 
-from . import _version
 from bidsmreye.configuration import Config
 from bidsmreye.logging import bidsmreye_log
 
 log = bidsmreye_log(name="bidsmreye")
-
-
-__version__ = _version.get_versions()["version"]
 
 
 def copy_license(output_dir: Path) -> Path:

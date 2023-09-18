@@ -7,7 +7,7 @@ from typing import Any
 import nibabel as nib
 from bids import BIDSLayout  # type: ignore
 
-from . import _version
+from bidsmreye._version import __version__
 from bidsmreye.configuration import Config
 from bidsmreye.configuration import config_to_dict
 from bidsmreye.configuration import get_bids_filter_config
@@ -19,8 +19,6 @@ from bidsmreye.utils import copy_license
 from bidsmreye.utils import create_dir_if_absent
 
 log = bidsmreye_log("bidsmreye")
-
-__version__ = _version.get_versions()["version"]
 
 
 def check_layout(cfg: Config, layout: BIDSLayout, for_file: str = "bold") -> None:

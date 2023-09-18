@@ -21,30 +21,30 @@ repos:
         args: [--mapping, '4', --sequence, '4', --offset, '0']
 
 -   repo: https://github.com/asottile/pyupgrade
-    rev: v3.4.0
+    rev: v3.10.1
     hooks:
     -   id: pyupgrade
         args: [--py38-plus]
 
 -   repo: https://github.com/ikamensh/flynt/
-    rev: '0.78'
+    rev: 1.0.1
     hooks:
     -   id: flynt
 
 -   repo: https://github.com/asottile/reorder-python-imports
-    rev: v3.9.0
+    rev: v3.10.0
     hooks:
     -   id: reorder-python-imports
         args: [--py37-plus, --add-import, from __future__ import annotations]
 
 -   repo: https://github.com/psf/black
-    rev: 23.3.0
+    rev: 23.9.1
     hooks:
     -   id: black
         args: [--config=pyproject.toml, --verbose]
 
 -   repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.3.0
+    rev: v1.5.1
     hooks:
     -   id: mypy
         additional_dependencies: [types-all, pydantic]
@@ -52,19 +52,19 @@ repos:
         args: [--config-file, pyproject.toml]
 
 -   repo: https://github.com/codespell-project/codespell
-    rev: v2.2.4
+    rev: v2.2.5
     hooks:
     -   id: codespell
         args: [--toml=pyproject.toml]
         additional_dependencies: [tomli]
 
 -   repo: https://github.com/jendrikseipp/vulture
-    rev: v2.7
+    rev: v2.9.1
     hooks:
     -   id: vulture
 
 -   repo: https://github.com/pycqa/flake8
-    rev: 6.0.0
+    rev: 6.1.0
     hooks:
     -   id: flake8
         exclude: tests_.*.py|version.*.py|setup.py     # ignore tests and versioneer related code

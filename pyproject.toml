@@ -1,12 +1,12 @@
 [build-system]
-requires = ["setuptools", "versioneer[toml]"]
-build-backend = "setuptools.build_meta"
+build-backend = "hatchling.build"
+requires = ["hatchling", "hatch-vcs"]
 
 [project]
 name = "bidsmreye"
 description = "bids app using deepMReye to decode eye motion for fMRI time series data"
 readme = "README.md"
-requires-python = ">=3.8.0, <3.11"
+requires-python = ">=3.8.0"
 license = { file="LICENSE" }
 authors = [
   { name = "Remi Gau", email = "remi.gau@gmail.com" },
@@ -24,12 +24,12 @@ classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)",
-    "Operating System :: MacOS :: MacOS X",
     "Operating System :: Unix",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
     "Topic :: Scientific/Engineering :: Image Processing",
 ]
@@ -65,6 +65,8 @@ style =[
     "flake8",
     "flake8-docstrings",
     "mypy",
+    'types-all',
+    'pandas-stubs',
     "pre-commit",
     "sourcery",
 ]
@@ -84,14 +86,14 @@ Homepage = "https://github.com/cpp-lln-lab/bidsMReye"
 bidsmreye = "bidsmreye.bidsmreye:cli"
 bidsmreye_model = "bidsmreye.download:cli"
 
-[tool.setuptools.packages]
-find = {}  # Scan the project directory with the default parameters
+[tool.hatch.build.hooks.vcs]
+version-file = "bidsmreye/_version.py"
 
-[tool.versioneer]
-VCS = "git"
-style = "pep440"
-versionfile_source = "bidsmreye/_version.py"
-tag_prefix = ""
+[tool.hatch.build.targets.wheel]
+packages = ["bidsmreye"]
+
+[tool.hatch.version]
+source = "vcs"
 
 [tool.black]
 line-length = 90
@@ -102,7 +104,6 @@ builtin = "clear,rare"
 ignore-words-list = "fo,slite"
 
 [tool.vulture]
-exclude = ["bidsmreye/_version.py"]
 min_confidence = 70
 paths = ["bidsmreye"]
 sort_by_size = true
@@ -127,19 +128,18 @@ warn_untyped_fields = true
 [[tool.mypy.overrides]]
 module = [
     'bids.*',
-    'bidsmreye._version',
+    "bidsmreye._version"
 ]
 ignore_errors = true
 
 [[tool.mypy.overrides]]
 module = [
     'attrs.*',
+    "bidsmreye._version",
     'chevron.*',
-    'nibabel.*',
-    'numpy.*',
-    'pandas.*',
     'deepmreye.*',
-    'pkg_resources.*',
+    'nibabel.*',
+    'pandas.*',
     'plotly.*',
     'pooch.*',
     'rich.*',

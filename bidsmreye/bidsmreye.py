@@ -11,7 +11,7 @@ from typing import IO
 
 import rich
 
-from . import _version
+from bidsmreye._version import __version__
 from bidsmreye.configuration import Config
 from bidsmreye.defaults import allowed_actions
 from bidsmreye.defaults import available_models
@@ -24,8 +24,6 @@ from bidsmreye.logging import bidsmreye_log
 from bidsmreye.prepare_data import prepare_data
 from bidsmreye.quality_control import quality_control_input
 from bidsmreye.visualize import group_report
-
-__version__ = _version.get_versions()["version"]
 
 log = bidsmreye_log(name="bidsmreye")
 
