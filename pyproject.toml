@@ -38,7 +38,7 @@ dependencies = [
     "chevron",
     "deepmreye",
     "kaleido",
-    "pooch",
+    "pooch>=1.6.0",
     "pybids",
     "rich",
     "tqdm",
