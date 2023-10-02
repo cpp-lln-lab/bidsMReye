@@ -10,6 +10,7 @@ Welcome to bidsMReye's documentation!
    demo
    FAQ
    modules
+   references
 
 Indices and tables
 ==================

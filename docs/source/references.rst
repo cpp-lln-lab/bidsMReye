@@ -1,0 +1,8 @@
+References
+**********
+
+Bilbiography
+============
+
+.. bibliography::
+    :all:

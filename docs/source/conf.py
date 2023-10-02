@@ -42,6 +42,7 @@ extensions = [
     "sphinx_copybutton",
     "myst_parser",
     "sphinxarg.ext",
+    "sphinxcontrib.bibtex",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -84,6 +85,10 @@ todo_include_todos = False
 
 # Configuration of sphinx.ext.coverage
 coverage_show_missing_items = True
+
+bibtex_bibfiles = ["references.bib"]
+bibtex_style = "unsrt"
+bibtex_reference_style = "author_year"
 
 # -- Options for HTML output -------------------------------------------
 
