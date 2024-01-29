@@ -1,4 +1,5 @@
 """Run coregistration and extract data."""
+
 from __future__ import annotations
 
 import pickle
