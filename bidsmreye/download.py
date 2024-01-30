@@ -1,4 +1,5 @@
 """Download the models from OSF."""
+
 from __future__ import annotations
 
 import argparse

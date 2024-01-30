@@ -1,4 +1,5 @@
 """Write method section."""
+
 from __future__ import annotations
 
 import shutil
