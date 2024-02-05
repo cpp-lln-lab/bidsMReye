@@ -5,8 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from bidsmreye.download import download
-from bidsmreye.download import download_parser
+from bidsmreye.download import download, download_parser
 
 
 def test_download_parser():

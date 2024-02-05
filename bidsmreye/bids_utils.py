@@ -8,15 +8,16 @@ import nibabel as nib
 from bids import BIDSLayout  # type: ignore
 
 from bidsmreye._version import __version__
-from bidsmreye.configuration import Config
-from bidsmreye.configuration import config_to_dict
-from bidsmreye.configuration import get_bids_filter_config
-from bidsmreye.configuration import get_bidsname_config
-from bidsmreye.configuration import get_pybids_config
+from bidsmreye.configuration import (
+    Config,
+    config_to_dict,
+    get_bids_filter_config,
+    get_bidsname_config,
+    get_pybids_config,
+)
 from bidsmreye.logging import bidsmreye_log
 from bidsmreye.methods import methods
-from bidsmreye.utils import copy_license
-from bidsmreye.utils import create_dir_if_absent
+from bidsmreye.utils import copy_license, create_dir_if_absent
 
 log = bidsmreye_log("bidsmreye")
 

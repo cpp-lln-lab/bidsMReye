@@ -4,12 +4,11 @@ from pathlib import Path
 
 import pandas as pd
 
-from .utils import create_confounds_tsv
-from .utils import return_bidsmreye_eyetrack_tsv
 from bidsmreye.bidsmreye import bidsmreye
 from bidsmreye.configuration import Config
-from bidsmreye.visualize import group_report
-from bidsmreye.visualize import visualize_eye_gaze_data
+from bidsmreye.visualize import group_report, visualize_eye_gaze_data
+
+from .utils import create_confounds_tsv, return_bidsmreye_eyetrack_tsv
 
 
 def test_visualize_eye_gaze_data():

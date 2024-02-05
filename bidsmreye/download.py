@@ -6,15 +6,13 @@ import argparse
 import sys
 import warnings
 from pathlib import Path
-from typing import Any
-from typing import IO
+from typing import IO, Any
 
 import pkg_resources
 import pooch
 import rich
 
-from bidsmreye.defaults import available_models
-from bidsmreye.defaults import default_model
+from bidsmreye.defaults import available_models, default_model
 from bidsmreye.logging import bidsmreye_log
 
 log = bidsmreye_log(name="bidsmreye")

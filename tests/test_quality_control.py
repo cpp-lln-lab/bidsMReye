@@ -6,21 +6,25 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from .utils import create_basic_data
-from .utils import create_basic_json
-from .utils import create_confounds_tsv
-from .utils import return_bidsmreye_eyetrack_tsv
-from .utils import rm_dir
-from bidsmreye.bids_utils import create_bidsname
-from bidsmreye.bids_utils import get_dataset_layout
+from bidsmreye.bids_utils import create_bidsname, get_dataset_layout
 from bidsmreye.configuration import Config
-from bidsmreye.quality_control import add_qc_to_sidecar
-from bidsmreye.quality_control import compute_displacement_and_outliers
-from bidsmreye.quality_control import compute_robust_outliers
-from bidsmreye.quality_control import get_sampling_frequency
-from bidsmreye.quality_control import perform_quality_control
-from bidsmreye.quality_control import quality_control_input
-from bidsmreye.quality_control import quality_control_output
+from bidsmreye.quality_control import (
+    add_qc_to_sidecar,
+    compute_displacement_and_outliers,
+    compute_robust_outliers,
+    get_sampling_frequency,
+    perform_quality_control,
+    quality_control_input,
+    quality_control_output,
+)
+
+from .utils import (
+    create_basic_data,
+    create_basic_json,
+    create_confounds_tsv,
+    return_bidsmreye_eyetrack_tsv,
+    rm_dir,
+)
 
 
 def time_series():
