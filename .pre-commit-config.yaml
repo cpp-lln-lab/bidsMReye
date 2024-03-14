@@ -44,7 +44,7 @@ repos:
         args: [--config=pyproject.toml, --verbose]
 
 -   repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.8.0
+    rev: v1.9.0
     hooks:
     -   id: mypy
         additional_dependencies: [types-all, pydantic]
@@ -59,7 +59,7 @@ repos:
         additional_dependencies: [tomli]
 
 -   repo: https://github.com/jendrikseipp/vulture
-    rev: v2.10
+    rev: v2.11
     hooks:
     -   id: vulture
 
