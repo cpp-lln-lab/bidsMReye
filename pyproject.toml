@@ -42,7 +42,8 @@ dependencies = [
     "pybids",
     "rich",
     "tqdm",
-    "tomli; python_version < '3.11'"
+    "tomli; python_version < '3.11'",
+    "keras<3.0.0"
 ]
 dynamic = ["version"]
 
@@ -147,4 +148,8 @@ module = [
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]
-addopts = "--cov bidsmreye -ra -vv"
+addopts = "--cov bidsmreye -ra --strict-config --strict-markers --doctest-modules --showlocals -s -vv --durations=0"
+doctest_optionflags = "NORMALIZE_WHITESPACE ELLIPSIS"
+junit_family = "xunit2"
+minversion = "6.0"
+xfail_strict = true
