@@ -5,13 +5,14 @@ from __future__ import annotations
 import argparse
 import sys
 import warnings
+from importlib import resources
 from pathlib import Path
 from typing import IO, Any
 
-import pkg_resources
 import pooch
 import rich
 
+import bidsmreye
 from bidsmreye.defaults import available_models, default_model
 from bidsmreye.logging import bidsmreye_log
 
@@ -98,8 +99,9 @@ def download(
         base_url="https://osf.io/download/",
         registry=None,
     )
-    registry_file = pkg_resources.resource_stream("bidsmreye", "models/registry.txt")
-    POOCH.load_registry(registry_file)
+    source = resources.files(bidsmreye).joinpath("models/registry.txt")
+    with resources.as_file(source) as registry_file:
+        POOCH.load_registry(registry_file)
 
     output_file = output_dir.joinpath(f"dataset_{model_name}")
 

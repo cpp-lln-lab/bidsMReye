@@ -20,8 +20,8 @@ identifiers:
     value: "10.5281/zenodo.7493322"
 
 contact:
-  - affiliation: "Université catholique de Louvain"
-    email: remi.gau@uclouvain.be
+  - affiliation: "McGill university"
+    email: remi.gau2@mcgill.ca
     family-names: Gau
     given-names: Rémi
 
@@ -29,10 +29,15 @@ authors:
   - family-names: "Gau"
     given-names: "Rémi"
     orcid: "https://orcid.org/0000-0002-1535-9767"
-    affiliation: "Université catholique de Louvain"
+    affiliation: "McGill university"
 
   - family-names: "Cabee"
     given-names: "Pauline"
+
+  - family-names: "Yang"
+    given-names: "Ying"
+    orcid: "https://orcid.org/0000-0002-4157-2975"
+    affiliation: "Université catholique de Louvain"
 
 license: GPL-3.0
 
