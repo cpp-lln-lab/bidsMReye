@@ -20,6 +20,12 @@ repos:
     -   id: yamlfmt
         args: [--mapping, '4', --sequence, '4', --offset, '0']
 
+-   repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
+    rev: v2.12.0
+    hooks:
+    -   id: pretty-format-toml
+        args: [--autofix, --indent, '4']
+
 -   repo: https://github.com/asottile/pyupgrade
     rev: v3.15.1
     hooks:
@@ -31,13 +37,25 @@ repos:
     hooks:
     -   id: flynt
 
+-   repo: https://github.com/seddonym/import-linter
+    rev: v2.0
+    hooks:
+    -   id: import-linter
+
 -   repo: https://github.com/pycqa/isort
     rev: 5.13.2
     hooks:
     -   id: isort
         args: [--profile, black]
 
--   repo: https://github.com/psf/black
+-   repo: https://github.com/adamchainz/blacken-docs
+    rev: 1.16.0
+    hooks:
+    -   id: blacken-docs
+        additional_dependencies:
+        -   black==24.2.0
+
+-   repo: https://github.com/psf/black-pre-commit-mirror
     rev: 24.2.0
     hooks:
     -   id: black
@@ -70,3 +88,7 @@ repos:
         exclude: tests_.*.py|version.*.py|setup.py     # ignore tests and versioneer related code
         args: [--verbose]
         additional_dependencies: [flake8-docstrings]
+
+
+ci:
+    autoupdate_commit_msg: 'chore: update pre-commit hooks'
