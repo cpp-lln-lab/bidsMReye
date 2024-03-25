@@ -27,7 +27,7 @@ repos:
         args: [--autofix, --indent, '4']
 
 -   repo: https://github.com/asottile/pyupgrade
-    rev: v3.15.1
+    rev: v3.15.2
     hooks:
     -   id: pyupgrade
         args: [--py38-plus]
