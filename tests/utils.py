@@ -8,8 +8,7 @@ import numpy as np
 import pandas as pd
 from bids.tests import get_test_data_path
 
-from bidsmreye.quality_control import compute_displacement
-from bidsmreye.quality_control import compute_robust_outliers
+from bidsmreye.quality_control import compute_displacement, compute_robust_outliers
 
 
 def create_basic_data():

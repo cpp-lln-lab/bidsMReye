@@ -1,4 +1,5 @@
 """TODO."""
+
 from __future__ import annotations
 
 import logging
@@ -10,24 +11,26 @@ from typing import Any
 import numpy as np
 import pandas as pd
 from bids import BIDSLayout  # type: ignore
-from deepmreye import analyse
-from deepmreye import train
-from deepmreye.util import data_generator
-from deepmreye.util import model_opts
+from deepmreye import analyse, train
+from deepmreye.util import data_generator, model_opts
 from rich import print
 
-from bidsmreye.bids_utils import check_layout
-from bidsmreye.bids_utils import create_bidsname
-from bidsmreye.bids_utils import get_dataset_layout
-from bidsmreye.bids_utils import list_subjects
+from bidsmreye.bids_utils import (
+    check_layout,
+    create_bidsname,
+    get_dataset_layout,
+    list_subjects,
+)
 from bidsmreye.configuration import Config
 from bidsmreye.logging import bidsmreye_log
 from bidsmreye.quality_control import quality_control_output
-from bidsmreye.utils import add_sidecar_in_root
-from bidsmreye.utils import check_if_file_found
-from bidsmreye.utils import create_dir_for_file
-from bidsmreye.utils import move_file
-from bidsmreye.utils import set_this_filter
+from bidsmreye.utils import (
+    add_sidecar_in_root,
+    check_if_file_found,
+    create_dir_for_file,
+    move_file,
+    set_this_filter,
+)
 
 log = bidsmreye_log(name="bidsmreye")
 
