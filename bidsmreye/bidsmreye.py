@@ -19,12 +19,7 @@ from bidsmreye.defaults import (
     default_model,
     log_levels,
 )
-from bidsmreye.download import download
-from bidsmreye.generalize import generalize
 from bidsmreye.logging import bidsmreye_log
-from bidsmreye.prepare_data import prepare_data
-from bidsmreye.quality_control import quality_control_input
-from bidsmreye.visualize import group_report
 
 log = bidsmreye_log(name="bidsmreye")
 
@@ -122,6 +117,8 @@ def bidsmreye(
     log.debug(f"Configuration:\n{cfg}")
 
     if action in {"all", "generalize"} and isinstance(cfg.model_weights_file, str):
+        from bidsmreye.download import download
+
         cfg.model_weights_file = download(cfg.model_weights_file)
 
     dispatch(analysis_level=analysis_level, action=action, cfg=cfg)
@@ -130,6 +127,8 @@ def bidsmreye(
 def dispatch(analysis_level: str, action: str, cfg: Config) -> None:
     if analysis_level == "group":
         if action == "qc":
+            from bidsmreye.visualize import group_report
+
             group_report(cfg=cfg)
         else:
             log.error("Unknown group level action")
@@ -137,13 +136,22 @@ def dispatch(analysis_level: str, action: str, cfg: Config) -> None:
 
     elif analysis_level == "participant":
         if action == "all":
+            from bidsmreye.generalize import generalize
+            from bidsmreye.prepare_data import prepare_data
+
             prepare_data(cfg)
             generalize(cfg)
         elif action == "prepare":
+            from bidsmreye.prepare_data import prepare_data
+
             prepare_data(cfg)
         elif action == "generalize":
+            from bidsmreye.generalize import generalize
+
             generalize(cfg)
         elif action == "qc":
+            from bidsmreye.quality_control import quality_control_input
+
             quality_control_input(cfg)
         else:
             log.error("Unknown participant level action")
