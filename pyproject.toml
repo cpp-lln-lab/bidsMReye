@@ -57,7 +57,8 @@ doc = [
     "sphinx",
     "sphinx-argparse",
     "sphinx-copybutton",
-    "sphinx-rtd-theme"
+    "sphinx-rtd-theme",
+    "sphinxcontrib-bibtex"
 ]
 docs = ["bidsmreye[doc]"]
 style = [

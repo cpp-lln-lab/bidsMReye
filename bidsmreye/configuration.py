@@ -87,8 +87,17 @@ No dataset_description.json found:
             database_path=database_path,
             reset_database=self.reset_database,
         )
+        log.debug(f"Layout in:\n{layout_in.root}")
 
-        log.debug(f"Layout in:\n{layout_in}")
+        value = layout_in.get(return_type="id", target="subject", datatype="func")
+        if not value:
+            raise RuntimeError(
+                f"Input dataset {layout_in.root} does not have "
+                f"any data to process.\n"
+                "Is your dataset a BIDS derivative dataset?\n"
+                "Check the FAQ for more information: "
+                "https://bidsmreye.readthedocs.io/en/latest/FAQ.html"
+            )
 
         if not database_path.is_dir():
             layout_in.save(database_path)

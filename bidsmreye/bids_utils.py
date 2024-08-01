@@ -41,7 +41,11 @@ def check_layout(cfg: Config, layout: BIDSLayout, for_file: str = "bold") -> Non
         or "DatasetType" in desc
         and desc["DatasetType"] != "derivative"
     ):
-        raise RuntimeError("DatasetType must be 'derivative' in dataset_description.json")
+        raise RuntimeError(
+            "DatasetType must be 'derivative' in dataset_description.json\n."
+            "Check the FAQ for more information: "
+            "https://bidsmreye.readthedocs.io/en/latest/FAQ.html"
+        )
 
     this_filter = get_bids_filter_config()[for_file]
 
@@ -71,7 +75,10 @@ def check_layout(cfg: Config, layout: BIDSLayout, for_file: str = "bold") -> Non
     if bf == []:
         raise RuntimeError(
             f"Input dataset {layout.root} does not have "
-            "any data to process for filter\n{this_filter}"
+            f"any data to process for filter\n{this_filter}.\n"
+            "Is your dataset a BIDS derivative dataset?\n"
+            "Check the FAQ for more information: "
+            "https://bidsmreye.readthedocs.io/en/latest/FAQ.html"
         )
 
 

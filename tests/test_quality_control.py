@@ -135,11 +135,9 @@ def test_quality_control_output():
     quality_control_output(cfg)
 
 
-def test_quality_control_input():
-    input_dir = Path().resolve().joinpath("tests", "data", "ds000201-der")
-    output_dir = input_dir.joinpath("derivatives")
-
-    rm_dir(output_dir)
+def test_quality_control_input(tmp_path):
+    input_dir = Path("tests") / "data" / "ds000201-der"
+    output_dir = tmp_path / "derivatives"
 
     cfg = Config(
         input_dir,
@@ -147,8 +145,6 @@ def test_quality_control_input():
     )
 
     quality_control_input(cfg)
-
-    rm_dir(output_dir)
 
 
 def test_perform_quality_control():
