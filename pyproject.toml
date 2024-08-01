@@ -24,7 +24,7 @@ dependencies = [
     "chevron>=0.14.0",
     "deepmreye>=0.2.1",
     "kaleido",
-    "pooch>=1.6.0",
+    "pooch[progress]>=1.6.0",
     "pybids",
     "rich"
 ]
