@@ -25,10 +25,7 @@ dependencies = [
     "kaleido",
     "pooch>=1.6.0",
     "pybids",
-    "rich",
-    "tqdm",
-    "tomli; python_version < '3.11'",
-    "keras<3.0.0"
+    "rich"
 ]
 description = "bids app using deepMReye to decode eye motion for fMRI time series data"
 dynamic = ["version"]
