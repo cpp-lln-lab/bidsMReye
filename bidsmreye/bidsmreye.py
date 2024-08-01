@@ -77,7 +77,7 @@ def bidsmreye(
     reset_database: bool | None = None,
     bids_filter_file: str | None = None,
     non_linear_coreg: bool = False,
-    log_level_name: str = default_log_level(),
+    log_level_name: str | None = None,
 ) -> None:
     bids_filter = None
     if bids_filter_file is not None and Path(bids_filter_file).is_file():
@@ -101,6 +101,8 @@ def bidsmreye(
         non_linear_coreg=non_linear_coreg,
     )  # type: ignore
 
+    if log_level_name is None:
+        log_level_name = default_log_level()
     log.setLevel(log_level_name)
 
     print(log_level_name)

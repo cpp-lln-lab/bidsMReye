@@ -86,7 +86,7 @@ def download(
         assert model_name.is_file()
         return model_name.resolve()
     if model_name not in available_models():
-        warnings.warn(f"{model_name} is not a valid model name.")
+        warnings.warn(f"{model_name} is not a valid model name.", stacklevel=3)
         return None
 
     if output_dir is None:

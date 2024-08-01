@@ -1,5 +1,4 @@
 [flake8]
-max-line-length = 90
 count = True
 show-source = True
 statistics = True
@@ -9,11 +8,9 @@ exclude =
     __pycache__
     tests/*
     _version.py
-    versioneer.py
-    tests_.*.py
-	version.*.py
-	setup.py
-max-complexity = 10
 ignore = D100, D103, W503
-per-file-ignores =
-    setup.py:E121
+max-line-length = 90
+max_complexity = 15
+max_function_length = 150
+max_parameters_amount = 15
+max_returns_amount = 5
