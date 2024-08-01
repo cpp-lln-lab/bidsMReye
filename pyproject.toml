@@ -42,7 +42,7 @@ dependencies = [
     "pybids",
     "rich",
     "tqdm",
-    "tomli; python_version < '3.11'"
+    "tomli"
 ]
 dynamic = ["version"]
 
