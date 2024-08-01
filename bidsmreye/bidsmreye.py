@@ -6,18 +6,19 @@ import argparse
 import json
 import sys
 from pathlib import Path
-from typing import Any
-from typing import IO
+from typing import IO, Any
 
 import rich
 
 from bidsmreye._version import __version__
 from bidsmreye.configuration import Config
-from bidsmreye.defaults import allowed_actions
-from bidsmreye.defaults import available_models
-from bidsmreye.defaults import default_log_level
-from bidsmreye.defaults import default_model
-from bidsmreye.defaults import log_levels
+from bidsmreye.defaults import (
+    allowed_actions,
+    available_models,
+    default_log_level,
+    default_model,
+    log_levels,
+)
 from bidsmreye.download import download
 from bidsmreye.generalize import generalize
 from bidsmreye.logging import bidsmreye_log

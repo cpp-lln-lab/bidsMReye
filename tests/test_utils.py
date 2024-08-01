@@ -3,14 +3,17 @@ from __future__ import annotations
 import shutil
 from pathlib import Path
 
-from .utils import pybids_test_dataset
 from bidsmreye.bids_utils import get_dataset_layout
 from bidsmreye.configuration import Config
-from bidsmreye.utils import copy_license
-from bidsmreye.utils import get_deepmreye_filename
-from bidsmreye.utils import return_deepmreye_output_filename
-from bidsmreye.utils import return_regex
-from bidsmreye.utils import set_this_filter
+from bidsmreye.utils import (
+    copy_license,
+    get_deepmreye_filename,
+    return_deepmreye_output_filename,
+    return_regex,
+    set_this_filter,
+)
+
+from .utils import pybids_test_dataset
 
 
 def test_copy_license(tmp_path):

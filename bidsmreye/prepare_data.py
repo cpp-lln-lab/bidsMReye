@@ -1,4 +1,5 @@
 """Run coregistration and extract data."""
+
 from __future__ import annotations
 
 import pickle
@@ -9,18 +10,22 @@ import numpy as np
 from bids import BIDSLayout  # type: ignore
 from deepmreye import preprocess
 
-from bidsmreye.bids_utils import check_layout
-from bidsmreye.bids_utils import create_bidsname
-from bidsmreye.bids_utils import get_dataset_layout
-from bidsmreye.bids_utils import init_dataset
-from bidsmreye.bids_utils import list_subjects
-from bidsmreye.bids_utils import save_sampling_frequency_to_json
+from bidsmreye.bids_utils import (
+    check_layout,
+    create_bidsname,
+    get_dataset_layout,
+    init_dataset,
+    list_subjects,
+    save_sampling_frequency_to_json,
+)
 from bidsmreye.configuration import Config
 from bidsmreye.logging import bidsmreye_log
-from bidsmreye.utils import check_if_file_found
-from bidsmreye.utils import get_deepmreye_filename
-from bidsmreye.utils import move_file
-from bidsmreye.utils import set_this_filter
+from bidsmreye.utils import (
+    check_if_file_found,
+    get_deepmreye_filename,
+    move_file,
+    set_this_filter,
+)
 
 log = bidsmreye_log(name="bidsmreye")
 

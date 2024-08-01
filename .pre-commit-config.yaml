@@ -3,7 +3,7 @@
 # See https://pre-commit.com/hooks.html for more hooks
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
+    rev: v4.6.0
     hooks:
     -   id: end-of-file-fixer
     -   id: check-added-large-files
@@ -20,8 +20,14 @@ repos:
     -   id: yamlfmt
         args: [--mapping, '4', --sequence, '4', --offset, '0']
 
+-   repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
+    rev: v2.14.0
+    hooks:
+    -   id: pretty-format-toml
+        args: [--autofix, --indent, '4']
+
 -   repo: https://github.com/asottile/pyupgrade
-    rev: v3.13.0
+    rev: v3.17.0
     hooks:
     -   id: pyupgrade
         args: [--py38-plus]
@@ -31,20 +37,32 @@ repos:
     hooks:
     -   id: flynt
 
--   repo: https://github.com/asottile/reorder-python-imports
-    rev: v3.11.0
+-   repo: https://github.com/seddonym/import-linter
+    rev: v2.0
     hooks:
-    -   id: reorder-python-imports
-        args: [--py37-plus, --add-import, from __future__ import annotations]
+    -   id: import-linter
 
--   repo: https://github.com/psf/black
-    rev: 23.9.1
+-   repo: https://github.com/pycqa/isort
+    rev: 5.13.2
+    hooks:
+    -   id: isort
+        args: [--profile, black]
+
+-   repo: https://github.com/adamchainz/blacken-docs
+    rev: 1.18.0
+    hooks:
+    -   id: blacken-docs
+        additional_dependencies:
+        -   black==24.2.0
+
+-   repo: https://github.com/psf/black-pre-commit-mirror
+    rev: 24.4.2
     hooks:
     -   id: black
         args: [--config=pyproject.toml, --verbose]
 
 -   repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.5.1
+    rev: v1.11.0
     hooks:
     -   id: mypy
         additional_dependencies: [types-all, pydantic]
@@ -52,21 +70,25 @@ repos:
         args: [--config-file, pyproject.toml]
 
 -   repo: https://github.com/codespell-project/codespell
-    rev: v2.2.5
+    rev: v2.3.0
     hooks:
     -   id: codespell
         args: [--toml=pyproject.toml]
         additional_dependencies: [tomli]
 
 -   repo: https://github.com/jendrikseipp/vulture
-    rev: v2.9.1
+    rev: v2.11
     hooks:
     -   id: vulture
 
 -   repo: https://github.com/pycqa/flake8
-    rev: 6.1.0
+    rev: 7.1.0
     hooks:
     -   id: flake8
         exclude: tests_.*.py|version.*.py|setup.py     # ignore tests and versioneer related code
         args: [--verbose]
         additional_dependencies: [flake8-docstrings]
+
+
+ci:
+    autoupdate_commit_msg: 'chore: update pre-commit hooks'
