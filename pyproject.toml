@@ -28,7 +28,8 @@ dependencies = [
     "rich",
     "tqdm",
     "tomli; python_version < '3.11'",
-    "keras<3.0.0"
+    "keras<3.0.0",
+    "rich_argparse"
 ]
 description = "bids app using deepMReye to decode eye motion for fMRI time series data"
 dynamic = ["version"]
@@ -156,7 +157,8 @@ module = [
     'plotly.*',
     'pooch.*',
     'rich.*',
-    'scipy.*'
+    'scipy.*',
+    "rich_argparse"
 ]
 
 [tool.pydantic-mypy]
