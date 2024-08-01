@@ -121,12 +121,13 @@ jobs:
                         user_name=cpplab
                         repo_name=$(echo "${CIRCLE_PROJECT_REPONAME}" | tr '[:upper:]' '[:lower:]')
                         if [[ -n "${DOCKER_TOKEN}" ]]; then
-                            echo "${DOCKER_TOKEN}" | docker login -u "${DOCKER_USER}" --password-stdin
+                            echo "${DOCKER_TOKEN}" | docker login -u remigau --password-stdin
                             : "Pushing to DockerHub ${user_name}/${repo_name}:unstable"
                             docker tag "${user_name}/${repo_name}" "${user_name}/${repo_name}:unstable"
                             docker push "${user_name}/${repo_name}:unstable"
                             if [[ -n "${CIRCLE_TAG}" ]]; then
                                 : "Pushing to DockerHub ${user_name}/${repo_name}:${CIRCLE_TAG}"
+                                docker tag "${user_name}/${repo_name}" "${user_name}/${repo_name}:latest"
                                 docker push "${user_name}/${repo_name}:latest"
                                 docker tag "${user_name}/${repo_name}" "${user_name}/${repo_name}:${CIRCLE_TAG}"
                                 docker push "${user_name}/${repo_name}:${CIRCLE_TAG}"
@@ -141,21 +142,16 @@ workflows:
     build-test-deploy:
         jobs:
         -   build
-
         -   get_data
         -   test:
                 requires:
                 -   build
                 -   get_data
-
         -   deploy:
                 context:
                 -   DOCKER_HUB
                 requires:
                 -   test
-                filters:
-                    tags:
-                        only: /.*/
 
 
 

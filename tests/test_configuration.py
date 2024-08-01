@@ -4,12 +4,15 @@ from pathlib import Path
 
 import pytest
 
+from bidsmreye.configuration import (
+    Config,
+    config_to_dict,
+    get_bidsname_config,
+    get_config,
+    get_pybids_config,
+)
+
 from .utils import pybids_test_dataset
-from bidsmreye.configuration import Config
-from bidsmreye.configuration import config_to_dict
-from bidsmreye.configuration import get_bidsname_config
-from bidsmreye.configuration import get_config
-from bidsmreye.configuration import get_pybids_config
 
 
 def test_Config():

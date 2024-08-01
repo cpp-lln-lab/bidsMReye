@@ -6,10 +6,7 @@ import warnings
 from pathlib import Path
 from typing import Any
 
-from attrs import asdict
-from attrs import converters
-from attrs import define
-from attrs import field
+from attrs import asdict, converters, define, field
 from bids import BIDSLayout  # type: ignore
 
 from bidsmreye.logging import bidsmreye_log

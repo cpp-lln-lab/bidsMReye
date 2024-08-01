@@ -69,8 +69,8 @@ dist: clean ## builds source and wheel package
 clean-models: ## remove pretrained models
 	rm -fr models/
 
-models: ## gets all pretrained models from OSF
-	bidsmreye_model --model_name all
+models:
+	bidsmreye_model --model_name 1to6
 models/dataset1_guided_fixations.h5:
 	bidsmreye_model
 models/dataset2_pursuit.h5:

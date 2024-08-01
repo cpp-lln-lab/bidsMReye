@@ -6,15 +6,18 @@ from pathlib import Path
 
 import pytest
 
-from .utils import pybids_test_dataset
-from bidsmreye.bids_utils import check_layout
-from bidsmreye.bids_utils import create_bidsname
-from bidsmreye.bids_utils import get_dataset_layout
-from bidsmreye.bids_utils import init_dataset
-from bidsmreye.bids_utils import list_subjects
+from bidsmreye.bids_utils import (
+    check_layout,
+    create_bidsname,
+    get_dataset_layout,
+    init_dataset,
+    list_subjects,
+)
 from bidsmreye.configuration import Config
 from bidsmreye.prepare_data import save_sampling_frequency_to_json
 from bidsmreye.utils import set_this_filter
+
+from .utils import pybids_test_dataset
 
 
 def test_create_bidsname(tmp_path):

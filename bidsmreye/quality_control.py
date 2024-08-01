@@ -1,4 +1,5 @@
 """TODO."""
+
 from __future__ import annotations
 
 import json
@@ -11,16 +12,16 @@ import pandas as pd
 from bids import BIDSLayout  # type: ignore
 from scipy.stats.distributions import chi2
 
-from bidsmreye.bids_utils import check_layout
-from bidsmreye.bids_utils import create_bidsname
-from bidsmreye.bids_utils import get_dataset_layout
-from bidsmreye.bids_utils import init_dataset
-from bidsmreye.bids_utils import list_subjects
+from bidsmreye.bids_utils import (
+    check_layout,
+    create_bidsname,
+    get_dataset_layout,
+    init_dataset,
+    list_subjects,
+)
 from bidsmreye.configuration import Config
 from bidsmreye.logging import bidsmreye_log
-from bidsmreye.utils import check_if_file_found
-from bidsmreye.utils import create_dir_for_file
-from bidsmreye.utils import set_this_filter
+from bidsmreye.utils import check_if_file_found, create_dir_for_file, set_this_filter
 from bidsmreye.visualize import visualize_eye_gaze_data
 
 log = bidsmreye_log("bidsmreye")
