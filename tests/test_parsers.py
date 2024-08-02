@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from bidsmreye.bidsmreye import common_parser
-from bidsmreye.download import download_parser
+from bidsmreye._parsers import common_parser, download_parser
 
 
 def test_parser() -> None:
