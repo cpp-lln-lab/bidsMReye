@@ -80,8 +80,8 @@ test = [
 tests = ["bidsmreye[test]"]
 
 [project.scripts]
-bidsmreye = "bidsmreye.bidsmreye:cli"
-bidsmreye_model = "bidsmreye.download:cli"
+bidsmreye = "bidsmreye._cli:cli"
+bidsmreye_model = "bidsmreye._cli:cli_download"
 
 [project.urls]
 "Bug Tracker" = "https://github.com/cpp-lln-lab/bidsMReye/issues"

@@ -1,9 +1,58 @@
 from __future__ import annotations
 
 from argparse import ArgumentParser, HelpFormatter
+from pathlib import Path
 
 from bidsmreye._version import __version__
 from bidsmreye.defaults import allowed_actions, available_models, default_model
+
+
+def _base_parser(formatter_class: type[HelpFormatter] = HelpFormatter) -> ArgumentParser:
+    parser = ArgumentParser(
+        description=(
+            "BIDS app using deepMReye to decode " "eye motion for fMRI time series data."
+        ),
+        epilog="""
+        For a more readable version of this help section,
+        see the online https://bidsmreye.readthedocs.io/.
+        """,
+        formatter_class=formatter_class,
+    )
+
+    parser.add_argument(
+        "-v",
+        "--version",
+        action="version",
+        version=f"{__version__}",
+    )
+    parser.add_argument(
+        "bids_dir",
+        help="""
+        Fullpath to the directory with the input dataset
+        formatted according to the BIDS standard.
+        """,
+        nargs=1,
+    )
+    parser.add_argument(
+        "output_dir",
+        help="""
+        Fullpath to the directory where the output files will be stored.
+        """,
+        nargs=1,
+    )
+    parser.add_argument(
+        "analysis_level",
+        help="""
+        Level of the analysis that will be performed.
+        Multiple participant level analyses can be run independently
+        (in parallel) using the same ``output_dir``.
+        """,
+        choices=["subject", "dataset"],
+        type=str,
+        nargs=1,
+    )
+
+    return parser
 
 
 def common_parser(formatter_class: type[HelpFormatter] = HelpFormatter) -> ArgumentParser:
@@ -133,6 +182,37 @@ def common_parser(formatter_class: type[HelpFormatter] = HelpFormatter) -> Argum
         help="model to use",
         choices=available_models(),
         default=default_model(),
+    )
+
+    return parser
+
+
+def download_parser(
+    formatter_class: type[HelpFormatter] = HelpFormatter,
+) -> ArgumentParser:
+    """Execute the main script."""
+    parser = ArgumentParser(
+        description="Download deepmreye pretrained model from OSF.",
+        epilog="""
+        For a more readable version of this help section,
+        see the online https://bidsmreye.readthedocs.io/.
+        """,
+        formatter_class=formatter_class,
+    )
+    parser.add_argument(
+        "--model_name",
+        help="""
+        Model to download.
+        """,
+        choices=available_models(),
+        default=default_model(),
+    )
+    parser.add_argument(
+        "--output_dir",
+        help="""
+        The directory where the model files will be stored.
+        """,
+        default=Path.cwd().joinpath("models"),
     )
 
     return parser

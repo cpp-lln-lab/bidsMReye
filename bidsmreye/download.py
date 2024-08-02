@@ -2,68 +2,17 @@
 
 from __future__ import annotations
 
-import argparse
-import sys
 import warnings
 from importlib import resources
 from pathlib import Path
-from typing import IO, Any
 
 import pooch
-import rich
 
 import bidsmreye
 from bidsmreye.defaults import available_models, default_model
 from bidsmreye.logging import bidsmreye_log
 
 log = bidsmreye_log(name="bidsmreye")
-
-
-class MuhParser(argparse.ArgumentParser):
-    """Parser for the main script."""
-
-    def _print_message(self, message: str, file: IO[str] | None = None) -> None:
-        rich.print(message, file=file)
-
-
-def download_parser() -> MuhParser:
-    """Execute the main script."""
-    parser = MuhParser(
-        description="Download deepmreye pretrained model from OSF.",
-        epilog="""
-        For a more readable version of this help section,
-        see the online https://bidsmreye.readthedocs.io/.
-        """,
-    )
-    parser.add_argument(
-        "--model_name",
-        help="""
-        Model to download.
-        """,
-        choices=available_models(),
-        default=default_model(),
-    )
-    parser.add_argument(
-        "--output_dir",
-        help="""
-        The directory where the model files will be stored.
-        """,
-        default=Path.cwd().joinpath("models"),
-    )
-
-    return parser
-
-
-def cli(argv: Any = sys.argv) -> None:
-    """Download the models from OSF.
-
-    :return: _description_
-    :rtype: _type_
-    """
-    parser = download_parser()
-    args = parser.parse_args(argv[1:])
-
-    download(model_name=args.model_name, output_dir=args.output_dir)
 
 
 def download(

@@ -5,56 +5,13 @@ from __future__ import annotations
 import json
 import sys
 from pathlib import Path
-from typing import Any
 
-from rich_argparse import RichHelpFormatter
-
-from bidsmreye._parsers import common_parser
 from bidsmreye._version import __version__
 from bidsmreye.configuration import Config
-from bidsmreye.defaults import default_log_level, log_levels
+from bidsmreye.defaults import default_log_level
 from bidsmreye.logging import bidsmreye_log
 
 log = bidsmreye_log(name="bidsmreye")
-
-
-def cli(argv: Any = sys.argv) -> None:
-    """Run the bids app.
-
-    :param argv: _description_, defaults to sys.argv
-    :type argv: _type_, optional
-    """
-    parser = common_parser(formatter_class=RichHelpFormatter)
-
-    args = parser.parse_args(argv[1:])
-
-    log.debug(f"args:\n{args}")
-
-    # TODO integrate as part of base config
-    # https://stackoverflow.com/a/53293042/14223310
-    log_level = log_levels().index(default_log_level())
-    # For each "-v" flag, adjust the logging verbosity accordingly
-    # making sure to clamp off the value from 0 to 4, inclusive of both
-    for adjustment in args.log_level or ():
-        log_level = min(len(log_levels()) - 1, max(log_level + adjustment, 0))
-    log_level_name = log_levels()[log_level]
-
-    bidsmreye(
-        bids_dir=args.bids_dir,
-        output_dir=args.output_dir,
-        analysis_level=args.analysis_level,
-        action=args.action,
-        participant_label=args.participant_label or None,
-        space=args.space or None,
-        task=args.task or None,
-        run=args.run or None,
-        debug=args.debug,
-        model_weights_file=args.model or None,
-        reset_database=args.reset_database,
-        bids_filter_file=args.bids_filter_file,
-        non_linear_coreg=args.non_linear_coreg,
-        log_level_name=log_level_name,
-    )
 
 
 def bidsmreye(
