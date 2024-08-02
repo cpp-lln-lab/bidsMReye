@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import shutil
 from pathlib import Path
 
 from bidsmreye.bids_utils import get_dataset_layout
@@ -34,7 +33,10 @@ def test_get_deepmreye_filename():
         "sub-01",
         "ses-01",
         "func",
-        "mask_sub-01_ses-01_task-nback_run-01_space-MNI152NLin2009cAsym_desc-preproc_bold.p",
+        (
+            "mask_sub-01_ses-01_task-nback_run-01_"
+            "space-MNI152NLin2009cAsym_desc-preproc_bold.p"
+        ),
     )
 
     img = layout.get(

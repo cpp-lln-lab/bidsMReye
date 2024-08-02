@@ -113,7 +113,8 @@ root_package = "bidsmreye"
 [[tool.importlinter.contracts]]
 containers = "bidsmreye"
 layers = [
-    "bidsmreye",
+    "_cli",
+    "_parsers | bidsmreye",
     "prepare_data | generalize | download",
     "quality_control",
     "visualize",
@@ -126,6 +127,12 @@ layers = [
 ]
 name = "Layered architecture"
 type = "layers"
+
+[tool.isort]
+combine_as_imports = true
+line_length = 90
+profile = "black"
+skip_gitignore = true
 
 [tool.mypy]
 check_untyped_defs = true
@@ -175,8 +182,3 @@ log_cli_level = "INFO"
 minversion = "6.0"
 testpaths = ["tests"]
 xfail_strict = true
-
-[tool.vulture]
-min_confidence = 70
-paths = ["bidsmreye"]
-sort_by_size = true
