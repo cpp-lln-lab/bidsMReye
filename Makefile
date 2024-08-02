@@ -139,7 +139,7 @@ prepare: tests/data/moae_fmriprep ## demo: prepares the data of MOAE dataset
 	bidsmreye 	$$PWD/tests/data/moae_fmriprep \
 				$$PWD/outputs/moae_fmriprep/derivatives \
 				participant \
-				--action prepare \
+				prepare \
 				-vv \
 				--reset_database \
 				--non_linear_coreg
@@ -148,7 +148,7 @@ generalize: ## demo: predicts labels of MOAE dataset
 	bidsmreye 	$$PWD/tests/data/moae_fmriprep \
 				$$PWD/outputs/moae_fmriprep/derivatives \
 				participant \
-				--action generalize \
+				generalize \
 				-vv \
 				--non_linear_coreg
 
@@ -170,7 +170,7 @@ ds002799_prepare: get_ds002799
 	bidsmreye 	$$PWD/tests/data/ds002799/derivatives/fmriprep \
 				$$PWD/outputs/ds002799/derivatives \
 				participant \
-				--action prepare \
+				prepare \
 				--participant_label 302 307 \
 				--space MNI152NLin2009cAsym \
 				--reset_database \
@@ -181,7 +181,7 @@ ds002799_generalize:
 	bidsmreye 	$$PWD/tests/data/ds002799/derivatives/fmriprep \
 				$$PWD/outputs/ds002799/derivatives \
 				participant \
-				--action generalize \
+				generalize \
 				--participant_label 302 307 \
 				--space MNI152NLin2009cAsym \
 				--run 1 2
@@ -191,7 +191,7 @@ ds002799: clean-ds002799 get_ds002799
 	bidsmreye	$$PWD/tests/data/ds002799/derivatives/fmriprep \
 				$$PWD/outputs/ds002799/derivatives \
 				participant \
-				--action all \
+				all \
 				--participant_label 302 307 \
 				--space MNI152NLin2009cAsym \
 				--run 1 2 \
@@ -219,7 +219,7 @@ docker_prepare_data:
 				/home/neuro/data/ \
 				/home/neuro/outputs/ \
 				participant \
-				--action prepare \
+				prepare \
 				--reset_database
 
 docker_generalize:
@@ -230,7 +230,7 @@ docker_generalize:
 				/home/neuro/data/ \
 				/home/neuro/outputs/ \
 				participant \
-				--action generalize
+				generalize
 
 docker_ds002799: get_ds002799
 # datalad unlock $$PWD/tests/data/ds002799/derivatives/fmriprep/sub-30[27]/ses-*/func/*run-*preproc*bold*
@@ -241,7 +241,7 @@ docker_ds002799: get_ds002799
 				/home/neuro/data/ \
 				/home/neuro/outputs/ \
 				participant \
-				--action all \
+				all \
 				--participant_label 302 307 \
 				--space MNI152NLin2009cAsym \
 				--run 1 2 \

@@ -4,7 +4,7 @@ from argparse import ArgumentParser, HelpFormatter
 from pathlib import Path
 
 from bidsmreye._version import __version__
-from bidsmreye.defaults import allowed_actions, available_models, default_model
+from bidsmreye.defaults import available_models, default_model
 
 
 def _base_parser(formatter_class: type[HelpFormatter] = HelpFormatter) -> ArgumentParser:
@@ -18,12 +18,11 @@ def _base_parser(formatter_class: type[HelpFormatter] = HelpFormatter) -> Argume
         """,
         formatter_class=formatter_class,
     )
-
     parser.add_argument(
-        "-v",
         "--version",
         action="version",
-        version=f"{__version__}",
+        help="show program's version number and exit",
+        version=f"\nbidsMReye version {__version__}\n",
     )
     parser.add_argument(
         "bids_dir",
@@ -47,7 +46,8 @@ def _base_parser(formatter_class: type[HelpFormatter] = HelpFormatter) -> Argume
         Multiple participant level analyses can be run independently
         (in parallel) using the same ``output_dir``.
         """,
-        choices=["subject", "dataset"],
+        choices=["participant", "group"],
+        default="participant",
         type=str,
         nargs=1,
     )
@@ -55,48 +55,7 @@ def _base_parser(formatter_class: type[HelpFormatter] = HelpFormatter) -> Argume
     return parser
 
 
-def common_parser(formatter_class: type[HelpFormatter] = HelpFormatter) -> ArgumentParser:
-    """Execute the main script."""
-    parser = ArgumentParser(
-        description=(
-            "BIDS app using deepMReye to decode " "eye motion for fMRI time series data."
-        ),
-        epilog="""
-        For a more readable version of this help section,
-        see the online https://bidsmreye.readthedocs.io/.
-        """,
-        formatter_class=formatter_class,
-    )
-    parser.add_argument(
-        "bids_dir",
-        help=(
-            "The directory with the input dataset "
-            "formatted according to the BIDS standard."
-        ),
-    )
-    parser.add_argument(
-        "output_dir",
-        help="""
-        The directory where the output files will be stored.
-        """,
-    )
-    parser.add_argument(
-        "analysis_level",
-        help="""Level of the analysis that will be performed.
-        Multiple participant level analyses can be run independently (in parallel)
-        using the same output_dir.
-        """,
-        choices=["participant", "group"],
-        default="participant",
-    )
-    parser.add_argument(
-        "--action",
-        help="""
-        What action to perform.
-        """,
-        choices=allowed_actions(),
-        default="all",
-    )
+def _add_common_arguments(parser: ArgumentParser) -> ArgumentParser:
     parser.add_argument(
         "--participant_label",
         help="""
@@ -161,23 +120,76 @@ def common_parser(formatter_class: type[HelpFormatter] = HelpFormatter) -> Argum
         For further details, please check out TBD.
         """,
     )
-    parser.add_argument(
-        "--version",
-        action="version",
-        help="show program's version number and exit",
-        version=f"\nbidsMReye version {__version__}\n",
+    return parser
+
+
+def common_parser(formatter_class: type[HelpFormatter] = HelpFormatter) -> ArgumentParser:
+    """Execute the main script."""
+    parser = _base_parser(formatter_class=formatter_class)
+    subparsers = parser.add_subparsers(
+        dest="command",
+        help="Choose a subcommand",
+        required=True,
     )
+
+    prepare_parser = subparsers.add_parser(
+        "prepare",
+        help="""Preprocessing data for classification.
+Extract the data coming from the eyes from the fMRI images.
+If your data is not in MNI space, bidsmreye will also register the data to MNI.
+""",
+        formatter_class=parser.formatter_class,
+    )
+    prepare_parser = _add_common_arguments(prepare_parser)
     # TODO make it possible to pass path to a model ?
-    prepare_only = parser.add_argument_group("prepare only arguments")
-    prepare_only.add_argument(
+    prepare_parser.add_argument(
+        "--non_linear_coreg",
+        help="Uses a more aggressive (and non-linear) alignment procedure "
+        "to the deepmreye template.",
+        action="store_true",
+    )
+
+    generalize_parser = subparsers.add_parser(
+        "generalize",
+        help="""Run classification.
+Use the extracted timeseries to predict the eye movements
+using the default pre-trained model of deepmreye.
+        """,
+        formatter_class=parser.formatter_class,
+    )
+    generalize_parser = _add_common_arguments(generalize_parser)
+    # TODO make it possible to pass path to a model ?
+    generalize_parser.add_argument(
+        "--model",
+        help="model to use",
+        choices=available_models(),
+        default=default_model(),
+    )
+
+    qc_parser = subparsers.add_parser(
+        "qc",
+        help="""Run quality control on output.
+
+        """,
+        formatter_class=parser.formatter_class,
+    )
+    qc_parser = _add_common_arguments(qc_parser)
+
+    all_parser = subparsers.add_parser(
+        "all",
+        help="""Run prepare, generalize, qc.""",
+        formatter_class=parser.formatter_class,
+    )
+    all_parser = _add_common_arguments(all_parser)
+    # TODO make it possible to pass path to a model ?
+    all_parser.add_argument(
         "--non_linear_coreg",
         help="Uses a more aggressive (and non-linear) alignment procedure "
         "to the deepmreye template.",
         action="store_true",
     )
     # TODO make it possible to pass path to a model ?
-    generalize_only = parser.add_argument_group("generalize only arguments")
-    generalize_only.add_argument(
+    all_parser.add_argument(
         "--model",
         help="model to use",
         choices=available_models(),

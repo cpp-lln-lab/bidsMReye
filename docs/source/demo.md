@@ -43,7 +43,7 @@ docker run --rm -it \
             /home/neuro/data/ \
             /home/neuro/outputs/ \
             participant \
-            --action prepare
+            prepare
 ```
 
 ## Computing the eye movements
@@ -60,5 +60,5 @@ docker run --rm -it \
             /home/neuro/data/ \
             /home/neuro/outputs/ \
             participant \
-            --action generalize
+            generalize
 ```
