@@ -5,24 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from bidsmreye.download import download, download_parser
-
-
-def test_download_parser():
-    parser = download_parser()
-
-    assert parser.description == "Download deepmreye pretrained model from OSF."
-
-    args, _ = parser.parse_known_args(
-        [
-            "--model_name",
-            "1_guided_fixations",
-            "--output_dir",
-            "/home/bob/models",
-        ]
-    )
-
-    assert args.output_dir == "/home/bob/models"
+from bidsmreye.download import download
 
 
 def test_download(tmp_path):

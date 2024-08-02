@@ -22,5 +22,5 @@ Command-Line Arguments
 ----------------------
 .. argparse::
    :prog: bidsmreye
-   :module: bidsmreye.bidsmreye
+   :module: bidsmreye._parsers
    :func: common_parser

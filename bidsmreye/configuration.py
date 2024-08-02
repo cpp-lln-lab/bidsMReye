@@ -142,7 +142,8 @@ No dataset_description.json found:
         if getattr(self, attribute):
             if missing_values := list(set(getattr(self, attribute)) - set(value)):
                 warnings.warn(
-                    f"{attribute}(s) {missing_values} not found in {self.input_dir}"
+                    f"{attribute}(s) {missing_values} not found in {self.input_dir}",
+                    stacklevel=3,
                 )
             value = list(set(getattr(self, attribute)) & set(value))
 

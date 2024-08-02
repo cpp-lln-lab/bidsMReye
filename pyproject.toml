@@ -28,7 +28,8 @@ dependencies = [
     "rich",
     "tqdm",
     "tomli; python_version < '3.11'",
-    "keras<3.0.0"
+    "keras<3.0.0",
+    "rich_argparse"
 ]
 description = "bids app using deepMReye to decode eye motion for fMRI time series data"
 dynamic = ["version"]
@@ -79,8 +80,8 @@ test = [
 tests = ["bidsmreye[test]"]
 
 [project.scripts]
-bidsmreye = "bidsmreye.bidsmreye:cli"
-bidsmreye_model = "bidsmreye.download:cli"
+bidsmreye = "bidsmreye._cli:cli"
+bidsmreye_model = "bidsmreye._cli:cli_download"
 
 [project.urls]
 "Bug Tracker" = "https://github.com/cpp-lln-lab/bidsMReye/issues"
@@ -112,7 +113,8 @@ root_package = "bidsmreye"
 [[tool.importlinter.contracts]]
 containers = "bidsmreye"
 layers = [
-    "bidsmreye",
+    "_cli",
+    "_parsers | bidsmreye",
     "prepare_data | generalize | download",
     "quality_control",
     "visualize",
@@ -126,11 +128,18 @@ layers = [
 name = "Layered architecture"
 type = "layers"
 
+[tool.isort]
+combine_as_imports = true
+line_length = 90
+profile = "black"
+skip_gitignore = true
+
 [tool.mypy]
 check_untyped_defs = true
 disallow_any_generics = true
 disallow_incomplete_defs = true
 disallow_untyped_defs = true
+# enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
 exclude = ['tests/']
 no_implicit_optional = true
 plugins = "pydantic.mypy"
@@ -156,7 +165,8 @@ module = [
     'plotly.*',
     'pooch.*',
     'rich.*',
-    'scipy.*'
+    'scipy.*',
+    "rich_argparse"
 ]
 
 [tool.pydantic-mypy]
@@ -166,15 +176,10 @@ warn_required_dynamic_aliases = true
 warn_untyped_fields = true
 
 [tool.pytest.ini_options]
-addopts = "--cov bidsmreye -ra --strict-config --strict-markers --doctest-modules --showlocals -s -vv --durations=0"
+addopts = "-ra --cov bidsmreye --strict-config --strict-markers --doctest-modules --showlocals -s -vv --durations=0"
 doctest_optionflags = "NORMALIZE_WHITESPACE ELLIPSIS"
 junit_family = "xunit2"
 log_cli_level = "INFO"
 minversion = "6.0"
 testpaths = ["tests"]
 xfail_strict = true
-
-[tool.vulture]
-min_confidence = 70
-paths = ["bidsmreye"]
-sort_by_size = true

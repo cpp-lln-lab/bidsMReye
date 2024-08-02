@@ -32,11 +32,6 @@ repos:
     -   id: pyupgrade
         args: [--py38-plus]
 
--   repo: https://github.com/ikamensh/flynt/
-    rev: 1.0.1
-    hooks:
-    -   id: flynt
-
 -   repo: https://github.com/seddonym/import-linter
     rev: v2.0
     hooks:
@@ -46,7 +41,7 @@ repos:
     rev: 5.13.2
     hooks:
     -   id: isort
-        args: [--profile, black]
+        args: [--settings-path, pyproject.toml]
 
 -   repo: https://github.com/adamchainz/blacken-docs
     rev: 1.18.0
@@ -59,7 +54,7 @@ repos:
     rev: 24.4.2
     hooks:
     -   id: black
-        args: [--config=pyproject.toml, --verbose]
+        args: [--config=pyproject.toml]
 
 -   repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.11.0
@@ -76,19 +71,13 @@ repos:
         args: [--toml=pyproject.toml]
         additional_dependencies: [tomli]
 
--   repo: https://github.com/jendrikseipp/vulture
-    rev: v2.11
-    hooks:
-    -   id: vulture
-
 -   repo: https://github.com/pycqa/flake8
     rev: 7.1.0
     hooks:
     -   id: flake8
         exclude: tests_.*.py|version.*.py|setup.py     # ignore tests and versioneer related code
-        args: [--verbose]
-        additional_dependencies: [flake8-docstrings]
-
+        args: [--config, .flake8, --verbose]
+        additional_dependencies: [flake8-docstrings, flake8-use-fstring, flake8-functions, flake8-bugbear]
 
 ci:
     autoupdate_commit_msg: 'chore: update pre-commit hooks'

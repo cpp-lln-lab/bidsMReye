@@ -156,48 +156,38 @@ bidsmreye --help
 
 ## Preparing the data
 
-`--action prepapre` means that bidsmreye will extract the data coming from the
+`prepapre` means that bidsmreye will extract the data coming from the
 eyes from the fMRI images.
 
 If your data is not in MNI space, bidsmreye will also register the data to MNI.
 
 ```bash
-bidsmreye --action prepare \
-          bids_dir \
-          output_dir \
-          participant
+bidsmreye bids_dir output_dir participant prepare
 ```
 
 ## Computing the eye movements
 
-`--action generalize` use the extracted timeseries to predict the eye movements
+`generalize` use the extracted timeseries to predict the eye movements
 using the default pre-trained model of deepmreye.
 
 This will also generate a quality control report of the decoded eye movements.
 
 ```bash
-bidsmreye --action generalize \
-          bids_dir \
-          output_dir \
-          participant
+bidsmreye bids_dir output_dir participant generalize
 ```
 ## Doing it all at once
 
-`--action all` does "prepare" then "generalize".
+`all` does "prepare" then "generalize".
 
 ```bash
-bidsmreye --action all \
-          bids_dir \
-          output_dir \
-          participant
+bidsmreye bids_dir output_dir participant all
 ```
 
 ## Group level summary
 
-bidsmreye --action qc \
-          bids_dir \
-          output_dir \
-          group
+```
+bidsmreye bids_dir output_dir group qc
+```
 
 ## Demo
 

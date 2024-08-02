@@ -1,4 +1,4 @@
-FROM python:3.10.9-bullseye
+FROM python:3.11.9-slim-bullseye@sha256:8850f5e6e8da9081a6d156252a11161aa22f04d6ed1723c57ca2d5a5d48132bc
 
 ARG DEBIAN_FRONTEND="noninteractive"
 
@@ -12,11 +12,12 @@ WORKDIR /home/neuro/bidsMReye
 
 COPY [".", "/home/neuro/bidsMReye"]
 RUN pip install --upgrade pip && \
-    pip3 install -e .
+    pip3 install -r requirements.txt && \
+    pip3 install .
 
 RUN bidsmreye_model
 
-ENTRYPOINT [ "//home/neuro/bidsMReye/entrypoint.sh" ]
+ENTRYPOINT [ "/home/neuro/bidsMReye/entrypoint.sh" ]
 COPY ["./docker/entrypoint.sh", \
-      "//home/neuro/bidsMReye/entrypoint.sh"]
+      "/home/neuro/bidsMReye/entrypoint.sh"]
 RUN chmod +x /home/neuro/bidsMReye/entrypoint.sh

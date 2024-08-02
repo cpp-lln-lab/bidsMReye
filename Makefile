@@ -84,18 +84,6 @@ models/dataset4_pursuit.h5:
 models/dataset5_free_viewing.h5:
 	bidsmreye_model --model_name 5_free_viewing
 
-
-## STYLE
-
-lint/flake8: ## check style with flake8
-	flake8 bidsmreye tests
-lint/black: ## check style with black
-	black bidsmreye tests
-lint/mypy: ## check style with mypy
-	mypy bidsmreye
-
-lint: lint/black lint/mypy lint/flake8  ## check style
-
 ## DOC
 .PHONY: docs docs/source/FAQ.md
 
@@ -139,7 +127,7 @@ prepare: tests/data/moae_fmriprep ## demo: prepares the data of MOAE dataset
 	bidsmreye 	$$PWD/tests/data/moae_fmriprep \
 				$$PWD/outputs/moae_fmriprep/derivatives \
 				participant \
-				--action prepare \
+				prepare \
 				-vv \
 				--reset_database \
 				--non_linear_coreg
@@ -148,12 +136,11 @@ generalize: ## demo: predicts labels of MOAE dataset
 	bidsmreye 	$$PWD/tests/data/moae_fmriprep \
 				$$PWD/outputs/moae_fmriprep/derivatives \
 				participant \
-				--action generalize \
-				-vv \
-				--non_linear_coreg
+				generalize \
+				-vv
 
 
-## Openneuro data
+## ds002799
 .PHONY: get_ds002799_dat
 
 clean-ds002799:
@@ -170,7 +157,7 @@ ds002799_prepare: get_ds002799
 	bidsmreye 	$$PWD/tests/data/ds002799/derivatives/fmriprep \
 				$$PWD/outputs/ds002799/derivatives \
 				participant \
-				--action prepare \
+				prepare \
 				--participant_label 302 307 \
 				--space MNI152NLin2009cAsym \
 				--reset_database \
@@ -181,7 +168,7 @@ ds002799_generalize:
 	bidsmreye 	$$PWD/tests/data/ds002799/derivatives/fmriprep \
 				$$PWD/outputs/ds002799/derivatives \
 				participant \
-				--action generalize \
+				generalize \
 				--participant_label 302 307 \
 				--space MNI152NLin2009cAsym \
 				--run 1 2
@@ -191,12 +178,17 @@ ds002799: clean-ds002799 get_ds002799
 	bidsmreye	$$PWD/tests/data/ds002799/derivatives/fmriprep \
 				$$PWD/outputs/ds002799/derivatives \
 				participant \
-				--action all \
+				all \
 				--participant_label 302 307 \
 				--space MNI152NLin2009cAsym \
 				--run 1 2 \
 				--reset_database \
 				-vv
+
+## ds002799
+get_ds000114:
+	datalad install -s ///openneuro-derivatives/ds000114-fmriprep tests/data/ds000114-fmriprep
+	cd tests/data/ds000114-fmriprep && datalad get sub-0[1-2]/ses-*/func/*MNI*desc-preproc*bold.nii.gz -J 12
 
 ## DOCKER
 .PHONY:
@@ -219,7 +211,7 @@ docker_prepare_data:
 				/home/neuro/data/ \
 				/home/neuro/outputs/ \
 				participant \
-				--action prepare \
+				prepare \
 				--reset_database
 
 docker_generalize:
@@ -230,7 +222,7 @@ docker_generalize:
 				/home/neuro/data/ \
 				/home/neuro/outputs/ \
 				participant \
-				--action generalize
+				generalize
 
 docker_ds002799: get_ds002799
 # datalad unlock $$PWD/tests/data/ds002799/derivatives/fmriprep/sub-30[27]/ses-*/func/*run-*preproc*bold*
@@ -241,7 +233,7 @@ docker_ds002799: get_ds002799
 				/home/neuro/data/ \
 				/home/neuro/outputs/ \
 				participant \
-				--action all \
+				all \
 				--participant_label 302 307 \
 				--space MNI152NLin2009cAsym \
 				--run 1 2 \

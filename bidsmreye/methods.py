@@ -14,7 +14,7 @@ from bidsmreye.utils import create_dir_for_file
 
 
 def methods(
-    output_dir: str | Path = Path("."),
+    output_dir: str | Path | None = None,
     model_name: str | None = None,
     qc_only: bool = False,
 ) -> Path:
@@ -29,6 +29,8 @@ def methods(
     :return: Output file name.
     :rtype: Path
     """
+    if output_dir is None:
+        output_dir = Path(".")
     if isinstance(output_dir, str):
         output_dir = Path(output_dir)
     output_dir = output_dir.joinpath("logs")
@@ -50,7 +52,7 @@ def methods(
             is_default_model = True
 
     if not is_known_models:
-        warnings.warn(f"{model_name} is not a known model name.")
+        warnings.warn(f"{model_name} is not a known model name.", stacklevel=3)
 
     template_file = str(Path(__file__).parent.joinpath("templates", "CITATION.mustache"))
     with open(template_file) as template:
