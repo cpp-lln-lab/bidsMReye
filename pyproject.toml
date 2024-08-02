@@ -175,7 +175,7 @@ warn_required_dynamic_aliases = true
 warn_untyped_fields = true
 
 [tool.pytest.ini_options]
-addopts = "--cov bidsmreye -ra --strict-config --strict-markers --doctest-modules --showlocals -s -vv --durations=0"
+addopts = "--ra --cov bidsmreye --strict-config --strict-markers --doctest-modules --showlocals -s -vv --durations=0"
 doctest_optionflags = "NORMALIZE_WHITESPACE ELLIPSIS"
 junit_family = "xunit2"
 log_cli_level = "INFO"

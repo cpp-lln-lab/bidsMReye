@@ -37,20 +37,24 @@ def cli(argv: Any = sys.argv) -> None:
         log_level = min(len(log_levels()) - 1, max(log_level + adjustment, 0))
     log_level_name = log_levels()[log_level]
 
+    model_weights_file=getattr(args, 'model',  None)
+    if model_weights_file is not None:
+        model_weights_file = model_weights_file[0]
+
     bidsmreye(
-        bids_dir=args.bids_dir,
-        output_dir=args.output_dir,
-        analysis_level=args.analysis_level,
-        action=args.action,
+        bids_dir=args.bids_dir[0],
+        output_dir=args.output_dir[0],
+        analysis_level=args.analysis_level[0],
+        action=args.command,
         participant_label=args.participant_label or None,
         space=args.space or None,
         task=args.task or None,
         run=args.run or None,
         debug=args.debug,
-        model_weights_file=args.model or None,
+        model_weights_file=model_weights_file,
         reset_database=args.reset_database,
         bids_filter_file=args.bids_filter_file,
-        non_linear_coreg=args.non_linear_coreg,
+        non_linear_coreg=getattr(args, 'non_linear_coreg',  None),
         log_level_name=log_level_name,
     )
 

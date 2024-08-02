@@ -68,6 +68,7 @@ def bidsmreye(
         log.debug("DEBUG MODE")
 
     log.debug(f"Configuration:\n{cfg}")
+    log.debug(f"{analysis_level=} {action=}")
 
     if action in {"all", "generalize"} and isinstance(cfg.model_weights_file, str):
         from bidsmreye.download import download

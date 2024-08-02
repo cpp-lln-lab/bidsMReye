@@ -84,18 +84,6 @@ models/dataset4_pursuit.h5:
 models/dataset5_free_viewing.h5:
 	bidsmreye_model --model_name 5_free_viewing
 
-
-## STYLE
-
-lint/flake8: ## check style with flake8
-	flake8 bidsmreye tests
-lint/black: ## check style with black
-	black bidsmreye tests
-lint/mypy: ## check style with mypy
-	mypy bidsmreye
-
-lint: lint/black lint/mypy lint/flake8  ## check style
-
 ## DOC
 .PHONY: docs docs/source/FAQ.md
 
@@ -149,8 +137,7 @@ generalize: ## demo: predicts labels of MOAE dataset
 				$$PWD/outputs/moae_fmriprep/derivatives \
 				participant \
 				generalize \
-				-vv \
-				--non_linear_coreg
+				-vv
 
 
 ## Openneuro data
