@@ -140,7 +140,7 @@ generalize: ## demo: predicts labels of MOAE dataset
 				-vv
 
 
-## Openneuro data
+## ds002799
 .PHONY: get_ds002799_dat
 
 clean-ds002799:
@@ -184,6 +184,11 @@ ds002799: clean-ds002799 get_ds002799
 				--run 1 2 \
 				--reset_database \
 				-vv
+
+## ds002799
+get_ds000114:
+	datalad install -s ///openneuro-derivatives/ds000114-fmriprep tests/data/ds000114-fmriprep
+	cd tests/data/ds000114-fmriprep && datalad get sub-0[1-2]/ses-*/func/*MNI*desc-preproc*bold.nii.gz -J 12
 
 ## DOCKER
 .PHONY:

@@ -37,9 +37,10 @@ def cli(argv: Any = sys.argv) -> None:
         log_level = min(len(log_levels()) - 1, max(log_level + adjustment, 0))
     log_level_name = log_levels()[log_level]
 
-    model_weights_file = getattr(args, "model", None)
-    if model_weights_file is not None:
-        model_weights_file = model_weights_file[0]
+
+    model_weights_file = None
+    if getattr(args, "model", None) is not None:
+        model_weights_file = str(getattr(args, "model"))
 
     bidsmreye(
         bids_dir=args.bids_dir[0],
