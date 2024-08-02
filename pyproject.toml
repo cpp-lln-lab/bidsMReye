@@ -144,6 +144,7 @@ no_implicit_optional = true
 plugins = "pydantic.mypy"
 warn_redundant_casts = true
 warn_unused_ignores = true
+enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
 
 [[tool.mypy.overrides]]
 ignore_errors = true
