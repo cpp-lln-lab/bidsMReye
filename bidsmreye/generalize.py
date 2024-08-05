@@ -158,7 +158,6 @@ def process_subject(cfg: Config, layout_out: BIDSLayout, subject_label: str) -> 
     this_filter = set_this_filter(cfg, subject_label, "no_label")
 
     bf = layout_out.get(
-        return_type="filename",
         regex_search=True,
         **this_filter,
     )
@@ -166,11 +165,11 @@ def process_subject(cfg: Config, layout_out: BIDSLayout, subject_label: str) -> 
     check_if_file_found(bf, this_filter, layout_out)
 
     for file in bf:
-        log.info(f"Processing file: {Path(file).name}")
+        log.info(f"Processing file: {Path(file.path).name}")
 
         print("\n")
-        generators = data_generator.create_generators([file], [file])
-        generators = (*generators, [file], [file])
+        generators = data_generator.create_generators([file.path], [file.path])
+        generators = (*generators, [file.path], [file.path])
         print("\n")
 
         opts = model_opts.get_opts()
@@ -200,7 +199,7 @@ def process_subject(cfg: Config, layout_out: BIDSLayout, subject_label: str) -> 
             percentile_cut=80,
         )
 
-        create_confounds_tsv(layout_out, file, subject_label)
+        create_confounds_tsv(layout_out, file.path, subject_label)
 
 
 def generalize(cfg: Config) -> None:

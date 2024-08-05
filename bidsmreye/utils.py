@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any
 
 from bids import BIDSLayout  # type: ignore
+from bids.layout import BIDSFile
 from rich.progress import (
     BarColumn,
     MofNCompleteColumn,
@@ -63,11 +64,13 @@ def add_sidecar_in_root(layout_out: BIDSLayout) -> None:
     json.dump(content, open(sidecar_name, "w"), indent=4)
 
 
-def check_if_file_found(bf: Any, this_filter: dict[str, Any], layout: BIDSLayout) -> None:
-    if len(bf) == 0:
+def check_if_file_found(
+    bf: list[BIDSFile], this_filter: dict[str, Any], layout: BIDSLayout
+) -> None:
+    if not bf:
         log.warning(f"No file found for filter {this_filter}")
     else:
-        to_print = [str(Path(x).relative_to(layout.root)) for x in bf]
+        to_print = [str(Path(x.path).relative_to(layout.root)) for x in bf]
         log.debug(f"Found files\n{to_print}")
 
 

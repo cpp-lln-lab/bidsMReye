@@ -218,7 +218,6 @@ def qc_subject(
     this_filter = set_this_filter(cfg, subject_label, "eyetrack")
 
     bf = layout_in.get(
-        return_type="filename",
         regex_search=True,
         **this_filter,
     )
@@ -226,7 +225,7 @@ def qc_subject(
     check_if_file_found(bf, this_filter, layout_in)
 
     for file in bf:
-        perform_quality_control(cfg, layout_in, file, layout_out)
+        perform_quality_control(cfg, layout_in, file.path, layout_out)
 
 
 def compute_robust_outliers(

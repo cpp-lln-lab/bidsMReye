@@ -8,6 +8,7 @@ from typing import Any
 
 import numpy as np
 from bids import BIDSLayout  # type: ignore
+from bids.layout import BIDSFile
 from deepmreye import preprocess
 
 from bidsmreye.bids_utils import (
@@ -131,7 +132,6 @@ def process_subject(
     this_filter = set_this_filter(cfg, subject_label, "bold")
 
     bf = layout_in.get(
-        return_type="filename",
         regex_search=True,
         **this_filter,
     )
@@ -143,12 +143,14 @@ def process_subject(
 
 
 def prepapre_image(
-    cfg: Config, layout_in: BIDSLayout, layout_out: BIDSLayout, img: str
+    cfg: Config, layout_in: BIDSLayout, layout_out: BIDSLayout, img: BIDSFile
 ) -> None:
     """Preprocess a single functional image."""
-    report_name = create_bidsname(layout_out, filename=img, filetype="report")
-    mask_name = create_bidsname(layout_out, filename=img, filetype="mask")
-    output_file = create_bidsname(layout_out, Path(img), "no_label")
+    img_path = img.path
+
+    report_name = create_bidsname(layout_out, filename=img_path, filetype="report")
+    mask_name = create_bidsname(layout_out, filename=img_path, filetype="mask")
+    output_file = create_bidsname(layout_out, Path(img_path), "no_label")
 
     if (
         not cfg.force
@@ -159,21 +161,23 @@ def prepapre_image(
         log.debug(
             "Output for the following file already exists. "
             "Use the '--force' option to overwrite. "
-            f"\n '{Path(img).name}'"
+            f"\n '{Path(img_path).name}'"
         )
         return
 
-    log.info(f"Processing file: {Path(img).name}")
+    log.info(f"Processing file: {Path(img_path).name}")
 
-    coregister_and_extract_data(img, non_linear_coreg=cfg.non_linear_coreg)
+    coregister_and_extract_data(img_path, non_linear_coreg=cfg.non_linear_coreg)
 
-    deepmreye_mask_report = get_deepmreye_filename(layout_in, img=img, filetype="report")
+    deepmreye_mask_report = get_deepmreye_filename(
+        layout_in, img=img_path, filetype="report"
+    )
     move_file(deepmreye_mask_report, report_name)
 
-    deepmreye_mask_name = get_deepmreye_filename(layout_in, img=img, filetype="mask")
+    deepmreye_mask_name = get_deepmreye_filename(layout_in, img=img_path, filetype="mask")
     move_file(deepmreye_mask_name, mask_name)
 
-    source = str(Path(img).relative_to(layout_in.root))
+    source = str(Path(img_path).relative_to(layout_in.root))
     save_sampling_frequency_to_json(layout_out, img=img, source=source)
 
     combine_data_with_empty_labels(layout_out, mask_name)
