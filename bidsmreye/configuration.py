@@ -31,14 +31,14 @@ class Config:
     def _check_input_dir(self, attribute: str, value: Path) -> None:
         if not value.is_dir:  # type: ignore
             raise ValueError(
-                f"input_dir must be an existing directory:\n{value.resolve()}."
+                f"input_dir must be an existing directory:\n{value.absolute()}."
             )
 
-        if not value.joinpath("dataset_description.json").is_file():
+        if not (value / "dataset_description.json").is_file():
             raise ValueError(
                 f"""input_dir does not seem to be a valid BIDS dataset.
 No dataset_description.json found:
-\t{value.resolve()}."""
+\t{value.absolute()}."""
             )
 
     output_dir: Path = field(default=None, converter=Path)
@@ -55,6 +55,7 @@ No dataset_description.json found:
     debug: str | bool | None = field(kw_only=True, default=None)
     reset_database: bool = field(kw_only=True, default=False)
     non_linear_coreg: bool = field(kw_only=True, default=False)
+    force: bool = field(kw_only=True, default=False)
 
     has_GPU: bool = False
 
@@ -74,11 +75,11 @@ No dataset_description.json found:
         if not self.bids_filter:
             self.bids_filter = get_bids_filter_config()
 
-        self.output_dir = self.output_dir.joinpath("bidsmreye")
+        self.output_dir = self.output_dir / "bidsmreye"
         if not self.output_dir:
             self.output_dir.mkdir(parents=True, exist_ok=True)
 
-        database_path = self.input_dir.joinpath("pybids_db")
+        database_path = self.input_dir / "pybids_db"
 
         layout_in = BIDSLayout(
             self.input_dir,
@@ -225,8 +226,8 @@ def get_config(config_file: Path | None = None, default: str = "") -> dict[str, 
     :rtype: dict
     """
     if config_file is None or not Path(config_file).exists():
-        my_path = Path(__file__).resolve().parent.joinpath("config")
-        config_file = my_path.joinpath(default)
+        my_path = Path(__file__).absolute().parent / "config"
+        config_file = my_path / default
 
     if config_file is None or not Path(config_file).exists():
         raise FileNotFoundError(f"Config file {config_file} not found")

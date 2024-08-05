@@ -17,27 +17,30 @@ from bidsmreye.configuration import Config
 from bidsmreye.prepare_data import save_sampling_frequency_to_json
 from bidsmreye.utils import set_this_filter
 
-from .utils import pybids_test_dataset
-
 
 def test_create_bidsname(tmp_path):
     output_dir = tmp_path / "derivatives"
 
     layout = get_dataset_layout(output_dir)
-    filename = Path("inputs").joinpath(
-        "raw",
-        "sub-01",
-        "ses-01",
-        "func",
-        "sub-01_ses-01_task-motion_run-01_bold.nii",
+    filename = (
+        Path("inputs")
+        / "raw"
+        / "sub-01"
+        / "ses-01"
+        / "func"
+        / "sub-01_ses-01_task-motion_run-01_bold.nii"
     )
 
     output_file = create_bidsname(layout, filename=filename, filetype="mask")
 
     rel_path = output_file.relative_to(layout.root)
 
-    assert rel_path == Path("sub-01").joinpath(
-        "ses-01", "func", "sub-01_ses-01_task-motion_run-01_desc-eye_mask.p"
+    assert (
+        rel_path
+        == Path("sub-01")
+        / "ses-01"
+        / "func"
+        / "sub-01_ses-01_task-motion_run-01_desc-eye_mask.p"
     )
 
 
@@ -45,35 +48,35 @@ def test_get_dataset_layout_smoke_test(tmp_path):
     get_dataset_layout(tmp_path / "data")
 
 
-def test_init_dataset(tmp_path):
+def test_init_dataset(tmp_path, pybids_test_dataset):
     output_dir = tmp_path / "derivatives"
 
     cfg = Config(
-        pybids_test_dataset(),
+        pybids_test_dataset,
         output_dir,
     )
 
     init_dataset(cfg)
 
 
-def test_list_subjects():
+def test_list_subjects(data_dir, pybids_test_dataset):
     cfg = Config(
-        pybids_test_dataset(),
-        Path(__file__).parent.joinpath("data"),
+        pybids_test_dataset,
+        data_dir,
     )
 
-    layout = get_dataset_layout(pybids_test_dataset())
+    layout = get_dataset_layout(pybids_test_dataset)
 
     subjects = list_subjects(cfg, layout)
     assert len(subjects) == 5
 
 
-def test_save_sampling_frequency_to_json():
-    layout_in = get_dataset_layout(pybids_test_dataset())
+def test_save_sampling_frequency_to_json(data_dir, pybids_test_dataset):
+    layout_in = get_dataset_layout(pybids_test_dataset)
 
     cfg = Config(
-        pybids_test_dataset(),
-        Path(__file__).parent.joinpath("data"),
+        pybids_test_dataset,
+        data_dir,
     )
 
     this_filter = set_this_filter(cfg, "01", "bold")
@@ -91,10 +94,10 @@ def test_save_sampling_frequency_to_json():
     assert content["Sources"][0] == "foo"
 
 
-def test_check_layout_prepare_data():
+def test_check_layout_prepare_data(data_dir, pybids_test_dataset):
     cfg = Config(
-        pybids_test_dataset(),
-        Path(__file__).parent.joinpath("data"),
+        pybids_test_dataset,
+        data_dir,
     )
 
     layout_in = get_dataset_layout(
@@ -106,8 +109,8 @@ def test_check_layout_prepare_data():
     check_layout(cfg, layout_in)
 
 
-def test_check_layout_error_no_space_entity(tmp_path):
-    shutil.copytree(pybids_test_dataset(), tmp_path, dirs_exist_ok=True)
+def test_check_layout_error_no_space_entity(tmp_path, pybids_test_dataset):
+    shutil.copytree(pybids_test_dataset, tmp_path, dirs_exist_ok=True)
     for file in tmp_path.rglob("*_space-*"):
         file.unlink()
 

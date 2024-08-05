@@ -7,11 +7,33 @@ from pathlib import Path
 from typing import Any
 
 from bids import BIDSLayout  # type: ignore
+from rich.progress import (
+    BarColumn,
+    MofNCompleteColumn,
+    Progress,
+    SpinnerColumn,
+    TaskProgressColumn,
+    TextColumn,
+    TimeElapsedColumn,
+    TimeRemainingColumn,
+)
 
 from bidsmreye.configuration import Config
 from bidsmreye.logging import bidsmreye_log
 
 log = bidsmreye_log(name="bidsmreye")
+
+
+def progress_bar(text: str, color: str = "green") -> Progress:
+    return Progress(
+        TextColumn(f"[{color}]{text}"),
+        SpinnerColumn("dots"),
+        TimeElapsedColumn(),
+        BarColumn(),
+        MofNCompleteColumn(),
+        TaskProgressColumn(),
+        TimeRemainingColumn(),
+    )
 
 
 def copy_license(output_dir: Path) -> Path:
@@ -20,12 +42,12 @@ def copy_license(output_dir: Path) -> Path:
     :param output_dir:
     :type output_dir: Path
     """
-    input_file = str(Path(__file__).parent.joinpath("templates", "CCO"))
-    output_file = output_dir.joinpath("LICENSE")
+    input_file = str(Path(__file__).parent / "templates" / "CCO")
+    output_file = output_dir / "LICENSE"
     create_dir_if_absent(output_dir)
-    if not output_dir.joinpath("LICENSE").is_file():
+    if not (output_dir / "LICENSE").is_file():
         shutil.copy(input_file, output_dir)
-        move_file(output_dir.joinpath("CCO"), output_file)
+        move_file(output_dir / "CCO", output_file)
     return output_file
 
 
@@ -37,7 +59,7 @@ def add_sidecar_in_root(layout_out: BIDSLayout) -> None:
         "SampleCoordinateSystem": "gaze-on-screen",
         "RecordedEye": "both",
     }
-    sidecar_name = Path(layout_out.root).joinpath("desc-bidsmreye_eyetrack.json")
+    sidecar_name = Path(layout_out.root) / "desc-bidsmreye_eyetrack.json"
     json.dump(content, open(sidecar_name, "w"), indent=4)
 
 
@@ -80,7 +102,7 @@ def move_file(input: Path, output: Path) -> None:
     :param root: Optional. If specified, the printed path will be relative to this path.
     :type root: Path
     """
-    log.debug(f"{input.resolve()} --> {output.resolve()}")
+    log.debug(f"{input.absolute()} --> {output.absolute()}")
     create_dir_for_file(output)
     shutil.copy(input, output)
     input.unlink()
@@ -105,7 +127,7 @@ def create_dir_for_file(file: Path) -> None:
     :param file:
     :type file: Path
     """
-    output_path = file.resolve().parent
+    output_path = file.absolute().parent
     create_dir_if_absent(output_path)
 
     # TODO refactor with create_dir_if_absent
@@ -165,10 +187,7 @@ def get_deepmreye_filename(
 
     filename = return_deepmreye_output_filename(filename, filetype)
 
-    filefolder = Path(img).parent
-    filefolder = filefolder.joinpath(filename)
-
-    return Path(filefolder).resolve()
+    return Path(img).parent.absolute() / filename
 
 
 def return_deepmreye_output_filename(filename: str, filetype: str | None = None) -> str:

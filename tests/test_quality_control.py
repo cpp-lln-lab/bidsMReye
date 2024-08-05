@@ -18,13 +18,7 @@ from bidsmreye.quality_control import (
     quality_control_output,
 )
 
-from .utils import (
-    create_basic_data,
-    create_basic_json,
-    create_confounds_tsv,
-    return_bidsmreye_eyetrack_tsv,
-    rm_dir,
-)
+from .conftest import rm_dir
 
 
 def time_series():
@@ -52,9 +46,8 @@ def time_series():
     ]
 
 
-def test_get_sampling_frequency():
-    ds_location = Path().resolve().joinpath("tests", "data", "bidsmreye")
-    layout = get_dataset_layout(ds_location)
+def test_get_sampling_frequency(output_dir):
+    layout = get_dataset_layout(output_dir)
 
     file = layout.get(return_type="filename", suffix="eyetrack")[0]
 
@@ -64,8 +57,8 @@ def test_get_sampling_frequency():
 
 
 @pytest.mark.xfail(reason="not implemented yet")
-def test_get_sampling_frequency_in_root():
-    ds_location = Path().resolve().joinpath("tests", "data", "ds000201-der")
+def test_get_sampling_frequency_in_root(data_dir):
+    ds_location = data_dir / "ds000201-der"
     layout = get_dataset_layout(ds_location)
 
     file = layout.get(return_type="filename", subject="9001", suffix="eyetrack")[0]
@@ -116,27 +109,24 @@ def test_compute_robust_with_nan():
     assert outliers == expected_outliers
 
 
-def test_quality_control_output():
-    create_basic_json()
+def test_quality_control_output(
+    create_basic_data, create_basic_json, bidsmreye_eyetrack_tsv, data_dir
+):
+    output_dir = data_dir
 
-    output_dir = Path().resolve()
-    output_dir = output_dir.joinpath("tests", "data")
-
-    confounds_tsv = return_bidsmreye_eyetrack_tsv()
-
-    df = pd.DataFrame(create_basic_data())
-    df.to_csv(confounds_tsv, sep="\t", index=False)
+    df = pd.DataFrame(create_basic_data)
+    df.to_csv(bidsmreye_eyetrack_tsv, sep="\t", index=False)
 
     cfg = Config(
-        output_dir.joinpath("bidsmreye"),
+        output_dir / "bidsmreye",
         output_dir,
     )
 
     quality_control_output(cfg)
 
 
-def test_quality_control_input(tmp_path):
-    input_dir = Path("tests") / "data" / "ds000201-der"
+def test_quality_control_input(tmp_path, data_dir):
+    input_dir = data_dir / "ds000201-der"
     output_dir = tmp_path / "derivatives"
 
     cfg = Config(
@@ -147,57 +137,63 @@ def test_quality_control_input(tmp_path):
     quality_control_input(cfg)
 
 
-def test_perform_quality_control():
-    create_basic_json()
-
-    output_dir = Path().resolve()
-    output_dir = output_dir.joinpath("tests", "data", "bidsmreye")
+def test_perform_quality_control(
+    output_dir,
+    pybids_test_dataset,
+    create_basic_data,
+    create_basic_json,
+    bidsmreye_eyetrack_tsv,
+):
     layout = get_dataset_layout(output_dir)
-    confounds_tsv = return_bidsmreye_eyetrack_tsv()
 
-    df = pd.DataFrame(create_basic_data())
-    df.to_csv(confounds_tsv, sep="\t", index=False)
+    df = pd.DataFrame(create_basic_data)
+    df.to_csv(bidsmreye_eyetrack_tsv, sep="\t", index=False)
 
-    perform_quality_control(layout, confounds_tsv)
+    cfg = Config(
+        pybids_test_dataset,
+        Path(__file__).parent / "data",
+    )
+
+    perform_quality_control(cfg, layout, bidsmreye_eyetrack_tsv)
 
 
-def test_perform_quality_control_with_different_output():
-    input_dir = Path().resolve().joinpath("tests", "data", "ds000201-der")
+def test_perform_quality_control_with_different_output(data_dir, pybids_test_dataset):
+    input_dir = data_dir / "ds000201-der"
     layout_in = get_dataset_layout(input_dir)
 
-    output_dir = input_dir.joinpath("derivatives", "bidsmreye")
+    output_dir = input_dir / "derivatives" / "bidsmreye"
     layout_out = get_dataset_layout(output_dir)
 
     confounds_tsv = layout_in.get(
         return_type="filename", subject="9001", suffix="eyetrack", extension=".tsv"
     )[0]
 
+    cfg = Config(
+        pybids_test_dataset,
+        Path(__file__).parent / "data",
+    )
+
     perform_quality_control(
-        layout_in=layout_in, confounds_tsv=confounds_tsv, layout_out=layout_out
+        cfg=cfg, layout_in=layout_in, confounds_tsv=confounds_tsv, layout_out=layout_out
     )
 
     rm_dir(output_dir)
 
 
-def test_add_qc_to_sidecar():
-    create_basic_json()
-
-    create_confounds_tsv()
-
-    output_dir = Path().resolve()
-    output_dir = output_dir.joinpath("tests", "data", "bidsmreye")
+def test_add_qc_to_sidecar(
+    output_dir, create_confounds_tsv, create_basic_json, bidsmreye_eyetrack_tsv
+):
     layout_out = get_dataset_layout(output_dir)
 
-    confounds_tsv = return_bidsmreye_eyetrack_tsv()
-    confounds = pd.read_csv(confounds_tsv, sep="\t")
+    confounds = pd.read_csv(bidsmreye_eyetrack_tsv, sep="\t")
 
-    sidecar_name = create_bidsname(layout_out, confounds_tsv, "confounds_json")
+    sidecar_name = create_bidsname(layout_out, bidsmreye_eyetrack_tsv, "confounds_json")
 
     add_qc_to_sidecar(confounds, sidecar_name)
 
 
-def test_add_qc_to_sidecar_if_missing():
-    ds_location = Path().resolve().joinpath("tests", "data", "ds000201-der")
+def test_add_qc_to_sidecar_if_missing(data_dir):
+    ds_location = data_dir / "ds000201-der"
     layout = get_dataset_layout(ds_location)
 
     file = layout.get(

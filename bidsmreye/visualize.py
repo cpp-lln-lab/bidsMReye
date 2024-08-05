@@ -39,7 +39,7 @@ COLORS = [COLOR_1, COLOR_2, COLOR_3]
 log = bidsmreye_log(name="bidsmreye")
 
 
-def collect_group_qc_data(cfg: Config) -> pd.DataFrame:
+def collect_group_qc_data(cfg: Config) -> pd.DataFrame | None:
     """Collect QC metrics data from all subjects json in a BIDS dataset.
 
     :param input_dir:
@@ -75,6 +75,9 @@ def collect_group_qc_data(cfg: Config) -> pd.DataFrame:
         df["subject"] = entities["subject"]
         qc_data = df if i == 0 else pd.concat([qc_data, df], sort=False)
 
+    if qc_data is None:
+        return None
+
     cols = [
         "subject",
         "filename",
@@ -84,7 +87,7 @@ def collect_group_qc_data(cfg: Config) -> pd.DataFrame:
         "eye1XVar",
         "eye1YVar",
     ]
-    qc_data = qc_data[cols]  # type: ignore
+    qc_data = qc_data[cols]
 
     return qc_data
 
@@ -132,6 +135,10 @@ def group_report(cfg: Config) -> None:
     :rtype: Any
     """
     qc_data = collect_group_qc_data(cfg)
+
+    if qc_data is None:
+        log.warning("No data found.")
+        return
 
     fig = go.FigureWidget(
         make_subplots(
@@ -229,10 +236,10 @@ def group_report(cfg: Config) -> None:
     )
 
     fig.show()
-    group_report_file = Path(cfg.output_dir).joinpath("group_eyetrack.html")
+    group_report_file = cfg.output_dir / "group_eyetrack.html"
     fig.write_html(group_report_file)
 
-    qc_data_file = Path(cfg.output_dir).joinpath("group_eyetrack.tsv")
+    qc_data_file = cfg.output_dir / "group_eyetrack.tsv"
     qc_data.to_csv(qc_data_file, sep="\t", index=False)
 
 

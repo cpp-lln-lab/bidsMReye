@@ -1,4 +1,4 @@
-"""TODO."""
+"""Compute eyetracking movement from preprocessed extracted data."""
 
 from __future__ import annotations
 
@@ -29,6 +29,7 @@ from bidsmreye.utils import (
     check_if_file_found,
     create_dir_for_file,
     move_file,
+    progress_bar,
     set_this_filter,
 )
 
@@ -130,9 +131,7 @@ def create_confounds_tsv(layout_out: BIDSLayout, file: str, subject_label: str) 
     """
     confound_numpy = create_bidsname(layout_out, file, "confounds_numpy")
 
-    source_file = Path(layout_out.root).joinpath(
-        f"sub-{subject_label}", "results_tmp.npy"
-    )
+    source_file = Path(layout_out.root) / f"sub-{subject_label}" / "results_tmp.npy"
 
     move_file(
         source_file,
@@ -210,9 +209,6 @@ def generalize(cfg: Config) -> None:
     :param cfg: Configuration object
     :type cfg: Config
     """
-    log.info("GENERALIZING")
-    log.info(f"Using model: {cfg.model_weights_file}")
-
     layout_out = get_dataset_layout(cfg.output_dir)
     check_layout(cfg, layout_out)
 
@@ -220,7 +216,14 @@ def generalize(cfg: Config) -> None:
 
     subjects = list_subjects(cfg, layout_out)
 
-    for subject_label in subjects:
-        process_subject(cfg, layout_out, subject_label)
+    text = "GENERALIZING"
+    with progress_bar(text=text) as progress:
+        subject_loop = progress.add_task(
+            description="processing subject", total=len(subjects)
+        )
+        log.info(f"Using model: {cfg.model_weights_file}")
+        for subject_label in subjects:
+            process_subject(cfg, layout_out, subject_label)
+            progress.update(subject_loop, advance=1)
 
     quality_control_output(cfg)

@@ -1,4 +1,4 @@
-"""Run coregistration and extract data."""
+"""Run coregistration and extract data from eye masks in MNI space."""
 
 from __future__ import annotations
 
@@ -24,6 +24,7 @@ from bidsmreye.utils import (
     check_if_file_found,
     get_deepmreye_filename,
     move_file,
+    progress_bar,
     set_this_filter,
 )
 
@@ -40,7 +41,7 @@ def coregister_and_extract_data(img: str, non_linear_coreg: bool = False) -> Non
         eyemask_small,
         eyemask_big,
         dme_template,
-        mask,
+        _,
         x_edges,
         y_edges,
         z_edges,
@@ -94,6 +95,7 @@ def combine_data_with_empty_labels(layout_out: BIDSLayout, img: Path, i: int = 1
     subj["ids"].append(([entities["subject"]] * labels.shape[0], [i] * labels.shape[0]))
 
     output_file = create_bidsname(layout_out, Path(img), "no_label")
+    file_to_move = Path(layout_out.root) / ".." / "bidsmreye" / output_file.name
 
     preprocess.save_data(
         output_file.name,
@@ -104,11 +106,7 @@ def combine_data_with_empty_labels(layout_out: BIDSLayout, img: Path, i: int = 1
         center_labels=False,
     )
 
-    file_to_move = Path(layout_out.root).joinpath("..", "bidsmreye", output_file.name)
-
-    move_file(file_to_move, output_file)
-
-    return output_file
+    return file_to_move
 
 
 def process_subject(
@@ -141,24 +139,46 @@ def process_subject(
     check_if_file_found(bf, this_filter, layout_in)
 
     for img in bf:
-        log.info(f"Processing file: {Path(img).name}")
+        prepapre_image(cfg, layout_in, layout_out, img)
 
-        coregister_and_extract_data(img, non_linear_coreg=cfg.non_linear_coreg)
 
-        report_name = create_bidsname(layout_out, filename=img, filetype="report")
-        deepmreye_mask_report = get_deepmreye_filename(
-            layout_in, img=img, filetype="report"
+def prepapre_image(
+    cfg: Config, layout_in: BIDSLayout, layout_out: BIDSLayout, img: str
+) -> None:
+    """Preprocess a single functional image."""
+    report_name = create_bidsname(layout_out, filename=img, filetype="report")
+    mask_name = create_bidsname(layout_out, filename=img, filetype="mask")
+    output_file = create_bidsname(layout_out, Path(img), "no_label")
+
+    if (
+        not cfg.force
+        and report_name.exists()
+        and mask_name.exists()
+        and output_file.exists()
+    ):
+        log.debug(
+            "Output for the following file already exists. "
+            "Use the '--force' option to overwrite. "
+            f"\n '{Path(img).name}'"
         )
-        move_file(deepmreye_mask_report, report_name)
+        return
 
-        mask_name = create_bidsname(layout_out, filename=img, filetype="mask")
-        deepmreye_mask_name = get_deepmreye_filename(layout_in, img=img, filetype="mask")
-        move_file(deepmreye_mask_name, mask_name)
+    log.info(f"Processing file: {Path(img).name}")
 
-        source = str(Path(img).relative_to(layout_in.root))
-        save_sampling_frequency_to_json(layout_out, img=img, source=source)
+    coregister_and_extract_data(img, non_linear_coreg=cfg.non_linear_coreg)
 
-        combine_data_with_empty_labels(layout_out, mask_name)
+    deepmreye_mask_report = get_deepmreye_filename(layout_in, img=img, filetype="report")
+    move_file(deepmreye_mask_report, report_name)
+
+    deepmreye_mask_name = get_deepmreye_filename(layout_in, img=img, filetype="mask")
+    move_file(deepmreye_mask_name, mask_name)
+
+    source = str(Path(img).relative_to(layout_in.root))
+    save_sampling_frequency_to_json(layout_out, img=img, source=source)
+
+    combine_data_with_empty_labels(layout_out, mask_name)
+    file_to_move = Path(layout_out.root) / ".." / "bidsmreye" / output_file.name
+    move_file(file_to_move, output_file)
 
 
 def prepare_data(cfg: Config) -> None:
@@ -167,8 +187,6 @@ def prepare_data(cfg: Config) -> None:
     :param cfg: Configuration object
     :type cfg: Config
     """
-    log.info("PREPARING DATA")
-
     layout_in = get_dataset_layout(
         cfg.input_dir,
         use_database=True,
@@ -181,8 +199,14 @@ def prepare_data(cfg: Config) -> None:
 
     subjects = list_subjects(cfg, layout_in)
 
+    text = "PREPARING DATA"
     if cfg.non_linear_coreg:
-        log.debug("Using non-linear coregistration")
+        log.info("Using non-linear coregistration")
 
-    for subject_label in subjects:
-        process_subject(cfg, layout_in, layout_out, subject_label)
+    with progress_bar(text=text) as progress:
+        subject_loop = progress.add_task(
+            description="processing subject", total=len(subjects)
+        )
+        for subject_label in subjects:
+            process_subject(cfg, layout_in, layout_out, subject_label)
+            progress.update(subject_loop, advance=1)

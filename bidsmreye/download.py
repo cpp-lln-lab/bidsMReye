@@ -33,13 +33,13 @@ def download(
         model_name = default_model()
     if isinstance(model_name, Path):
         assert model_name.is_file()
-        return model_name.resolve()
+        return model_name.absolute()
     if model_name not in available_models():
         warnings.warn(f"{model_name} is not a valid model name.", stacklevel=3)
         return None
 
     if output_dir is None:
-        output_dir = Path.cwd().joinpath("models")
+        output_dir = Path.cwd() / "models"
     if isinstance(output_dir, str):
         output_dir = Path(output_dir)
 
@@ -48,11 +48,11 @@ def download(
         base_url="https://osf.io/download/",
         registry=None,
     )
-    source = resources.files(bidsmreye).joinpath("models/registry.txt")
+    source = resources.files(bidsmreye) / "models" / "registry.txt"
     with resources.as_file(source) as registry_file:
         POOCH.load_registry(registry_file)
 
-    output_file = output_dir.joinpath(f"dataset_{model_name}")
+    output_file = output_dir / f"dataset_{model_name}"
 
     if not output_file.is_file():
         file_idx = available_models().index(model_name)

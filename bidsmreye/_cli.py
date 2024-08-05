@@ -39,7 +39,7 @@ def cli(argv: Any = sys.argv) -> None:
 
     model_weights_file = None
     if getattr(args, "model", None) is not None:
-        model_weights_file = str(getattr(args, "model"))
+        model_weights_file = str(getattr(args, "model"))  # noqa: B009
 
     bidsmreye(
         bids_dir=args.bids_dir[0],
@@ -56,6 +56,7 @@ def cli(argv: Any = sys.argv) -> None:
         bids_filter_file=args.bids_filter_file,
         non_linear_coreg=bool(getattr(args, "non_linear_coreg", False)),
         log_level_name=log_level_name,
+        force=bool(getattr(args, "force", False)),
     )
 
 

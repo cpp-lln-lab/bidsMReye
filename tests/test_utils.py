@@ -12,8 +12,6 @@ from bidsmreye.utils import (
     set_this_filter,
 )
 
-from .utils import pybids_test_dataset
-
 
 def test_copy_license(tmp_path):
     output_dir = tmp_path / "derivatives"
@@ -21,22 +19,23 @@ def test_copy_license(tmp_path):
     license_file = copy_license(output_dir)
 
     assert license_file.is_file()
-    assert str(license_file) == str(output_dir.joinpath("LICENSE"))
+    assert str(license_file) == str(output_dir / "LICENSE")
 
     copy_license(output_dir)
 
 
-def test_get_deepmreye_filename():
-    layout = get_dataset_layout(pybids_test_dataset())
+def test_get_deepmreye_filename(pybids_test_dataset):
+    layout = get_dataset_layout(pybids_test_dataset)
 
-    output_file = Path(pybids_test_dataset()).joinpath(
-        "sub-01",
-        "ses-01",
-        "func",
-        (
+    output_file = (
+        Path(pybids_test_dataset)
+        / "sub-01"
+        / "ses-01"
+        / "func"
+        / (
             "mask_sub-01_ses-01_task-nback_run-01_"
             "space-MNI152NLin2009cAsym_desc-preproc_bold.p"
-        ),
+        )
     )
 
     img = layout.get(
@@ -72,12 +71,9 @@ def test_return_regex():
     assert return_regex(["foo", "bar"]) == "^foo$|^bar$"
 
 
-def test_set_this_filter_bold():
-    output_dir = Path().resolve()
-    output_dir = Path.joinpath(output_dir, "derivatives")
-
+def test_set_this_filter_bold(pybids_test_dataset, output_dir):
     cfg = Config(
-        pybids_test_dataset(),
+        pybids_test_dataset,
         output_dir,
     )
 
@@ -97,11 +93,8 @@ def test_set_this_filter_bold():
     }
 
 
-def test_set_this_filter_bidsmreye():
-    output_dir = Path().resolve()
-    output_dir = Path.joinpath(output_dir, "data", "bidsmreye")
-
-    cfg = Config(pybids_test_dataset(), output_dir, run="1")
+def test_set_this_filter_bidsmreye(output_dir, pybids_test_dataset):
+    cfg = Config(pybids_test_dataset, output_dir, run="1")
 
     this_filter = set_this_filter(cfg, subject_label="001", filter_type="eyetrack")
 
@@ -116,7 +109,7 @@ def test_set_this_filter_bidsmreye():
     }
 
 
-def test_set_this_filter_with_bids_filter_file():
+def test_set_this_filter_with_bids_filter_file(output_dir, pybids_test_dataset):
     bids_filter = {
         "eyetrack": {
             "suffix": "^eyetrack$$",
@@ -125,10 +118,7 @@ def test_set_this_filter_with_bids_filter_file():
         }
     }
 
-    output_dir = Path().resolve()
-    output_dir = Path.joinpath(output_dir, "data", "bidsmreye")
-
-    cfg = Config(pybids_test_dataset(), output_dir, run="1", bids_filter=bids_filter)
+    cfg = Config(pybids_test_dataset, output_dir, run="1", bids_filter=bids_filter)
 
     this_filter = set_this_filter(cfg, subject_label="001", filter_type="eyetrack")
 

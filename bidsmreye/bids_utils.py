@@ -119,9 +119,8 @@ def create_bidsname(
 
     output_file = layout.build_path(entities, bids_name_config[filetype], validate=False)
 
-    output_file = Path(layout.root).joinpath(output_file)
-
-    return output_file.resolve()
+    output_file = Path(layout.root) / output_file
+    return output_file.absolute()
 
 
 def create_sidecar(
@@ -180,7 +179,7 @@ def get_dataset_layout(
         dataset_path = Path(dataset_path)
     create_dir_if_absent(dataset_path)
 
-    dataset_path = dataset_path.resolve()
+    dataset_path = dataset_path.absolute()
 
     pybids_config = config
     if config is None:
@@ -193,7 +192,7 @@ def get_dataset_layout(
             dataset_path, validate=False, derivatives=False, config=pybids_config
         )
 
-    database_path = dataset_path.joinpath("pybids_db")
+    database_path = dataset_path / "pybids_db"
     return BIDSLayout(
         dataset_path,
         validate=False,
@@ -321,7 +320,7 @@ def write_dataset_description(layout: BIDSLayout) -> None:
     :param layout: BIDSLayout of the dataset to update.
     :type layout: BIDSLayout
     """
-    output_file = Path(layout.root).joinpath("dataset_description.json")
+    output_file = Path(layout.root) / "dataset_description.json"
 
     with open(output_file, "w") as ff:
         json.dump(layout.dataset_description, ff, indent=4)
