@@ -70,19 +70,19 @@ clean-models: ## remove pretrained models
 	rm -fr models/
 
 models:
-	bidsmreye_model --model_name 1to6
+	bidsmreye_model --model 1to6
 models/dataset1_guided_fixations.h5:
 	bidsmreye_model
 models/dataset2_pursuit.h5:
-	bidsmreye_model --model_name 2_pursuit
+	bidsmreye_model --model 2_pursuit
 models/dataset3_openclosed.h5:
-	bidsmreye_model --model_name 3_openclosed
+	bidsmreye_model --model 3_openclosed
 models/dataset3_pursuit.h5:
-	bidsmreye_model --model_name 3_pursuit
+	bidsmreye_model --model 3_pursuit
 models/dataset4_pursuit.h5:
-	bidsmreye_model --model_name 4_pursuit
+	bidsmreye_model --model 4_pursuit
 models/dataset5_free_viewing.h5:
-	bidsmreye_model --model_name 5_free_viewing
+	bidsmreye_model --model 5_free_viewing
 
 ## DOC
 .PHONY: docs docs/source/FAQ.md

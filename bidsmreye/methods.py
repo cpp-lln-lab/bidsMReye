@@ -15,7 +15,7 @@ from bidsmreye.utils import create_dir_for_file
 
 def methods(
     output_dir: str | Path | None = None,
-    model_name: str | None = None,
+    model: str | None = None,
     qc_only: bool = False,
 ) -> Path:
     """Write method section.
@@ -23,8 +23,8 @@ def methods(
     :param output_dir: Defaults to Path(".")
     :type  output_dir: Union[str, Path], optional
 
-    :param model_name: Defaults to None.
-    :type  model_name: str, optional
+    :param model: Defaults to None.
+    :type  model: str, optional
 
     :return: Output file name.
     :rtype: Path
@@ -41,18 +41,18 @@ def methods(
     bib_file = str(Path(__file__).parent / "templates" / "CITATION.bib")
     shutil.copy(bib_file, output_dir)
 
-    if not model_name:
-        model_name = default_model()
+    if not model:
+        model = default_model()
 
     is_known_models = False
     is_default_model = False
-    if model_name in available_models():
+    if model in available_models():
         is_known_models = True
-        if model_name == default_model():
+        if model == default_model():
             is_default_model = True
 
     if not is_known_models:
-        warnings.warn(f"{model_name} is not a known model name.", stacklevel=3)
+        warnings.warn(f"{model} is not a known model name.", stacklevel=3)
 
     template_file = str(Path(__file__).parent / "templates" / "CITATION.mustache")
     with open(template_file) as template:
@@ -60,7 +60,7 @@ def methods(
             template=template,
             data={
                 "version": __version__,
-                "model_name": model_name,
+                "model": model,
                 "is_default_model": is_default_model,
                 "is_known_models": is_known_models,
                 "qc_only": qc_only,

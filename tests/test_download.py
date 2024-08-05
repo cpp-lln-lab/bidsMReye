@@ -9,7 +9,7 @@ from bidsmreye.download import download
 
 
 def test_download(tmp_path):
-    download(model_name="1_guided_fixations", output_dir=str(tmp_path))
+    download(model="1_guided_fixations", output_dir=str(tmp_path))
 
     assert tmp_path.is_dir()
     assert (tmp_path / "dataset_1_guided_fixations.h5").is_file()
@@ -29,4 +29,4 @@ def test_download_basic():
 
 def test_download_unknown_model():
     with pytest.warns(UserWarning):
-        download(model_name="foo")
+        download(model="foo")

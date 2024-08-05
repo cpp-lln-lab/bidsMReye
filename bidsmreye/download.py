@@ -16,12 +16,12 @@ log = bidsmreye_log(name="bidsmreye")
 
 
 def download(
-    model_name: str | Path | None = None, output_dir: Path | str | None = None
+    model: str | Path | None = None, output_dir: Path | str | None = None
 ) -> Path | None:
     """Download the models from OSF.
 
-    :param model_name: Model to download. defaults to None
-    :type model_name: str, optional
+    :param model: Model to download. defaults to None
+    :type model: str, optional
 
     :param output_dir: Path where to save the model. Defaults to None.
     :type output_dir: Path, optional
@@ -29,13 +29,13 @@ def download(
     :return: Path to the downloaded model.
     :rtype: Path
     """
-    if not model_name:
-        model_name = default_model()
-    if isinstance(model_name, Path):
-        assert model_name.is_file()
-        return model_name.absolute()
-    if model_name not in available_models():
-        warnings.warn(f"{model_name} is not a valid model name.", stacklevel=3)
+    if not model:
+        model = default_model()
+    if isinstance(model, Path):
+        assert model.is_file()
+        return model.absolute()
+    if model not in available_models():
+        warnings.warn(f"{model} is not a valid model name.", stacklevel=3)
         return None
 
     if output_dir is None:
@@ -52,10 +52,10 @@ def download(
     with resources.as_file(source) as registry_file:
         POOCH.load_registry(registry_file)
 
-    output_file = output_dir / f"dataset_{model_name}"
+    output_file = output_dir / f"dataset_{model}"
 
     if not output_file.is_file():
-        file_idx = available_models().index(model_name)
+        file_idx = available_models().index(model)
         filename = f"dataset_{available_models()[file_idx]}.h5"
         output_file = POOCH.fetch(filename, progressbar=True)
         if isinstance(output_file, str):

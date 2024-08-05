@@ -69,4 +69,4 @@ def cli_download(argv: Any = sys.argv) -> None:
     parser = download_parser(formatter_class=RichHelpFormatter)
     args = parser.parse_args(argv[1:])
 
-    download(model_name=args.model_name, output_dir=args.output_dir)
+    download(model=args.model, output_dir=args.output_dir)
