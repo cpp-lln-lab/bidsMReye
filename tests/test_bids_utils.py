@@ -22,20 +22,25 @@ def test_create_bidsname(tmp_path):
     output_dir = tmp_path / "derivatives"
 
     layout = get_dataset_layout(output_dir)
-    filename = Path("inputs").joinpath(
-        "raw",
-        "sub-01",
-        "ses-01",
-        "func",
-        "sub-01_ses-01_task-motion_run-01_bold.nii",
+    filename = (
+        Path("inputs")
+        / "raw"
+        / "sub-01"
+        / "ses-01"
+        / "func"
+        / "sub-01_ses-01_task-motion_run-01_bold.nii"
     )
 
     output_file = create_bidsname(layout, filename=filename, filetype="mask")
 
     rel_path = output_file.relative_to(layout.root)
 
-    assert rel_path == Path("sub-01").joinpath(
-        "ses-01", "func", "sub-01_ses-01_task-motion_run-01_desc-eye_mask.p"
+    assert (
+        rel_path
+        == Path("sub-01")
+        / "ses-01"
+        / "func"
+        / "sub-01_ses-01_task-motion_run-01_desc-eye_mask.p"
     )
 
 
@@ -54,10 +59,10 @@ def test_init_dataset(tmp_path, pybids_test_dataset):
     init_dataset(cfg)
 
 
-def test_list_subjects(pybids_test_dataset):
+def test_list_subjects(data_dir, pybids_test_dataset):
     cfg = Config(
         pybids_test_dataset,
-        Path(__file__).parent.joinpath("data"),
+        data_dir,
     )
 
     layout = get_dataset_layout(pybids_test_dataset)
@@ -66,12 +71,12 @@ def test_list_subjects(pybids_test_dataset):
     assert len(subjects) == 5
 
 
-def test_save_sampling_frequency_to_json(pybids_test_dataset):
+def test_save_sampling_frequency_to_json(data_dir, pybids_test_dataset):
     layout_in = get_dataset_layout(pybids_test_dataset)
 
     cfg = Config(
         pybids_test_dataset,
-        Path(__file__).parent.joinpath("data"),
+        data_dir,
     )
 
     this_filter = set_this_filter(cfg, "01", "bold")
@@ -89,10 +94,10 @@ def test_save_sampling_frequency_to_json(pybids_test_dataset):
     assert content["Sources"][0] == "foo"
 
 
-def test_check_layout_prepare_data(pybids_test_dataset):
+def test_check_layout_prepare_data(data_dir, pybids_test_dataset):
     cfg = Config(
         pybids_test_dataset,
-        Path(__file__).parent.joinpath("data"),
+        data_dir,
     )
 
     layout_in = get_dataset_layout(

@@ -19,10 +19,10 @@ def test_download_basic():
     download()
     output_file = download()
 
-    output_dir = Path.cwd().joinpath("models")
+    output_dir = Path.cwd() / "models"
     print(output_file)
     assert output_dir.is_dir()
-    assert output_dir.joinpath("dataset_1to6.h5").is_file()
+    assert (output_dir / "dataset_1to6.h5").is_file()
 
     shutil.rmtree(output_dir)
 

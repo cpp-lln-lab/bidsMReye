@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from pathlib import Path
-
 import pandas as pd
 
 from bidsmreye.bidsmreye import bidsmreye
@@ -17,8 +15,8 @@ def test_visualize_eye_gaze_data(create_confounds_tsv, bidsmreye_eyetrack_tsv):
     fig.show()
 
 
-def test_group_report():
-    input_dir = Path().absolute().joinpath("tests", "data", "derivatives", "bidsmreye")
+def test_group_report(create_confounds_tsv, output_dir):
+    input_dir = output_dir
 
     cfg = Config(
         input_dir=input_dir,
@@ -28,8 +26,8 @@ def test_group_report():
     group_report(cfg)
 
 
-def test_group_report_cli():
-    bids_dir = Path().absolute().joinpath("tests", "data", "derivatives", "bidsmreye")
+def test_group_report_cli(data_dir):
+    bids_dir = data_dir / "ds000201-der"
 
     bidsmreye(
         bids_dir=bids_dir,

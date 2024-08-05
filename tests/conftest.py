@@ -13,6 +13,31 @@ from bidsmreye.quality_control import compute_displacement, compute_robust_outli
 
 
 @pytest.fixture
+def pybids_test_dataset() -> Path:
+    return Path(get_test_data_path()) / "synthetic" / "derivatives" / "fmriprep"
+
+
+@pytest.fixture
+def data_dir():
+    return Path(__file__).parent / "data"
+
+
+@pytest.fixture
+def output_dir(data_dir):
+    return data_dir / "bidsmreye"
+
+
+@pytest.fixture
+def bidsmreye_eyetrack_tsv(output_dir):
+    return (
+        output_dir
+        / "sub-01"
+        / "func"
+        / "sub-01_task-nback_space-MNI152NLin2009cAsym_desc-bidsmreye_eyetrack.tsv"
+    )
+
+
+@pytest.fixture
 def create_basic_data():
     return {
         "eye1_x_coordinate": np.random.randn(400),
@@ -21,14 +46,12 @@ def create_basic_data():
 
 
 @pytest.fixture
-def create_basic_json():
-    output_dir = Path().absolute()
-    output_dir = output_dir.joinpath("tests", "data", "bidsmreye")
-
-    sidecar_name = output_dir.joinpath(
-        "sub-01",
-        "func",
-        "sub-01_task-nback_space-MNI152NLin2009cAsym_desc-bidsmreye_eyetrack.json",
+def create_basic_json(output_dir):
+    sidecar_name = (
+        output_dir
+        / "sub-01"
+        / "func"
+        / "sub-01_task-nback_space-MNI152NLin2009cAsym_desc-bidsmreye_eyetrack.json"
     )
 
     content = {"SamplingFrequency": 0.14285714285714285}
@@ -80,23 +103,6 @@ def create_data_with_outliers(create_basic_data):
     data["eye1_y_coordinate"][50] = eye1_y_coordinate.mean() + eye1_y_coordinate.std() * 4
 
     return data
-
-
-@pytest.fixture
-def pybids_test_dataset():
-    return Path(get_test_data_path()).joinpath("synthetic", "derivatives", "fmriprep")
-
-
-@pytest.fixture
-def bidsmreye_eyetrack_tsv():
-    output_dir = Path().absolute()
-    output_dir = output_dir.joinpath("tests", "data", "bidsmreye")
-
-    return output_dir.joinpath(
-        "sub-01",
-        "func",
-        "sub-01_task-nback_space-MNI152NLin2009cAsym_desc-bidsmreye_eyetrack.tsv",
-    )
 
 
 def rm_dir(some_dir):
