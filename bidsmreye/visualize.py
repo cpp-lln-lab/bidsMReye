@@ -70,6 +70,8 @@ def collect_group_qc_data(cfg: Config) -> pd.DataFrame | None:
         with open(file) as f:
             data = json.loads(f.read())
 
+        print(data)
+
         df = pd.json_normalize(data)
         df["filename"] = Path(file).name
         df["subject"] = entities["subject"]
@@ -87,7 +89,14 @@ def collect_group_qc_data(cfg: Config) -> pd.DataFrame | None:
         "eye1XVar",
         "eye1YVar",
     ]
-    qc_data = qc_data[cols]
+    try:
+        qc_data = qc_data[cols]
+    except KeyError:
+        log.error(
+            f"""Sidecar files seem to be missing the keys: {cols}.
+ To fix try to run the qc at the participant level first."""
+        )
+        return None
 
     return qc_data
 
