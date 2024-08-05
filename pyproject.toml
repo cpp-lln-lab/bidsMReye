@@ -156,6 +156,7 @@ module = [
 ignore_missing_imports = true
 module = [
     'attrs.*',
+    'bids.layout.*',
     "bidsmreye._version",
     'chevron.*',
     'deepmreye.*',
