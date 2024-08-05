@@ -23,7 +23,6 @@ jobs:
         strategy:
             matrix:
                 python-version: ['3.11']
-                dataset: [demo]
 
         steps:
 
@@ -50,8 +49,10 @@ jobs:
             run: |
                 datalad wtf
 
-        -   name: Run ${{ matrix.dataset }}
-            run: make ${{ matrix.dataset }}
+        -   name: Run demo
+            run: make demo
 
-        -   name: Re run ${{ matrix.dataset }} (should be faster)
-            run: make ${{ matrix.dataset }}
+        -   name: Re run demo (should be faster)
+            run: |
+                make prepare
+                make generalize
