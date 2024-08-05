@@ -20,6 +20,7 @@ def create_basic_data():
     }
 
 
+@pytest.fixture
 def create_basic_json():
     output_dir = Path().absolute()
     output_dir = output_dir.joinpath("tests", "data", "bidsmreye")
@@ -36,9 +37,7 @@ def create_basic_json():
 
 
 @pytest.fixture
-def create_confounds_tsv(create_data_with_outliers):
-    confounds_tsv = return_bidsmreye_eyetrack_tsv()
-
+def create_confounds_tsv(create_data_with_outliers, bidsmreye_eyetrack_tsv):
     df = pd.DataFrame(create_data_with_outliers)
 
     df["displacement"] = compute_displacement(
@@ -59,7 +58,7 @@ def create_confounds_tsv(create_data_with_outliers):
     cols.insert(0, cols.pop(cols.index("eye_timestamp")))
     df = df[cols]
 
-    df.to_csv(confounds_tsv, sep="\t", index=False)
+    df.to_csv(bidsmreye_eyetrack_tsv, sep="\t", index=False)
 
 
 @pytest.fixture
@@ -88,7 +87,8 @@ def pybids_test_dataset():
     return Path(get_test_data_path()).joinpath("synthetic", "derivatives", "fmriprep")
 
 
-def return_bidsmreye_eyetrack_tsv():
+@pytest.fixture
+def bidsmreye_eyetrack_tsv():
     output_dir = Path().absolute()
     output_dir = output_dir.joinpath("tests", "data", "bidsmreye")
 

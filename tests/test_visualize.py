@@ -8,13 +8,9 @@ from bidsmreye.bidsmreye import bidsmreye
 from bidsmreye.configuration import Config
 from bidsmreye.visualize import group_report, visualize_eye_gaze_data
 
-from .conftest import return_bidsmreye_eyetrack_tsv
 
-
-def test_visualize_eye_gaze_data(create_confounds_tsv):
-    confounds_tsv = return_bidsmreye_eyetrack_tsv()
-
-    eye_gaze_data = pd.read_csv(confounds_tsv, sep="\t")
+def test_visualize_eye_gaze_data(create_confounds_tsv, bidsmreye_eyetrack_tsv):
+    eye_gaze_data = pd.read_csv(bidsmreye_eyetrack_tsv, sep="\t")
 
     fig = visualize_eye_gaze_data(eye_gaze_data)
 
