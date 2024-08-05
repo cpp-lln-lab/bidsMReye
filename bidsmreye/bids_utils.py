@@ -4,8 +4,8 @@ import json
 from pathlib import Path
 from typing import Any
 
-import nibabel as nib
 from bids import BIDSLayout  # type: ignore
+from bids.layout import BIDSFile
 
 from bidsmreye._version import __version__
 from bidsmreye.configuration import (
@@ -143,15 +143,16 @@ def create_sidecar(
 
 
 def save_sampling_frequency_to_json(
-    layout_out: BIDSLayout, img: str, source: str
+    layout_out: BIDSLayout, img: BIDSFile, source: str
 ) -> None:
-    func_img = nib.load(img)
-    header = func_img.header
-    sampling_frequency = header.get_zooms()[3]
-    if sampling_frequency <= 1:
-        log.warning(f"Found a repetition time of {sampling_frequency} seconds.")
+    metadata = img.get_metadata()
+    repetition_time = metadata["RepetitionTime"]
+    # TODO handle rare edge case where preprocessed data
+    # does not contain RepetitionTime metadata
+    if repetition_time <= 1:
+        log.warning(f"Found a repetition time of {repetition_time} seconds.")
     create_sidecar(
-        layout_out, img, SamplingFrequency=1 / float(sampling_frequency), source=source
+        layout_out, img.path, SamplingFrequency=1 / float(repetition_time), source=source
     )
 
 

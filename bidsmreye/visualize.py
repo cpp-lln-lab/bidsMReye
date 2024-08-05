@@ -54,7 +54,6 @@ def collect_group_qc_data(cfg: Config) -> pd.DataFrame | None:
     this_filter = set_this_filter(cfg, subjects, "eyetrack_qc")
 
     bf = layout.get(
-        return_type="filename",
         regex_search=True,
         **this_filter,
     )
@@ -63,17 +62,17 @@ def collect_group_qc_data(cfg: Config) -> pd.DataFrame | None:
 
     qc_data = None
     for i, file in enumerate(bf):
-        log.info(f"Processing file: {file}")
+        log.info(f"Processing file: {file.path}")
 
-        entities = layout.parse_file_entities(file)
+        entities = layout.parse_file_entities(file.path)
 
-        with open(file) as f:
+        with open(file.path) as f:
             data = json.loads(f.read())
 
         print(data)
 
         df = pd.json_normalize(data)
-        df["filename"] = Path(file).name
+        df["filename"] = Path(file.path).name
         df["subject"] = entities["subject"]
         qc_data = df if i == 0 else pd.concat([qc_data, df], sort=False)
 
