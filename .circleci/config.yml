@@ -99,6 +99,7 @@ jobs:
                           --participant_label 302 307 \
                           --space MNI152NLin2009cAsym \
                           --reset_database \
+                          --model 1to5 \
                           -vv
         -   run:
                 name: rerun prepare - fast as output already exists

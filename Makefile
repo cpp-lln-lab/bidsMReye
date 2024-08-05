@@ -70,19 +70,19 @@ clean-models: ## remove pretrained models
 	rm -fr models/
 
 models:
-	bidsmreye_model --model_name 1to6
+	bidsmreye_model --model 1to6
 models/dataset1_guided_fixations.h5:
 	bidsmreye_model
 models/dataset2_pursuit.h5:
-	bidsmreye_model --model_name 2_pursuit
+	bidsmreye_model --model 2_pursuit
 models/dataset3_openclosed.h5:
-	bidsmreye_model --model_name 3_openclosed
+	bidsmreye_model --model 3_openclosed
 models/dataset3_pursuit.h5:
-	bidsmreye_model --model_name 3_pursuit
+	bidsmreye_model --model 3_pursuit
 models/dataset4_pursuit.h5:
-	bidsmreye_model --model_name 4_pursuit
+	bidsmreye_model --model 4_pursuit
 models/dataset5_free_viewing.h5:
-	bidsmreye_model --model_name 5_free_viewing
+	bidsmreye_model --model 5_free_viewing
 
 ## DOC
 .PHONY: docs docs/source/FAQ.md
@@ -137,6 +137,7 @@ generalize: ## demo: predicts labels of MOAE dataset
 				$$PWD/outputs/moae_fmriprep/derivatives \
 				participant \
 				generalize \
+				--model 1_guided_fixations \
 				-vv
 
 
@@ -234,7 +235,7 @@ docker_build:
 docker_build_no_cache:
 	docker build --tag cpplab/bidsmreye:unstable --no-cache --file Dockerfile .
 
-docker_demo: docker_build clean-demo
+docker_demo: clean-demo
 	make docker_prepare_data
 	make docker_generalize
 
@@ -257,7 +258,7 @@ docker_generalize:
 				/home/neuro/data/ \
 				/home/neuro/outputs/ \
 				participant \
-				generalize
+				generalize --model 1_guided_fixations
 
 docker_ds002799: get_ds002799
 # datalad unlock $$PWD/tests/data/ds002799/derivatives/fmriprep/sub-30[27]/ses-*/func/*run-*preproc*bold*

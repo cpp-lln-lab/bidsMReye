@@ -53,7 +53,7 @@ def test_download_parser():
 
     args, _ = parser.parse_known_args(
         [
-            "--model_name",
+            "--model",
             "1_guided_fixations",
             "--output_dir",
             "/home/bob/models",

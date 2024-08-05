@@ -10,7 +10,7 @@ def test_methods(tmp_path):
 
 
 def test_methods_calibration_data(tmp_path):
-    output_file = methods(output_dir=tmp_path, model_name="calibration_data")
+    output_file = methods(output_dir=tmp_path, model="calibration_data")
     assert output_file.is_file()
 
 

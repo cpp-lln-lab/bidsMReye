@@ -177,7 +177,7 @@ using the default pre-trained model of deepmreye.
     # TODO make it possible to pass path to a model ?
     generalize_parser.add_argument(
         "--model",
-        help="model to use",
+        help=f"Model to use. Default model: {default_model()}.",
         choices=available_models(),
         default=default_model(),
     )
@@ -200,7 +200,7 @@ to the deepmreye template.
     # TODO make it possible to pass path to a model ?
     all_parser.add_argument(
         "--model",
-        help="model to use",
+        help=f"Model to use. Default model: {default_model()}.",
         choices=available_models(),
         default=default_model(),
     )
@@ -228,10 +228,8 @@ see the online https://bidsmreye.readthedocs.io/.
         formatter_class=formatter_class,
     )
     parser.add_argument(
-        "--model_name",
-        help="""
-Model to download.
-        """,
+        "--model",
+        help=f"Model to download. Default model: {default_model()}.",
         choices=available_models(),
         default=default_model(),
     )

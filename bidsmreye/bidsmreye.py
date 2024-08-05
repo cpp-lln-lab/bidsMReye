@@ -75,7 +75,12 @@ def bidsmreye(
     if action in {"all", "generalize"} and isinstance(cfg.model_weights_file, str):
         from bidsmreye.download import download
 
-        cfg.model_weights_file = download(cfg.model_weights_file)
+        model_output_dir = cfg.output_dir / "models"
+        model_output_dir.mkdir(exist_ok=True, parents=True)
+
+        cfg.model_weights_file = download(
+            cfg.model_weights_file, output_dir=model_output_dir
+        )
 
     dispatch(analysis_level=analysis_level, action=action, cfg=cfg)
 
