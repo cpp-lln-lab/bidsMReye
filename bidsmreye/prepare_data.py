@@ -61,7 +61,7 @@ def coregister_and_extract_data(img: str, non_linear_coreg: bool = False) -> Non
     )
 
 
-def combine_data_with_empty_labels(layout_out: BIDSLayout, img: Path, i: int = 1) -> None:
+def combine_data_with_empty_labels(layout_out: BIDSLayout, img: Path, i: int = 1) -> Path:
     """Combine data with empty labels.
 
     :param layout_out: _description_
@@ -95,6 +95,7 @@ def combine_data_with_empty_labels(layout_out: BIDSLayout, img: Path, i: int = 1
     subj["ids"].append(([entities["subject"]] * labels.shape[0], [i] * labels.shape[0]))
 
     output_file = create_bidsname(layout_out, Path(img), "no_label")
+    file_to_move = Path(layout_out.root).joinpath("..", "bidsmreye", output_file.name)
 
     preprocess.save_data(
         output_file.name,
@@ -104,6 +105,8 @@ def combine_data_with_empty_labels(layout_out: BIDSLayout, img: Path, i: int = 1
         layout_out.root,
         center_labels=False,
     )
+
+    return file_to_move
 
 
 def process_subject(
