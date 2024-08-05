@@ -33,7 +33,7 @@ def download(
         model_name = default_model()
     if isinstance(model_name, Path):
         assert model_name.is_file()
-        return model_name.resolve()
+        return model_name.absolute()
     if model_name not in available_models():
         warnings.warn(f"{model_name} is not a valid model name.", stacklevel=3)
         return None

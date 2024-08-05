@@ -19,7 +19,7 @@ def create_basic_data():
 
 
 def create_basic_json():
-    output_dir = Path().resolve()
+    output_dir = Path().absolute()
     output_dir = output_dir.joinpath("tests", "data", "bidsmreye")
 
     sidecar_name = output_dir.joinpath(
@@ -84,7 +84,7 @@ def pybids_test_dataset():
 
 
 def return_bidsmreye_eyetrack_tsv():
-    output_dir = Path().resolve()
+    output_dir = Path().absolute()
     output_dir = output_dir.joinpath("tests", "data", "bidsmreye")
 
     return output_dir.joinpath(

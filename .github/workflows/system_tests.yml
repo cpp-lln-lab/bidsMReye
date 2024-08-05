@@ -52,3 +52,6 @@ jobs:
 
         -   name: Run ${{ matrix.dataset }}
             run: make ${{ matrix.dataset }}
+
+        -   name: Re run ${{ matrix.dataset }} (should be faster)
+            run: make ${{ matrix.dataset }}

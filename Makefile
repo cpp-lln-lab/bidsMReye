@@ -185,10 +185,45 @@ ds002799: clean-ds002799 get_ds002799
 				--reset_database \
 				-vv
 
-## ds002799
+## ds000114
 get_ds000114:
 	datalad install -s ///openneuro-derivatives/ds000114-fmriprep tests/data/ds000114-fmriprep
 	cd tests/data/ds000114-fmriprep && datalad get sub-0[1-2]/ses-*/func/*MNI*desc-preproc*bold.nii.gz -J 12
+
+ds000114_all: get_ds000114
+	bidsmreye 	$$PWD/tests/data/ds000114-fmriprep \
+				$$PWD/outputs/ds000114/derivatives \
+				participant \
+				all \
+				--participant_label 01 02 \
+				--space MNI152NLin2009cAsym \
+				--task linebisection overtverbgeneration -vv --force
+
+ds000114_prepare: get_ds000114
+	bidsmreye 	$$PWD/tests/data/ds000114-fmriprep \
+				$$PWD/outputs/ds000114/derivatives \
+				participant \
+				prepare \
+				--participant_label 01 02 \
+				--space MNI152NLin2009cAsym \
+				--task linebisection -vv
+
+ds000114_generalize:
+	bidsmreye 	$$PWD/tests/data/ds000114-fmriprep \
+				$$PWD/outputs/ds000114/derivatives \
+				participant \
+				generalize \
+				--participant_label 01 02 \
+				--space MNI152NLin2009cAsym
+
+ds000114_qc:
+	bidsmreye 	$$PWD/outputs/ds000114/derivatives/bidsmreye \
+				$$PWD/outputs/ds000114/derivatives \
+				group \
+				qc \
+				--participant_label 01 02 \
+				--space MNI152NLin2009cAsym \
+				-vvv
 
 ## DOCKER
 .PHONY:

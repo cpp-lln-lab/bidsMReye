@@ -24,7 +24,7 @@ def test_visualize_eye_gaze_data():
 
 
 def test_group_report():
-    input_dir = Path().resolve().joinpath("tests", "data", "derivatives", "bidsmreye")
+    input_dir = Path().absolute().joinpath("tests", "data", "derivatives", "bidsmreye")
 
     cfg = Config(
         input_dir=input_dir,
@@ -35,7 +35,7 @@ def test_group_report():
 
 
 def test_group_report_cli():
-    bids_dir = Path().resolve().joinpath("tests", "data", "derivatives", "bidsmreye")
+    bids_dir = Path().absolute().joinpath("tests", "data", "derivatives", "bidsmreye")
 
     bidsmreye(
         bids_dir=bids_dir,

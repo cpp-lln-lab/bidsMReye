@@ -121,7 +121,7 @@ def create_bidsname(
 
     output_file = Path(layout.root).joinpath(output_file)
 
-    return output_file.resolve()
+    return output_file.absolute()
 
 
 def create_sidecar(
@@ -180,7 +180,7 @@ def get_dataset_layout(
         dataset_path = Path(dataset_path)
     create_dir_if_absent(dataset_path)
 
-    dataset_path = dataset_path.resolve()
+    dataset_path = dataset_path.absolute()
 
     pybids_config = config
     if config is None:

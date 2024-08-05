@@ -1,4 +1,4 @@
-"""TODO."""
+"""Tools to compute and plot quality controls at the file or group level."""
 
 from __future__ import annotations
 
@@ -21,7 +21,12 @@ from bidsmreye.bids_utils import (
 )
 from bidsmreye.configuration import Config
 from bidsmreye.logging import bidsmreye_log
-from bidsmreye.utils import check_if_file_found, create_dir_for_file, set_this_filter
+from bidsmreye.utils import (
+    check_if_file_found,
+    create_dir_for_file,
+    progress_bar,
+    set_this_filter,
+)
 from bidsmreye.visualize import visualize_eye_gaze_data
 
 log = bidsmreye_log("bidsmreye")
@@ -86,7 +91,10 @@ def compute_displacement_and_outliers(confounds: pd.DataFrame) -> pd.DataFrame:
 
 
 def perform_quality_control(
-    layout_in: BIDSLayout, confounds_tsv: str | Path, layout_out: BIDSLayout | None = None
+    cfg: Config,
+    layout_in: BIDSLayout,
+    confounds_tsv: str | Path,
+    layout_out: BIDSLayout | None = None,
 ) -> None:
     """Perform quality control on the confounds.
 
@@ -103,6 +111,15 @@ def perform_quality_control(
         layout_out = layout_in
 
     confounds_tsv = Path(confounds_tsv)
+    visualization_html_file = create_bidsname(layout_out, confounds_tsv, "confounds_html")
+    if not cfg.force and visualization_html_file.exists():
+        log.debug(
+            "Output for the following file already exists. "
+            "Use the '--force' option to overwrite. "
+            f"\n '{confounds_tsv.name}'"
+        )
+        return
+
     confounds = pd.read_csv(confounds_tsv, sep="\t")
 
     if "eye_timestamp" not in confounds.columns:
@@ -128,7 +145,7 @@ def perform_quality_control(
     fig.update_layout(title=Path(confounds_tsv).name)
     if log.isEnabledFor(logging.DEBUG):
         fig.show()
-    visualization_html_file = create_bidsname(layout_out, confounds_tsv, "confounds_html")
+
     create_dir_for_file(visualization_html_file)
     fig.write_html(visualization_html_file)
 
@@ -155,21 +172,23 @@ def get_sampling_frequency(layout: BIDSLayout, file: str | Path) -> float | None
 
 def quality_control_output(cfg: Config) -> None:
     """Run quality control on the output dataset."""
-    log.info("QUALITY CONTROL")
-
     layout_out = get_dataset_layout(cfg.output_dir)
     check_layout(cfg, layout_out)
 
     subjects = list_subjects(cfg, layout_out)
 
-    for subject_label in subjects:
-        qc_subject(cfg, layout_out, subject_label)
+    text = "QUALITY CONTROL"
+    with progress_bar(text=text) as progress:
+        subject_loop = progress.add_task(
+            description="processing subject", total=len(subjects)
+        )
+        for subject_label in subjects:
+            qc_subject(cfg, layout_out, subject_label)
+            progress.update(subject_loop, advance=1)
 
 
 def quality_control_input(cfg: Config) -> None:
     """Run quality control on the input dataset."""
-    log.info("QUALITY CONTROL")
-
     layout_in = get_dataset_layout(cfg.input_dir)
     check_layout(cfg, layout_in, "eyetrack")
 
@@ -177,8 +196,14 @@ def quality_control_input(cfg: Config) -> None:
 
     subjects = list_subjects(cfg, layout_in)
 
-    for subject_label in subjects:
-        qc_subject(cfg, layout_in, subject_label, layout_out)
+    text = "QUALITY CONTROL"
+    with progress_bar(text=text) as progress:
+        subject_loop = progress.add_task(
+            description="processing subject", total=len(subjects)
+        )
+        for subject_label in subjects:
+            qc_subject(cfg, layout_in, subject_label, layout_out)
+            progress.update(subject_loop, advance=1)
 
 
 def qc_subject(
@@ -201,7 +226,7 @@ def qc_subject(
     check_if_file_found(bf, this_filter, layout_in)
 
     for file in bf:
-        perform_quality_control(layout_in, file, layout_out)
+        perform_quality_control(cfg, layout_in, file, layout_out)
 
 
 def compute_robust_outliers(

@@ -7,11 +7,33 @@ from pathlib import Path
 from typing import Any
 
 from bids import BIDSLayout  # type: ignore
+from rich.progress import (
+    BarColumn,
+    MofNCompleteColumn,
+    Progress,
+    SpinnerColumn,
+    TaskProgressColumn,
+    TextColumn,
+    TimeElapsedColumn,
+    TimeRemainingColumn,
+)
 
 from bidsmreye.configuration import Config
 from bidsmreye.logging import bidsmreye_log
 
 log = bidsmreye_log(name="bidsmreye")
+
+
+def progress_bar(text: str, color: str = "green") -> Progress:
+    return Progress(
+        TextColumn(f"[{color}]{text}"),
+        SpinnerColumn("dots"),
+        TimeElapsedColumn(),
+        BarColumn(),
+        MofNCompleteColumn(),
+        TaskProgressColumn(),
+        TimeRemainingColumn(),
+    )
 
 
 def copy_license(output_dir: Path) -> Path:
@@ -80,7 +102,7 @@ def move_file(input: Path, output: Path) -> None:
     :param root: Optional. If specified, the printed path will be relative to this path.
     :type root: Path
     """
-    log.debug(f"{input.resolve()} --> {output.resolve()}")
+    log.debug(f"{input.absolute()} --> {output.absolute()}")
     create_dir_for_file(output)
     shutil.copy(input, output)
     input.unlink()
@@ -105,7 +127,7 @@ def create_dir_for_file(file: Path) -> None:
     :param file:
     :type file: Path
     """
-    output_path = file.resolve().parent
+    output_path = file.absolute().parent
     create_dir_if_absent(output_path)
 
     # TODO refactor with create_dir_if_absent
@@ -168,7 +190,7 @@ def get_deepmreye_filename(
     filefolder = Path(img).parent
     filefolder = filefolder.joinpath(filename)
 
-    return Path(filefolder).resolve()
+    return Path(filefolder).absolute()
 
 
 def return_deepmreye_output_filename(filename: str, filetype: str | None = None) -> str:

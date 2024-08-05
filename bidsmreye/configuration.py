@@ -31,14 +31,14 @@ class Config:
     def _check_input_dir(self, attribute: str, value: Path) -> None:
         if not value.is_dir:  # type: ignore
             raise ValueError(
-                f"input_dir must be an existing directory:\n{value.resolve()}."
+                f"input_dir must be an existing directory:\n{value.absolute()}."
             )
 
         if not value.joinpath("dataset_description.json").is_file():
             raise ValueError(
                 f"""input_dir does not seem to be a valid BIDS dataset.
 No dataset_description.json found:
-\t{value.resolve()}."""
+\t{value.absolute()}."""
             )
 
     output_dir: Path = field(default=None, converter=Path)
@@ -55,6 +55,7 @@ No dataset_description.json found:
     debug: str | bool | None = field(kw_only=True, default=None)
     reset_database: bool = field(kw_only=True, default=False)
     non_linear_coreg: bool = field(kw_only=True, default=False)
+    force: bool = field(kw_only=True, default=False)
 
     has_GPU: bool = False
 
@@ -225,7 +226,7 @@ def get_config(config_file: Path | None = None, default: str = "") -> dict[str, 
     :rtype: dict
     """
     if config_file is None or not Path(config_file).exists():
-        my_path = Path(__file__).resolve().parent.joinpath("config")
+        my_path = Path(__file__).absolute().parent.joinpath("config")
         config_file = my_path.joinpath(default)
 
     if config_file is None or not Path(config_file).exists():

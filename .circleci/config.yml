@@ -100,9 +100,41 @@ jobs:
                           --space MNI152NLin2009cAsym \
                           --reset_database \
                           -vv
-                no_output_timeout: 6h
+        -   run:
+                name: rerun prepare - fast as output already exists
+                command: |
+                    user_name=cpplab
+                    repo_name=$(echo "${CIRCLE_PROJECT_REPONAME}" | tr '[:upper:]' '[:lower:]')
+                    docker run -ti --rm \
+                      -v /tmp/workspace/data/ds002799/derivatives/fmriprep:/bids_dataset \
+                      -v ${HOME}/outputs:/outputs \
+                        ${user_name}/${repo_name} \
+                          /bids_dataset \
+                          /outputs \
+                          participant \
+                          prepare \
+                          --participant_label 302 307 \
+                          --space MNI152NLin2009cAsym \
+                          --reset_database \
+                          -vv
+        -   run:
+                name: run group level QC
+                command: |
+                    user_name=cpplab
+                    repo_name=$(echo "${CIRCLE_PROJECT_REPONAME}" | tr '[:upper:]' '[:lower:]')
+                    docker run -ti --rm \
+                      -v ${HOME}/outputs:/outputs \
+                        ${user_name}/${repo_name} \
+                          /outputs/bidsmreye \
+                          /outputs \
+                          group \
+                          qc \
+                          --participant_label 302 307 \
+                          --space MNI152NLin2009cAsym \
+                          --reset_database \
+                          -vv
         -   store_artifacts:
-                path: ~/output
+                path: ${HOME}/outputs/bidsmreye
 
     deploy:
         machine:

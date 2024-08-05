@@ -29,6 +29,7 @@ def bidsmreye(
     bids_filter_file: str | None = None,
     non_linear_coreg: bool = False,
     log_level_name: str | None = None,
+    force: bool = False,
 ) -> None:
     bids_filter = None
     if bids_filter_file is not None and Path(bids_filter_file).is_file():
@@ -50,6 +51,7 @@ def bidsmreye(
         reset_database=reset_database,
         bids_filter=bids_filter,
         non_linear_coreg=non_linear_coreg,
+        force=force,
     )  # type: ignore
 
     if log_level_name is None:

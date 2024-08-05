@@ -127,6 +127,13 @@ A JSON file describing custom BIDS input filters using PyBIDS.
 For further details, please check out TBD.
         """,
     )
+    parser.add_argument(
+        "--force",
+        help="""
+Overwrite previous output.
+        """,
+        action="store_true",
+    )
     return parser
 
 

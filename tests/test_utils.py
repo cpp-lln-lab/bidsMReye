@@ -73,7 +73,7 @@ def test_return_regex():
 
 
 def test_set_this_filter_bold():
-    output_dir = Path().resolve()
+    output_dir = Path().absolute()
     output_dir = Path.joinpath(output_dir, "derivatives")
 
     cfg = Config(
@@ -98,7 +98,7 @@ def test_set_this_filter_bold():
 
 
 def test_set_this_filter_bidsmreye():
-    output_dir = Path().resolve()
+    output_dir = Path().absolute()
     output_dir = Path.joinpath(output_dir, "data", "bidsmreye")
 
     cfg = Config(pybids_test_dataset(), output_dir, run="1")
@@ -125,7 +125,7 @@ def test_set_this_filter_with_bids_filter_file():
         }
     }
 
-    output_dir = Path().resolve()
+    output_dir = Path().absolute()
     output_dir = Path.joinpath(output_dir, "data", "bidsmreye")
 
     cfg = Config(pybids_test_dataset(), output_dir, run="1", bids_filter=bids_filter)
