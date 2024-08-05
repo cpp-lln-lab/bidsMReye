@@ -236,10 +236,10 @@ def group_report(cfg: Config) -> None:
     )
 
     fig.show()
-    group_report_file = Path(cfg.output_dir).joinpath("group_eyetrack.html")
+    group_report_file = cfg.output_dir / "group_eyetrack.html"
     fig.write_html(group_report_file)
 
-    qc_data_file = Path(cfg.output_dir).joinpath("group_eyetrack.tsv")
+    qc_data_file = cfg.output_dir / "group_eyetrack.tsv"
     qc_data.to_csv(qc_data_file, sep="\t", index=False)
 
 

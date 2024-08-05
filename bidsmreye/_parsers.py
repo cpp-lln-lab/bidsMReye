@@ -240,7 +240,7 @@ Model to download.
         help="""
 The directory where the model files will be stored.
         """,
-        default=Path.cwd().joinpath("models"),
+        default=Path.cwd() / "models",
     )
 
     return parser

@@ -131,9 +131,7 @@ def create_confounds_tsv(layout_out: BIDSLayout, file: str, subject_label: str) 
     """
     confound_numpy = create_bidsname(layout_out, file, "confounds_numpy")
 
-    source_file = Path(layout_out.root).joinpath(
-        f"sub-{subject_label}", "results_tmp.npy"
-    )
+    source_file = Path(layout_out.root) / f"sub-{subject_label}" / "results_tmp.npy"
 
     move_file(
         source_file,

@@ -42,12 +42,12 @@ def copy_license(output_dir: Path) -> Path:
     :param output_dir:
     :type output_dir: Path
     """
-    input_file = str(Path(__file__).parent.joinpath("templates", "CCO"))
-    output_file = output_dir.joinpath("LICENSE")
+    input_file = str(Path(__file__).parent / "templates" / "CCO")
+    output_file = output_dir / "LICENSE"
     create_dir_if_absent(output_dir)
-    if not output_dir.joinpath("LICENSE").is_file():
+    if not (output_dir / "LICENSE").is_file():
         shutil.copy(input_file, output_dir)
-        move_file(output_dir.joinpath("CCO"), output_file)
+        move_file(output_dir / "CCO", output_file)
     return output_file
 
 
@@ -59,7 +59,7 @@ def add_sidecar_in_root(layout_out: BIDSLayout) -> None:
         "SampleCoordinateSystem": "gaze-on-screen",
         "RecordedEye": "both",
     }
-    sidecar_name = Path(layout_out.root).joinpath("desc-bidsmreye_eyetrack.json")
+    sidecar_name = Path(layout_out.root) / "desc-bidsmreye_eyetrack.json"
     json.dump(content, open(sidecar_name, "w"), indent=4)
 
 
@@ -187,10 +187,7 @@ def get_deepmreye_filename(
 
     filename = return_deepmreye_output_filename(filename, filetype)
 
-    filefolder = Path(img).parent
-    filefolder = filefolder.joinpath(filename)
-
-    return Path(filefolder).absolute()
+    return Path(img).parent.absolute() / filename
 
 
 def return_deepmreye_output_filename(filename: str, filetype: str | None = None) -> str:

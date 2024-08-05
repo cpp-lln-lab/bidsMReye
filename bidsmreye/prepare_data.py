@@ -95,7 +95,7 @@ def combine_data_with_empty_labels(layout_out: BIDSLayout, img: Path, i: int = 1
     subj["ids"].append(([entities["subject"]] * labels.shape[0], [i] * labels.shape[0]))
 
     output_file = create_bidsname(layout_out, Path(img), "no_label")
-    file_to_move = Path(layout_out.root).joinpath("..", "bidsmreye", output_file.name)
+    file_to_move = Path(layout_out.root) / ".." / "bidsmreye" / output_file.name
 
     preprocess.save_data(
         output_file.name,
@@ -177,7 +177,7 @@ def prepapre_image(
     save_sampling_frequency_to_json(layout_out, img=img, source=source)
 
     combine_data_with_empty_labels(layout_out, mask_name)
-    file_to_move = Path(layout_out.root).joinpath("..", "bidsmreye", output_file.name)
+    file_to_move = Path(layout_out.root) / ".." / "bidsmreye" / output_file.name
     move_file(file_to_move, output_file)
 
 

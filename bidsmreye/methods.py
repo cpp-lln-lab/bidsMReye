@@ -33,12 +33,12 @@ def methods(
         output_dir = Path(".")
     if isinstance(output_dir, str):
         output_dir = Path(output_dir)
-    output_dir = output_dir.joinpath("logs")
+    output_dir = output_dir / "logs"
 
-    output_file = output_dir.joinpath("CITATION.md")
+    output_file = output_dir / "CITATION.md"
     create_dir_for_file(output_file)
 
-    bib_file = str(Path(__file__).parent.joinpath("templates", "CITATION.bib"))
+    bib_file = str(Path(__file__).parent / "templates" / "CITATION.bib")
     shutil.copy(bib_file, output_dir)
 
     if not model_name:
@@ -54,7 +54,7 @@ def methods(
     if not is_known_models:
         warnings.warn(f"{model_name} is not a known model name.", stacklevel=3)
 
-    template_file = str(Path(__file__).parent.joinpath("templates", "CITATION.mustache"))
+    template_file = str(Path(__file__).parent / "templates" / "CITATION.mustache")
     with open(template_file) as template:
         output = chevron.render(
             template=template,
