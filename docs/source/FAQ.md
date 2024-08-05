@@ -1,8 +1,25 @@
 
 # Frequently Asked Questions
+- [bidsmreye can not find subject / task](#bidsmreye-can-not-find-subject--task)
 - [How I should structure my input data?](#how-i-should-structure-my-input-data)
-- [Is the "prepare" only suitable for the datasets that have eye-tracking info?](#is-the-"prepare"-only-suitable-for-the-datasets-that-have-eye-tracking-info)
+- [Is the "prepare" only suitable for the datasets that have eye-tracking info?](#is-the-prepare-only-suitable-for-the-datasets-that-have-eye-tracking-info)
 - [Should I use the automatically generated methods section?](#should-i-use-the-automatically-generated-methods-section)
+
+<a name="bidsmreye-can-not-find-subject--task"></a>
+## bidsmreye can not find subject / task
+
+Check the following things:
+
+- Have you passed the correct path to your BIDS dataset?
+
+  This is one the most common errors,
+  that can very easily happen when working with a containerized version of bidsmreye
+
+- Is your dataset a valid preprocessed fMRI BIDS dataset?
+
+  See [How I should structure my input data?](./faq.md#how-i-should-structure-my-input-data)
+
+- Try to rerun your command with the `--reset-database` option for force bidsmreye to reindex your input dataset.
 
 <a name="how-i-should-structure-my-input-data"></a>
 ## How I should structure my input data?
@@ -49,7 +66,7 @@ that the input dataset is a derivative dataset:
 }
 ```
 
-<a name="is-the-"prepare"-only-suitable-for-the-datasets-that-have-eye-tracking-info"></a>
+<a name="is-the-prepare-only-suitable-for-the-datasets-that-have-eye-tracking-info"></a>
 ## Is the "prepare" only suitable for the datasets that have eye-tracking info?
 
 No the `prepare` action is necessary for all datasets,

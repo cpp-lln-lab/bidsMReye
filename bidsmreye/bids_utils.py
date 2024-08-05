@@ -73,9 +73,13 @@ def check_layout(cfg: Config, layout: BIDSLayout, for_file: str = "bold") -> Non
     )
 
     if bf == []:
+        subjects = layout.get(return_type="id", target="subject", suffix="bold")
+        tasks = layout.get(return_type="id", target="task", suffix="bold")
         raise RuntimeError(
             f"Input dataset {layout.root} does not have "
             f"any data to process for filter\n{this_filter}.\n"
+            f"This dataset contains subjects: {subjects}."
+            f"This dataset contains tasks: {tasks}."
             "Is your dataset a BIDS derivative dataset?\n"
             "Check the FAQ for more information: "
             "https://bidsmreye.readthedocs.io/en/latest/FAQ.html"
