@@ -134,7 +134,7 @@ jobs:
                           --reset_database \
                           -vv
         -   store_artifacts:
-                path: ${HOME}/outputs/bidsmreye
+                path: /home/circleci/outputs/bidsmreye
 
     deploy:
         machine:
