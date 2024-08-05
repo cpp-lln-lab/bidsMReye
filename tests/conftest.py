@@ -23,8 +23,12 @@ def data_dir():
 
 
 @pytest.fixture
-def output_dir(data_dir):
-    return data_dir / "bidsmreye"
+def output_dir(tmp_path, data_dir):
+    src_dir = data_dir / "bidsmreye"
+    target_dir = tmp_path / "bidsmreye"
+    target_dir.mkdir()
+    shutil.copytree(src_dir, target_dir, dirs_exist_ok=True)
+    return target_dir
 
 
 @pytest.fixture
@@ -60,28 +64,37 @@ def create_basic_json(output_dir):
 
 
 @pytest.fixture
-def create_confounds_tsv(create_data_with_outliers, bidsmreye_eyetrack_tsv):
-    df = pd.DataFrame(create_data_with_outliers)
+def create_confounds_tsv(bidsmreye_eyetrack_tsv, generate_confounds_tsv):
+    generate_confounds_tsv(bidsmreye_eyetrack_tsv)
 
-    df["displacement"] = compute_displacement(
-        df["eye1_x_coordinate"],
-        df["eye1_y_coordinate"],
-    )
-    df["eye1_x_outliers"] = compute_robust_outliers(
-        df["eye1_x_coordinate"], outlier_type="Carling"
-    )
-    df["eye1_y_outliers"] = compute_robust_outliers(
-        df["eye1_y_coordinate"], outlier_type="Carling"
-    )
-    df["displacement_outliers"] = compute_robust_outliers(
-        df["displacement"], outlier_type="Carling"
-    )
 
-    cols = df.columns.tolist()
-    cols.insert(0, cols.pop(cols.index("eye_timestamp")))
-    df = df[cols]
+@pytest.fixture
+def generate_confounds_tsv(create_data_with_outliers):
 
-    df.to_csv(bidsmreye_eyetrack_tsv, sep="\t", index=False)
+    def _generate_confounds_tsv(filename):
+        df = pd.DataFrame(create_data_with_outliers)
+
+        df["displacement"] = compute_displacement(
+            df["eye1_x_coordinate"],
+            df["eye1_y_coordinate"],
+        )
+        df["eye1_x_outliers"] = compute_robust_outliers(
+            df["eye1_x_coordinate"], outlier_type="Carling"
+        )
+        df["eye1_y_outliers"] = compute_robust_outliers(
+            df["eye1_y_coordinate"], outlier_type="Carling"
+        )
+        df["displacement_outliers"] = compute_robust_outliers(
+            df["displacement"], outlier_type="Carling"
+        )
+
+        cols = df.columns.tolist()
+        cols.insert(0, cols.pop(cols.index("eye_timestamp")))
+        df = df[cols]
+
+        df.to_csv(filename, sep="\t", index=False)
+
+    return _generate_confounds_tsv
 
 
 @pytest.fixture
