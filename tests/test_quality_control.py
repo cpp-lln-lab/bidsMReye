@@ -18,13 +18,7 @@ from bidsmreye.quality_control import (
     quality_control_output,
 )
 
-from .conftest import (
-    create_basic_data,
-    create_basic_json,
-    create_confounds_tsv,
-    return_bidsmreye_eyetrack_tsv,
-    rm_dir,
-)
+from .conftest import create_basic_json, return_bidsmreye_eyetrack_tsv, rm_dir
 
 
 def time_series():
@@ -116,7 +110,7 @@ def test_compute_robust_with_nan():
     assert outliers == expected_outliers
 
 
-def test_quality_control_output():
+def test_quality_control_output(create_basic_data):
     create_basic_json()
 
     output_dir = Path().absolute()
@@ -124,7 +118,7 @@ def test_quality_control_output():
 
     confounds_tsv = return_bidsmreye_eyetrack_tsv()
 
-    df = pd.DataFrame(create_basic_data())
+    df = pd.DataFrame(create_basic_data)
     df.to_csv(confounds_tsv, sep="\t", index=False)
 
     cfg = Config(
@@ -147,7 +141,7 @@ def test_quality_control_input(tmp_path):
     quality_control_input(cfg)
 
 
-def test_perform_quality_control():
+def test_perform_quality_control(pybids_test_dataset, create_basic_data):
     create_basic_json()
 
     output_dir = Path().absolute()
@@ -155,15 +149,18 @@ def test_perform_quality_control():
     layout = get_dataset_layout(output_dir)
     confounds_tsv = return_bidsmreye_eyetrack_tsv()
 
-    df = pd.DataFrame(create_basic_data())
+    df = pd.DataFrame(create_basic_data)
     df.to_csv(confounds_tsv, sep="\t", index=False)
 
-    cfg = Config()
+    cfg = Config(
+        pybids_test_dataset,
+        Path(__file__).parent.joinpath("data"),
+    )
 
     perform_quality_control(cfg, layout, confounds_tsv)
 
 
-def test_perform_quality_control_with_different_output():
+def test_perform_quality_control_with_different_output(pybids_test_dataset):
     input_dir = Path().absolute().joinpath("tests", "data", "ds000201-der")
     layout_in = get_dataset_layout(input_dir)
 
@@ -174,7 +171,10 @@ def test_perform_quality_control_with_different_output():
         return_type="filename", subject="9001", suffix="eyetrack", extension=".tsv"
     )[0]
 
-    cfg = Config()
+    cfg = Config(
+        pybids_test_dataset,
+        Path(__file__).parent.joinpath("data"),
+    )
 
     perform_quality_control(
         cfg=cfg, layout_in=layout_in, confounds_tsv=confounds_tsv, layout_out=layout_out
@@ -183,10 +183,8 @@ def test_perform_quality_control_with_different_output():
     rm_dir(output_dir)
 
 
-def test_add_qc_to_sidecar():
+def test_add_qc_to_sidecar(create_confounds_tsv):
     create_basic_json()
-
-    create_confounds_tsv()
 
     output_dir = Path().absolute()
     output_dir = output_dir.joinpath("tests", "data", "bidsmreye")

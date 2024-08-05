@@ -12,6 +12,7 @@ from bids.tests import get_test_data_path
 from bidsmreye.quality_control import compute_displacement, compute_robust_outliers
 
 
+@pytest.fixture
 def create_basic_data():
     return {
         "eye1_x_coordinate": np.random.randn(400),
@@ -34,10 +35,11 @@ def create_basic_json():
     json.dump(content, open(sidecar_name, "w"), indent=4)
 
 
-def create_confounds_tsv():
+@pytest.fixture
+def create_confounds_tsv(create_data_with_outliers):
     confounds_tsv = return_bidsmreye_eyetrack_tsv()
 
-    df = pd.DataFrame(create_data_with_outliers())
+    df = pd.DataFrame(create_data_with_outliers)
 
     df["displacement"] = compute_displacement(
         df["eye1_x_coordinate"],
@@ -60,8 +62,9 @@ def create_confounds_tsv():
     df.to_csv(confounds_tsv, sep="\t", index=False)
 
 
-def create_data_with_outliers():
-    data = create_basic_data()
+@pytest.fixture
+def create_data_with_outliers(create_basic_data):
+    data = create_basic_data
 
     data["eye_timestamp"] = np.arange(400)
 
