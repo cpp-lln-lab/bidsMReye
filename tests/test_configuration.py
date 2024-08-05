@@ -12,26 +12,24 @@ from bidsmreye.configuration import (
     get_pybids_config,
 )
 
-from .utils import pybids_test_dataset
 
-
-def test_Config():
+def test_Config(pybids_test_dataset):
     cfg = Config(
-        pybids_test_dataset(),
+        pybids_test_dataset,
         Path(__file__).parent.joinpath("data"),
     )
     assert not cfg.debug
     assert not cfg.non_linear_coreg
-    assert cfg.input_dir == pybids_test_dataset()
+    assert cfg.input_dir == pybids_test_dataset
     assert cfg.output_dir == Path(__file__).parent.joinpath("data", "bidsmreye")
     assert sorted(cfg.subjects) == ["01", "02", "03", "04", "05"]
     assert sorted(cfg.task) == ["nback", "rest"]
     assert sorted(cfg.space) == ["MNI152NLin2009cAsym", "T1w"]
 
 
-def test_config_to_dict_smoke():
+def test_config_to_dict_smoke(pybids_test_dataset):
     cfg = Config(
-        pybids_test_dataset(),
+        pybids_test_dataset,
         Path(__file__).parent.joinpath("data"),
     )
     config_to_dict(cfg)
@@ -52,54 +50,54 @@ def test_get_pybids_config_smoke():
     assert cfg is not None
 
 
-def test_missing_subject():
+def test_missing_subject(pybids_test_dataset):
     with pytest.warns(UserWarning):
         Config(
-            pybids_test_dataset(),
+            pybids_test_dataset,
             Path(__file__).parent.joinpath("data"),
             subjects=["01", "07"],
         )
 
 
-def test_missing_task():
+def test_missing_task(pybids_test_dataset):
     with pytest.warns(UserWarning):
         Config(
-            pybids_test_dataset(),
+            pybids_test_dataset,
             Path(__file__).parent.joinpath("data"),
             task=["auditory", "rest"],
         )
 
 
-def test_no_subject():
+def test_no_subject(pybids_test_dataset):
     with pytest.raises(RuntimeError):
         Config(
-            pybids_test_dataset(),
+            pybids_test_dataset,
             Path(__file__).parent.joinpath("data"),
             subjects=["99"],
         )
 
 
-def test_no_task():
+def test_no_task(pybids_test_dataset):
     with pytest.raises(RuntimeError):
         Config(
-            pybids_test_dataset(),
+            pybids_test_dataset,
             Path(__file__).parent.joinpath("data"),
             task=["foo"],
         )
 
 
-def test_missing_space():
+def test_missing_space(pybids_test_dataset):
     with pytest.warns(UserWarning):
         Config(
-            pybids_test_dataset(),
+            pybids_test_dataset,
             Path(__file__).parent.joinpath("data"),
             space=["T1w", "T2w"],
         )
 
 
-def test_task_omit_missing_values():
+def test_task_omit_missing_values(pybids_test_dataset):
     cfg = Config(
-        pybids_test_dataset(),
+        pybids_test_dataset,
         Path(__file__).parent.joinpath("data"),
         task=["auditory", "rest"],
         subjects=["01", "07"],

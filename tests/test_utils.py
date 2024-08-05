@@ -12,8 +12,6 @@ from bidsmreye.utils import (
     set_this_filter,
 )
 
-from .utils import pybids_test_dataset
-
 
 def test_copy_license(tmp_path):
     output_dir = tmp_path / "derivatives"
@@ -26,10 +24,10 @@ def test_copy_license(tmp_path):
     copy_license(output_dir)
 
 
-def test_get_deepmreye_filename():
-    layout = get_dataset_layout(pybids_test_dataset())
+def test_get_deepmreye_filename(pybids_test_dataset):
+    layout = get_dataset_layout(pybids_test_dataset)
 
-    output_file = Path(pybids_test_dataset()).joinpath(
+    output_file = Path(pybids_test_dataset).joinpath(
         "sub-01",
         "ses-01",
         "func",
@@ -72,12 +70,12 @@ def test_return_regex():
     assert return_regex(["foo", "bar"]) == "^foo$|^bar$"
 
 
-def test_set_this_filter_bold():
+def test_set_this_filter_bold(pybids_test_dataset):
     output_dir = Path().absolute()
     output_dir = Path.joinpath(output_dir, "derivatives")
 
     cfg = Config(
-        pybids_test_dataset(),
+        pybids_test_dataset,
         output_dir,
     )
 
@@ -97,11 +95,11 @@ def test_set_this_filter_bold():
     }
 
 
-def test_set_this_filter_bidsmreye():
+def test_set_this_filter_bidsmreye(pybids_test_dataset):
     output_dir = Path().absolute()
     output_dir = Path.joinpath(output_dir, "data", "bidsmreye")
 
-    cfg = Config(pybids_test_dataset(), output_dir, run="1")
+    cfg = Config(pybids_test_dataset, output_dir, run="1")
 
     this_filter = set_this_filter(cfg, subject_label="001", filter_type="eyetrack")
 
@@ -116,7 +114,7 @@ def test_set_this_filter_bidsmreye():
     }
 
 
-def test_set_this_filter_with_bids_filter_file():
+def test_set_this_filter_with_bids_filter_file(pybids_test_dataset):
     bids_filter = {
         "eyetrack": {
             "suffix": "^eyetrack$$",
@@ -128,7 +126,7 @@ def test_set_this_filter_with_bids_filter_file():
     output_dir = Path().absolute()
     output_dir = Path.joinpath(output_dir, "data", "bidsmreye")
 
-    cfg = Config(pybids_test_dataset(), output_dir, run="1", bids_filter=bids_filter)
+    cfg = Config(pybids_test_dataset, output_dir, run="1", bids_filter=bids_filter)
 
     this_filter = set_this_filter(cfg, subject_label="001", filter_type="eyetrack")
 

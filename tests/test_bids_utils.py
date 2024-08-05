@@ -17,8 +17,6 @@ from bidsmreye.configuration import Config
 from bidsmreye.prepare_data import save_sampling_frequency_to_json
 from bidsmreye.utils import set_this_filter
 
-from .utils import pybids_test_dataset
-
 
 def test_create_bidsname(tmp_path):
     output_dir = tmp_path / "derivatives"
@@ -45,34 +43,34 @@ def test_get_dataset_layout_smoke_test(tmp_path):
     get_dataset_layout(tmp_path / "data")
 
 
-def test_init_dataset(tmp_path):
+def test_init_dataset(tmp_path, pybids_test_dataset):
     output_dir = tmp_path / "derivatives"
 
     cfg = Config(
-        pybids_test_dataset(),
+        pybids_test_dataset,
         output_dir,
     )
 
     init_dataset(cfg)
 
 
-def test_list_subjects():
+def test_list_subjects(pybids_test_dataset):
     cfg = Config(
-        pybids_test_dataset(),
+        pybids_test_dataset,
         Path(__file__).parent.joinpath("data"),
     )
 
-    layout = get_dataset_layout(pybids_test_dataset())
+    layout = get_dataset_layout(pybids_test_dataset)
 
     subjects = list_subjects(cfg, layout)
     assert len(subjects) == 5
 
 
-def test_save_sampling_frequency_to_json():
-    layout_in = get_dataset_layout(pybids_test_dataset())
+def test_save_sampling_frequency_to_json(pybids_test_dataset):
+    layout_in = get_dataset_layout(pybids_test_dataset)
 
     cfg = Config(
-        pybids_test_dataset(),
+        pybids_test_dataset,
         Path(__file__).parent.joinpath("data"),
     )
 
@@ -91,9 +89,9 @@ def test_save_sampling_frequency_to_json():
     assert content["Sources"][0] == "foo"
 
 
-def test_check_layout_prepare_data():
+def test_check_layout_prepare_data(pybids_test_dataset):
     cfg = Config(
-        pybids_test_dataset(),
+        pybids_test_dataset,
         Path(__file__).parent.joinpath("data"),
     )
 
@@ -106,8 +104,8 @@ def test_check_layout_prepare_data():
     check_layout(cfg, layout_in)
 
 
-def test_check_layout_error_no_space_entity(tmp_path):
-    shutil.copytree(pybids_test_dataset(), tmp_path, dirs_exist_ok=True)
+def test_check_layout_error_no_space_entity(tmp_path, pybids_test_dataset):
+    shutil.copytree(pybids_test_dataset, tmp_path, dirs_exist_ok=True)
     for file in tmp_path.rglob("*_space-*"):
         file.unlink()
 

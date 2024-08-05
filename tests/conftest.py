@@ -6,6 +6,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import pytest
 from bids.tests import get_test_data_path
 
 from bidsmreye.quality_control import compute_displacement, compute_robust_outliers
@@ -79,6 +80,7 @@ def create_data_with_outliers():
     return data
 
 
+@pytest.fixture
 def pybids_test_dataset():
     return Path(get_test_data_path()).joinpath("synthetic", "derivatives", "fmriprep")
 

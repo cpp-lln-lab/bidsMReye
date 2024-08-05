@@ -18,7 +18,7 @@ from bidsmreye.quality_control import (
     quality_control_output,
 )
 
-from .utils import (
+from .conftest import (
     create_basic_data,
     create_basic_json,
     create_confounds_tsv,
