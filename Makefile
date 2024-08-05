@@ -137,6 +137,7 @@ generalize: ## demo: predicts labels of MOAE dataset
 				$$PWD/outputs/moae_fmriprep/derivatives \
 				participant \
 				generalize \
+				--model 1_guided_fixations \
 				-vv
 
 
@@ -234,7 +235,7 @@ docker_build:
 docker_build_no_cache:
 	docker build --tag cpplab/bidsmreye:unstable --no-cache --file Dockerfile .
 
-docker_demo: docker_build clean-demo
+docker_demo: clean-demo
 	make docker_prepare_data
 	make docker_generalize
 
@@ -257,7 +258,7 @@ docker_generalize:
 				/home/neuro/data/ \
 				/home/neuro/outputs/ \
 				participant \
-				generalize
+				generalize --model 1_guided_fixations
 
 docker_ds002799: get_ds002799
 # datalad unlock $$PWD/tests/data/ds002799/derivatives/fmriprep/sub-30[27]/ses-*/func/*run-*preproc*bold*
