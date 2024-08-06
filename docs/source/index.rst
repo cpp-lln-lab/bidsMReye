@@ -11,6 +11,7 @@ Welcome to bidsMReye's documentation!
    FAQ
    modules
    references
+   CHANGELOG
 
 Indices and tables
 ==================
