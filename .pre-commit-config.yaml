@@ -60,7 +60,7 @@ repos:
     rev: v1.11.1
     hooks:
     -   id: mypy
-        additional_dependencies: [pydantic]
+        additional_dependencies: [pydantic, numpy]
         files: bidsmreye
         args: [--config-file, pyproject.toml]
 
@@ -75,7 +75,7 @@ repos:
     rev: 7.1.1
     hooks:
     -   id: flake8
-        exclude: tests_.*.py|version.*.py|setup.py     # ignore tests and versioneer related code
+        exclude: tests_.*.py|version.*.py|setup.py # ignore tests and versioneer related code
         args: [--config, .flake8, --verbose]
         additional_dependencies: [flake8-docstrings, flake8-use-fstring, flake8-functions, flake8-bugbear]
 
