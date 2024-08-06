@@ -139,6 +139,9 @@ generalize: ## demo: predicts labels of MOAE dataset
 				--model 1_guided_fixations \
 				-vv
 
+# run demo via boutiques
+demo_boutiques: tests/data/moae_fmriprep
+	bosh exec launch --no-container boutiques/bidsmreye_0.4.0.json boutiques/invocation.json
 
 ## ds002799
 .PHONY: get_ds002799_dat

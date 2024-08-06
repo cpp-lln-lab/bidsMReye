@@ -142,8 +142,8 @@ disallow_untyped_defs = true
 exclude = ['tests/']
 no_implicit_optional = true
 plugins = [
-    "pydantic.mypy",
-    "numpy.typing.mypy_plugin"
+    "numpy.typing.mypy_plugin",
+    "pydantic.mypy"
 ]
 warn_redundant_casts = true
 warn_unused_ignores = true

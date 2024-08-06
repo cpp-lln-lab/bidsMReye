@@ -1,9 +1,18 @@
 {
-    "bids_dir": "ds001",
-    "output_dir_name": "example-output",
-    "analysis_level": "subject",
-    "participant_label": [
-        "01"
+    "bids_dir": [
+        "./tests/data/moae_fmriprep"
     ],
-    "action": "segment"
+    "output_dir": [
+        "./outputs/moae_fmriprep/derivatives"
+    ],
+    "analysis_level": [
+        "participant"
+    ],
+    "command": "all",
+    "log_level": "-vv",
+    "debug": false,
+    "reset_database": true,
+    "force": false,
+    "non_linear_coreg": true,
+    "model": "1_guided_fixations"
 }
