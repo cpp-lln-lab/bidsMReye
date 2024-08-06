@@ -140,7 +140,7 @@ generalize: ## demo: predicts labels of MOAE dataset
 				-vv
 
 # run demo via boutiques
-demo_boutiques:
+demo_boutiques: tests/data/moae_fmriprep
 	bosh exec launch --no-container boutiques/bidsmreye_0.4.0.json boutiques/invocation.json
 
 ## ds002799
