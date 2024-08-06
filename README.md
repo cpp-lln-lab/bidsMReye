@@ -100,19 +100,6 @@ Note that you might need to install cudnn first
 conda install -c conda-forge cudnn
 ```
 
-#### ANTsPy installation issues
-
-If installation of [ANTsPy](https://github.com/ANTsX/ANTsPy) fails try to manually install it via:
-
-<!-- may help on windows ? -->
-
-```bash
-git clone https://github.com/ANTsX/ANTsPy
-cd ANTsPy
-pip install CMake
-python3 setup.py install
-```
-
 ### Dev install
 
 Clone this repository.

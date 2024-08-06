@@ -17,42 +17,56 @@ env:
 
 jobs:
     system_test:
-
         runs-on: ubuntu-latest
-
         strategy:
             matrix:
                 python-version: ['3.11']
-
         steps:
-
         -   name: Clone repo
             uses: actions/checkout@v4
-
         -   name: Set up Python ${{ matrix.python-version }}
             uses: actions/setup-python@v5
             with:
                 python-version: ${{ matrix.python-version }}
-
         -   name: Install dependencies
             run: |
                 sudo apt-get update -y
                 sudo apt-get install -y git-annex
                 python -m pip install --upgrade pip setuptools
                 pip install datalad
-
         -   name: Install bidsmreye
             run: |
                 pip install .
-
         -   name: Datalad WTF
             run: |
                 datalad wtf
-
         -   name: Run demo
             run: make demo
-
         -   name: Re run demo (should be faster)
             run: |
                 make prepare
                 make generalize
+
+    boutiques_test:
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                python-version: ['3.11']
+        steps:
+        -   name: Clone repo
+            uses: actions/checkout@v4
+        -   name: Set up Python ${{ matrix.python-version }}
+            uses: actions/setup-python@v5
+            with:
+                python-version: ${{ matrix.python-version }}
+        -   name: Install dependencies
+            run: |
+                sudo apt-get update -y
+                sudo apt-get install -y git-annex
+                python -m pip install --upgrade pip setuptools
+                pip install datalad boutiques
+        -   name: Install bidsmreye
+            run: |
+                pip install .
+        -   name: Run demo via boutiques
+            run: make demo_boutiques

@@ -7,6 +7,4 @@ BIDS app and an example of invocation.
 ## How to use
 
 * Install Boutiques: `pip install boutiques`
-* Run the example: `bosh ./bids-app-example.json -i ./invocation.json -e -d`
-  (assumes `ds001` is a valid dataset in the current working
-  directory.)
+* Run the example: `bosh boutiques/bidsmreye_0.4.0.json -i boutiques/invocation.json -e -d`
