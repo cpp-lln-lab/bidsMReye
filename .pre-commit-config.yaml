@@ -60,7 +60,7 @@ repos:
     rev: v1.11.1
     hooks:
     -   id: mypy
-        additional_dependencies: [types-all, pydantic]
+        additional_dependencies: [pydantic]
         files: bidsmreye
         args: [--config-file, pyproject.toml]
 
