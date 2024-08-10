@@ -102,14 +102,17 @@ def dispatch(analysis_level: str, action: str, cfg: Config) -> None:
 
             prepare_data(cfg)
             generalize(cfg)
+
         elif action == "prepare":
             from bidsmreye.prepare_data import prepare_data
 
             prepare_data(cfg)
+
         elif action == "generalize":
             from bidsmreye.generalize import generalize
 
             generalize(cfg)
+
         elif action == "qc":
             from bidsmreye.quality_control import quality_control_input
 

@@ -105,8 +105,8 @@ No dataset_description.json found:
 
         self.check_argument(attribute="subjects", layout_in=layout_in)
         self.check_argument(attribute="task", layout_in=layout_in)
-        self.check_argument(attribute="run", layout_in=layout_in)
         self.check_argument(attribute="space", layout_in=layout_in)
+        self.check_argument(attribute="run", layout_in=layout_in)
 
     def check_argument(self, attribute: str, layout_in: BIDSLayout) -> Config:
         """Check an attribute value compared to the input dataset content.
@@ -125,9 +125,15 @@ No dataset_description.json found:
         if attribute == "subjects":
             value = layout_in.get_subjects()
         elif attribute == "task":
-            value = layout_in.get_tasks()
+            value = layout_in.get_tasks(subject=self.subjects)
         elif attribute in {"space", "run"}:
-            value = layout_in.get(return_type="id", target=attribute, datatype="func")
+            value = layout_in.get(
+                return_type="id",
+                target=attribute,
+                datatype="func",
+                subject=self.subjects,
+                task=self.task,
+            )
 
         self.listify(attribute)
 
@@ -148,9 +154,12 @@ No dataset_description.json found:
                 )
             value = list(set(getattr(self, attribute)) & set(value))
 
-        setattr(self, attribute, value)
-
         # run and space can be empty if their entity are not used
+        # we will figure out the values for run
+        # in subject / task wise manner later on
+        if attribute not in ["run"]:
+            setattr(self, attribute, value)
+
         if attribute not in ["run", "space"] and not getattr(self, attribute):
             raise RuntimeError(f"No {attribute} found in {self.input_dir}")
 

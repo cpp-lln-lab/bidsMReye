@@ -31,6 +31,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+* [FIX] do not apply run found for one task to all tasks by @Remi-Gau in https://github.com/cpp-lln-lab/bidsMReye/pull/228
+
 ### Security
 
 
