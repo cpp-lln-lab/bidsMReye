@@ -17,7 +17,7 @@ from bidsmreye.configuration import (
 )
 from bidsmreye.logging import bidsmreye_log
 from bidsmreye.methods import methods
-from bidsmreye.utils import copy_license, create_dir_if_absent
+from bidsmreye.utils import copy_license, create_dir_if_absent, return_regex
 
 log = bidsmreye_log("bidsmreye")
 
@@ -60,9 +60,10 @@ def check_layout(cfg: Config, layout: BIDSLayout, for_file: str = "bold") -> Non
     if generated_by["Name"].lower() == "bidsmreye":
         this_filter = get_bids_filter_config()["mask"]
 
-    this_filter["task"] = cfg.task
-    this_filter["space"] = cfg.space
-    this_filter["run"] = cfg.run
+    this_filter["task"] = return_regex(cfg.task)
+    this_filter["space"] = return_regex(cfg.space) or ".*"
+    if cfg.run:
+        this_filter["run"] = cfg.run
 
     log.debug(f"Looking for files with filter\n{this_filter}")
 
@@ -78,8 +79,8 @@ def check_layout(cfg: Config, layout: BIDSLayout, for_file: str = "bold") -> Non
         raise RuntimeError(
             f"Input dataset {layout.root} does not have "
             f"any data to process for filter\n{this_filter}.\n"
-            f"This dataset contains subjects: {subjects}."
-            f"This dataset contains tasks: {tasks}."
+            f"This dataset contains subjects: {subjects}.\n"
+            f"This dataset contains tasks: {tasks}.\n"
             "Is your dataset a BIDS derivative dataset?\n"
             "Check the FAQ for more information: "
             "https://bidsmreye.readthedocs.io/en/latest/FAQ.html"
