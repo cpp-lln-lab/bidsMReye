@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-import logging
 import math
 from pathlib import Path
 
@@ -20,7 +19,8 @@ from bidsmreye.bids_utils import (
     list_subjects,
 )
 from bidsmreye.configuration import Config
-from bidsmreye.logging import bidsmreye_log
+from bidsmreye.logger import bidsmreye_log
+from bidsmreye.report import generate_report
 from bidsmreye.utils import (
     check_if_file_found,
     create_dir_for_file,
@@ -142,9 +142,7 @@ def perform_quality_control(
     add_qc_to_sidecar(confounds, sidecar_name)
 
     fig = visualize_eye_gaze_data(confounds)
-    fig.update_layout(title=Path(confounds_tsv).name)
-    if log.isEnabledFor(logging.DEBUG):
-        fig.show()
+    fig.update_layout(showlegend=False, height=800)
 
     create_dir_for_file(visualization_html_file)
     fig.write_html(visualization_html_file)
@@ -184,6 +182,11 @@ def quality_control_output(cfg: Config) -> None:
         )
         for subject_label in subjects:
             qc_subject(cfg, layout_out, subject_label)
+            generate_report(
+                output_dir=cfg.output_dir,
+                subject_label=subject_label,
+                action="generalize",
+            )
             progress.update(subject_loop, advance=1)
 
 
@@ -203,6 +206,11 @@ def quality_control_input(cfg: Config) -> None:
         )
         for subject_label in subjects:
             qc_subject(cfg, layout_in, subject_label, layout_out)
+            generate_report(
+                output_dir=cfg.output_dir,
+                subject_label=subject_label,
+                action="generalize",
+            )
             progress.update(subject_loop, advance=1)
 
 

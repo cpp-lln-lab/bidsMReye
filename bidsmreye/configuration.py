@@ -9,7 +9,7 @@ from typing import Any
 from attrs import asdict, converters, define, field
 from bids import BIDSLayout  # type: ignore
 
-from bidsmreye.logging import bidsmreye_log
+from bidsmreye.logger import bidsmreye_log
 
 log = bidsmreye_log(name="bidsmreye")
 

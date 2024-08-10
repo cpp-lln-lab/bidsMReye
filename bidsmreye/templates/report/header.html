@@ -1,0 +1,51 @@
+<nav class="navbar navbar-expand-lg bg-body-tertiary fixed-top">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">
+      <img
+        src="/home/remi/github/cpp-lln-lab/bidsMReye/docs/source/images/bidsMReye_logo.png"
+        alt="Bootstrap"
+        width="40"
+        height="40"
+      />
+      bidsmreye report
+    </a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNavDropdown"
+      aria-controls="navbarNavDropdown"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle"
+            href="#"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            Files
+          </a>
+          <ul class="dropdown-menu">
+            {% for file in files %}
+            <li>
+              <a class="dropdown-item" href="#{{ file.name }}"
+                >{{ file.name }}</a
+              >
+            </li>
+            {% endfor %}
+          </ul>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#about">About</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

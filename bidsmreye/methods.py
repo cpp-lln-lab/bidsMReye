@@ -6,10 +6,9 @@ import shutil
 import warnings
 from pathlib import Path
 
-import chevron
-
 from bidsmreye._version import __version__
 from bidsmreye.defaults import available_models, default_model
+from bidsmreye.report import TEMPLATES_DIR, return_jinja_env
 from bidsmreye.utils import create_dir_for_file
 
 
@@ -44,29 +43,26 @@ def methods(
     if not model:
         model = default_model()
 
-    is_known_models = False
+    is_known_model = False
     is_default_model = False
     if model in available_models():
-        is_known_models = True
+        is_known_model = True
         if model == default_model():
             is_default_model = True
 
-    if not is_known_models:
+    if not is_known_model:
         warnings.warn(f"{model} is not a known model name.", stacklevel=3)
 
-    template_file = str(Path(__file__).parent / "templates" / "CITATION.mustache")
-    with open(template_file) as template:
-        output = chevron.render(
-            template=template,
-            data={
-                "version": __version__,
-                "model": model,
-                "is_default_model": is_default_model,
-                "is_known_models": is_known_models,
-                "qc_only": qc_only,
-            },
-            warn=True,
-        )
+    env = return_jinja_env(searchpath=TEMPLATES_DIR)
+    template = env.get_template("CITATION.jinja")
+
+    output = template.render(
+        version=__version__,
+        model=model,
+        is_default_model=is_default_model,
+        is_known_model=is_known_model,
+        qc_only=qc_only,
+    )
 
     output_file.write_text(output)
 

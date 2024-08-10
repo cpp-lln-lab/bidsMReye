@@ -15,7 +15,7 @@ from bidsmreye.configuration import (
     get_bidsname_config,
     get_pybids_config,
 )
-from bidsmreye.logging import bidsmreye_log
+from bidsmreye.logger import bidsmreye_log
 from bidsmreye.methods import methods
 from bidsmreye.utils import copy_license, create_dir_if_absent, return_regex
 

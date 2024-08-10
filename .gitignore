@@ -11,7 +11,6 @@ logs
 # files
 *.nii
 *.h5
-*.html
 *desc-bidsmreye_eyetrack.tsv
 pybids_db
 tmp.py

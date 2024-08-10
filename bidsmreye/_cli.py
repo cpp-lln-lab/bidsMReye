@@ -11,7 +11,7 @@ from bidsmreye._parsers import common_parser, download_parser
 from bidsmreye.bidsmreye import bidsmreye
 from bidsmreye.defaults import default_log_level, log_levels
 from bidsmreye.download import download
-from bidsmreye.logging import bidsmreye_log
+from bidsmreye.logger import bidsmreye_log
 
 log = bidsmreye_log(name="bidsmreye")
 
