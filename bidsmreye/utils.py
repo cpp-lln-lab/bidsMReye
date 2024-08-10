@@ -20,9 +20,12 @@ from rich.progress import (
 )
 
 from bidsmreye.configuration import Config
-from bidsmreye.logging import bidsmreye_log
+from bidsmreye.logger import bidsmreye_log
 
 log = bidsmreye_log(name="bidsmreye")
+
+
+TEMPLATES_DIR = Path(__file__).parent / "templates"
 
 
 def progress_bar(text: str, color: str = "green") -> Progress:
@@ -43,7 +46,7 @@ def copy_license(output_dir: Path) -> Path:
     :param output_dir:
     :type output_dir: Path
     """
-    input_file = str(Path(__file__).parent / "templates" / "CCO")
+    input_file = str(TEMPLATES_DIR / "CCO")
     output_file = output_dir / "LICENSE"
     create_dir_if_absent(output_dir)
     if not (output_dir / "LICENSE").is_file():

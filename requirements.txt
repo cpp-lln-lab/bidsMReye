@@ -56,8 +56,6 @@ charset-normalizer==3.3.2
     # via requests
 chart-studio==1.1.0
     # via antspyx
-chevron==0.14.0
-    # via bidsmreye (pyproject.toml)
 click==8.1.7
     # via pybids
 comm==0.2.2
@@ -145,6 +143,7 @@ jedi==0.19.1
     # via ipython
 jinja2==3.1.4
     # via
+    #   bidsmreye (pyproject.toml)
     #   jupyter-server
     #   jupyterlab
     #   jupyterlab-server

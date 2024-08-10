@@ -6,7 +6,7 @@ performed using [*bidsMReye*](https://github.com/cpp-lln-lab/bidsMReye) (version
 a BIDS app relying on [deepMReye](https://github.com/DeepMReye/DeepMReye) (@deepmreye)
 to decode eye motion from fMRI time series data.
 
-{{^qc_only}}
+{% if not qc_only %}
 ### data extraction
 
 The data of each BOLD runs underwent co-registration conducted
@@ -28,19 +28,18 @@ across voxels (spatial normalization).
 
 Voxels time series were used as inputs for generalization decoding
 using a
-{{#is_known_models}}
+    {% if is_known_model %}
 pre-trained model {{ model }} from deepMReye from [OSF](https://osf.io/23t5v).
-    {{#is_default_model}}
+        {% if is_default_model %}
 This model was trained on the following datasets:
 guided fixations (@alexander_open_2017),
 smooth pursuit (@nau_real-motion_2018, @polti_rapid_2022, @nau_hexadirectional_2018),
 free viewing (@julian_human_2018).
-    {{/is_default_model}}
-{{/is_known_models}}
-{{^is_known_models}}
+        {% endif %}
+    {% else %}
 model trained on calibration data from the current study.
-{{/is_known_models}}
-{{/qc_only}}
+    {% endif %}
+{% endif %}
 
 ### quality control
 

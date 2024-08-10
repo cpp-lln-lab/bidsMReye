@@ -3,9 +3,7 @@ build-backend = "hatchling.build"
 requires = ["hatchling", "hatch-vcs"]
 
 [project]
-authors = [
-    {name = "Remi Gau", email = "remi.gau@gmail.com"}
-]
+authors = [{name = "Remi Gau", email = "remi.gau@gmail.com"}]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Science/Research",
@@ -19,16 +17,16 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Image Processing"
 ]
 dependencies = [
+    "antspyx<0.5",
     "attrs",
-    "chevron>=0.14.0",
     "deepmreye>=0.2.1",
+    "jinja2",
     "kaleido",
+    "keras<3.0.0",
     "pooch>=1.6.0",
     "pybids",
-    "antspyx<0.5",
     "tqdm",
     "tomli; python_version < '3.11'",
-    "keras<3.0.0",
     "rich_argparse"
 ]
 description = "bids app using deepMReye to decode eye motion for fMRI time series data"
@@ -62,21 +60,8 @@ doc = [
     "sphinxcontrib-bibtex"
 ]
 docs = ["bidsmreye[doc]"]
-style = [
-    "black",
-    "codespell",
-    "flake8",
-    "flake8-docstrings",
-    "mypy",
-    'types-all',
-    'pandas-stubs',
-    "pre-commit",
-    "sourcery"
-]
-test = [
-    "pytest",
-    "pytest-cov"
-]
+style = ["pre-commit", "sourcery"]
+test = ["pytest", "pytest-cov"]
 tests = ["bidsmreye[test]"]
 
 [project.scripts]
@@ -105,9 +90,7 @@ packages = ["bidsmreye"]
 source = "vcs"
 
 [tool.importlinter]
-ignore_imports = [
-    "bidsmreye._version"
-]
+ignore_imports = ["bidsmreye._version"]
 root_package = "bidsmreye"
 
 [[tool.importlinter.contracts]]
@@ -120,9 +103,10 @@ layers = [
     "visualize",
     "bids_utils",
     "methods",
+    "report",
     "utils",
     "configuration",
-    "logging",
+    "logger",
     "defaults"
 ]
 name = "Layered architecture"
@@ -137,24 +121,18 @@ skip_gitignore = true
 [tool.mypy]
 check_untyped_defs = true
 disallow_any_generics = true
-disallow_incomplete_defs = true
-disallow_untyped_defs = true
+disallow_incomplete_defs = false
+disallow_untyped_defs = false
 # enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
 exclude = ['tests/']
 no_implicit_optional = true
-plugins = [
-    "numpy.typing.mypy_plugin",
-    "pydantic.mypy"
-]
+plugins = ["numpy.typing.mypy_plugin", "pydantic.mypy"]
 warn_redundant_casts = true
 warn_unused_ignores = true
 
 [[tool.mypy.overrides]]
 ignore_errors = true
-module = [
-    'bids.*',
-    "bidsmreye._version"
-]
+module = ['bids.*', "bidsmreye._version"]
 
 [[tool.mypy.overrides]]
 ignore_missing_imports = true

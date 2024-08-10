@@ -10,7 +10,7 @@ import pooch
 
 import bidsmreye
 from bidsmreye.defaults import available_models, default_model
-from bidsmreye.logging import bidsmreye_log
+from bidsmreye.logger import bidsmreye_log
 
 log = bidsmreye_log(name="bidsmreye")
 

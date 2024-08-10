@@ -9,7 +9,7 @@ from pathlib import Path
 from bidsmreye._version import __version__
 from bidsmreye.configuration import Config
 from bidsmreye.defaults import default_log_level
-from bidsmreye.logging import bidsmreye_log
+from bidsmreye.logger import bidsmreye_log
 
 log = bidsmreye_log(name="bidsmreye")
 

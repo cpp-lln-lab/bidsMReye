@@ -20,7 +20,8 @@ from bidsmreye.bids_utils import (
     save_sampling_frequency_to_json,
 )
 from bidsmreye.configuration import Config
-from bidsmreye.logging import bidsmreye_log
+from bidsmreye.logger import bidsmreye_log
+from bidsmreye.report import generate_report
 from bidsmreye.utils import (
     check_if_file_found,
     get_deepmreye_filename,
@@ -213,4 +214,7 @@ def prepare_data(cfg: Config) -> None:
         )
         for subject_label in subjects:
             process_subject(cfg, layout_in, layout_out, subject_label)
+            generate_report(
+                output_dir=cfg.output_dir, subject_label=subject_label, action="prepare"
+            )
             progress.update(subject_loop, advance=1)

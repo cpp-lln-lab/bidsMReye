@@ -22,7 +22,7 @@ from bidsmreye.bids_utils import (
     list_subjects,
 )
 from bidsmreye.configuration import Config
-from bidsmreye.logging import bidsmreye_log
+from bidsmreye.logger import bidsmreye_log
 from bidsmreye.quality_control import quality_control_output
 from bidsmreye.utils import (
     add_sidecar_in_root,
