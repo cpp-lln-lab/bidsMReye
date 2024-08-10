@@ -61,7 +61,7 @@ def check_layout(cfg: Config, layout: BIDSLayout, for_file: str = "bold") -> Non
         this_filter = get_bids_filter_config()["mask"]
 
     this_filter["task"] = return_regex(cfg.task)
-    this_filter["space"] = return_regex(cfg.space) or ".*"
+    this_filter["space"] = cfg.space
     if cfg.run:
         this_filter["run"] = cfg.run
 
