@@ -87,7 +87,6 @@ def test_set_this_filter_bold(pybids_test_dataset, output_dir):
         "datatype": "func",
         "desc": "preproc",
         "extension": "nii.*",
-        "run": "1|2",
         "subject": "001",
         "suffix": "^bold$",
     }
