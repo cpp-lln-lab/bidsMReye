@@ -15,7 +15,7 @@ log = bidsmreye_log(name="bidsmreye")
 
 TEMPLATES_DIR = Path(__file__).parent / "templates"
 
-SearchpathType = str | PathLike[str] | Iterable[str | PathLike[str]]
+SearchpathType = Union[str | PathLike[str] | Iterable[str | PathLike[str]]]
 
 
 def return_jinja_env(searchpath: Union[SearchpathType, None] = None) -> Environment:
