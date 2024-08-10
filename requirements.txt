@@ -9,7 +9,9 @@ absl-py==2.1.0
     #   tensorboard
     #   tensorflow
 antspyx==0.4.2
-    # via deepmreye
+    # via
+    #   bidsmreye (pyproject.toml)
+    #   deepmreye
 anyio==4.4.0
     # via
     #   httpx
@@ -430,6 +432,8 @@ rfc3986-validator==0.1.1
     #   jsonschema
     #   jupyter-events
 rich==13.7.1
+    # via rich-argparse
+rich-argparse==1.5.2
     # via bidsmreye (pyproject.toml)
 rpds-py==0.19.1
     # via
