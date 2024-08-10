@@ -1,10 +1,7 @@
 """Compile outputs from all tasks, spaces, runs into a single HTML."""
 
 import datetime
-from collections.abc import Iterable
-from os import PathLike
 from pathlib import Path
-from typing import Union
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
@@ -15,10 +12,8 @@ log = bidsmreye_log(name="bidsmreye")
 
 TEMPLATES_DIR = Path(__file__).parent / "templates"
 
-SearchpathType = Union[str | PathLike[str] | Iterable[str | PathLike[str]]]
 
-
-def return_jinja_env(searchpath: Union[SearchpathType, None] = None) -> Environment:
+def return_jinja_env(searchpath=None) -> Environment:
     if searchpath is None:
         searchpath = TEMPLATES_DIR / "report"
     return Environment(
