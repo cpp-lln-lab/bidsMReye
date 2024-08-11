@@ -23,7 +23,7 @@ def data_dir():
 
 
 @pytest.fixture
-def output_dir(tmp_path, data_dir):
+def output_dir(tmp_path, data_dir) -> Path:
     src_dir = data_dir / "bidsmreye"
     target_dir = tmp_path / "bidsmreye"
     target_dir.mkdir()
