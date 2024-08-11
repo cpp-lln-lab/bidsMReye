@@ -17,6 +17,7 @@ from bidsmreye.bids_utils import (
     get_dataset_layout,
     init_dataset,
     list_subjects,
+    return_desc_entity,
 )
 from bidsmreye.configuration import Config
 from bidsmreye.logger import bidsmreye_log
@@ -60,32 +61,32 @@ def add_qc_to_sidecar(confounds: pd.DataFrame, sidecar_name: Path) -> None:
         content = {}
 
     content["NbDisplacementOutliers"] = confounds["displacement_outliers"].sum()
-    content["NbXOutliers"] = confounds["eye1_x_outliers"].sum()
-    content["NbYOutliers"] = confounds["eye1_y_outliers"].sum()
-    content["eye1XVar"] = confounds["eye1_x_coordinate"].var()
-    content["eye1YVar"] = confounds["eye1_y_coordinate"].var()
+    content["NbXOutliers"] = confounds["x_outliers"].sum()
+    content["NbYOutliers"] = confounds["y_outliers"].sum()
+    content["eye1XVar"] = confounds["x_coordinate"].var()
+    content["eye1YVar"] = confounds["y_coordinate"].var()
 
     json.dump(content, open(sidecar_name, "w"), indent=4)
 
 
 def compute_displacement_and_outliers(confounds: pd.DataFrame) -> pd.DataFrame:
     confounds["displacement"] = compute_displacement(
-        confounds["eye1_x_coordinate"], confounds["eye1_y_coordinate"]
+        confounds["x_coordinate"], confounds["y_coordinate"]
     )
 
     confounds["displacement_outliers"] = compute_robust_outliers(
         confounds["displacement"], outlier_type="Carling"
     )
 
-    confounds["eye1_x_outliers"] = compute_robust_outliers(
-        confounds["eye1_x_coordinate"], outlier_type="Carling"
+    confounds["x_outliers"] = compute_robust_outliers(
+        confounds["x_coordinate"], outlier_type="Carling"
     )
-    log.debug(f"Found {confounds['eye1_x_outliers'].sum()} x outliers")
+    log.debug(f"Found {confounds['x_outliers'].sum()} x outliers")
 
-    confounds["eye1_y_outliers"] = compute_robust_outliers(
-        confounds["eye1_y_coordinate"], outlier_type="Carling"
+    confounds["y_outliers"] = compute_robust_outliers(
+        confounds["y_coordinate"], outlier_type="Carling"
     )
-    log.debug(f"Found {confounds['eye1_y_outliers'].sum()} y outliers")
+    log.debug(f"Found {confounds['y_outliers'].sum()} y outliers")
 
     return confounds
 
@@ -122,18 +123,23 @@ def perform_quality_control(
 
     confounds = pd.read_csv(confounds_tsv, sep="\t")
 
-    if "eye_timestamp" not in confounds.columns:
-        sampling_frequency = get_sampling_frequency(layout_in, confounds_tsv)
+    if "timestamp" not in confounds.columns:
+        extra_entities = None
+        if cfg.model_weights_file is not None:
+            extra_entities = {"desc": return_desc_entity(Path(cfg.model_weights_file))}
+        sampling_frequency = get_sampling_frequency(
+            layout_in, confounds_tsv, extra_entities=extra_entities
+        )
 
         if sampling_frequency is not None:
             nb_timepoints = confounds.shape[0]
-            eye_timestamp = np.arange(
+            timestamp = np.arange(
                 0, 1 / sampling_frequency * nb_timepoints, 1 / sampling_frequency
             )
-            confounds["eye_timestamp"] = eye_timestamp
+            confounds["timestamp"] = timestamp
 
             cols = confounds.columns.tolist()
-            cols.insert(0, cols.pop(cols.index("eye_timestamp")))
+            cols.insert(0, cols.pop(cols.index("timestamp")))
             confounds = confounds[cols]
 
     compute_displacement_and_outliers(confounds)
@@ -151,11 +157,15 @@ def perform_quality_control(
     confounds.to_csv(confounds_tsv, sep="\t", index=False)
 
 
-def get_sampling_frequency(layout: BIDSLayout, file: str | Path) -> float | None:
+def get_sampling_frequency(
+    layout: BIDSLayout, file: str | Path, extra_entities: dict[str, str] | None = None
+) -> float | None:
     """Get the sampling frequency from the sidecar JSON file."""
     sampling_frequency = None
 
-    sidecar_name = create_bidsname(layout, file, "confounds_json")
+    sidecar_name = create_bidsname(
+        layout, file, "confounds_json", extra_entities=extra_entities
+    )
 
     # TODO: deal with cases where the sidecar is in the root of the dataset
     if sidecar_name.is_file():
@@ -164,6 +174,11 @@ def get_sampling_frequency(layout: BIDSLayout, file: str | Path) -> float | None
             SamplingFrequency = content.get("SamplingFrequency", None)
             if SamplingFrequency is not None and SamplingFrequency > 0:
                 sampling_frequency = SamplingFrequency
+    else:
+        log.error(
+            "The following sidecar was not found. "
+            f"Cannot infer sampling frequency.\n{sidecar_name}."
+        )
 
     return sampling_frequency
 

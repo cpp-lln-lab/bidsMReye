@@ -9,10 +9,15 @@
         "suffix": "mask",
         "extension": "p"
     },
-    "no_label": {
+    "no_label_bold": {
         "desc": "nolabel",
-        "suffix": "^bidsmreye$$",
+        "suffix": "^bold$$",
         "extension": "npz"
+    },
+    "no_label_bold_json": {
+        "desc": "nolabel",
+        "suffix": "^bold$$",
+        "extension": "json"
     },
     "eyetrack": {
         "suffix": "^eyetrack$$",

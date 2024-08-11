@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 from typing import Any
 
@@ -88,7 +89,10 @@ def check_layout(cfg: Config, layout: BIDSLayout, for_file: str = "bold") -> Non
 
 
 def create_bidsname(
-    layout: BIDSLayout, filename: dict[str, str] | str | Path, filetype: str
+    layout: BIDSLayout,
+    filename: dict[str, str] | str | Path,
+    filetype: str,
+    extra_entities: dict[str, str] | None = None,
 ) -> Path:
     """Return a BIDS valid filename for layout and a filename or a dict of BIDS entities.
 
@@ -117,8 +121,9 @@ def create_bidsname(
                     padding = len(x.split("-")[1])
             entities["run"] = f"{entities['run']:0{padding}d}"
 
-    else:
-        raise TypeError(f"filename must be a dict or a Path, not {type(filename)}")
+    if extra_entities is not None:
+        for key in extra_entities:
+            entities[key] = extra_entities[key]
 
     bids_name_config = get_bidsname_config()
 
@@ -126,6 +131,32 @@ def create_bidsname(
 
     output_file = Path(layout.root) / output_file
     return output_file.absolute()
+
+
+def return_desc_entity(model_filename: Path):
+    model_name = sanitize_filename(model_filename).replace("Dataset", "")
+    if model_name in ["1GuidedFixations", "5FreeViewing"]:
+        return model_name[1:]
+    elif model_name == "3Openclosed":
+        return "OpenClosed"
+    elif model_name in ["4Pursuit", "2Pursuit", "3Pursuit"]:
+        return model_name[1:] + model_name[0]
+    elif model_name in ["1to5", "1to6"]:
+        return model_name
+    else:
+        return sanitize_filename(model_filename)
+
+
+def sanitize_filename(filename: Path):
+    """Turn filename stem into its alphanumeric CamelCase equivalent.
+
+    To use as a BIDS entity label.
+    """
+    # Remove non-alphanumeric characters and split into words
+    words = re.sub(r"[^a-zA-Z0-9]", " ", filename.stem).split()
+    # Capitalize the first letter of each word and join them
+    camelcase_name = "".join(word.capitalize() for word in words)
+    return camelcase_name
 
 
 def create_sidecar(
@@ -142,7 +173,7 @@ def create_sidecar(
     }
     if source is not None:
         content["Sources"] = [source]  # type: ignore
-    sidecar_name = create_bidsname(layout, filename, "confounds_json")
+    sidecar_name = create_bidsname(layout, filename, "no_label_json")
     json.dump(content, open(sidecar_name, "w"), indent=4)
     log.debug(f"sidecar saved to {sidecar_name}")
 

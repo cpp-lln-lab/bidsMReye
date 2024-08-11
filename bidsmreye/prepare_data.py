@@ -96,7 +96,7 @@ def combine_data_with_empty_labels(layout_out: BIDSLayout, img: Path, i: int = 1
     subj["labels"].append(labels)
     subj["ids"].append(([entities["subject"]] * labels.shape[0], [i] * labels.shape[0]))
 
-    output_file = create_bidsname(layout_out, Path(img), "no_label")
+    output_file = create_bidsname(layout_out, Path(img), "no_label_bold")
     file_to_move = Path(layout_out.root) / ".." / "bidsmreye" / output_file.name
 
     preprocess.save_data(
@@ -151,7 +151,7 @@ def prepapre_image(
 
     report_name = create_bidsname(layout_out, filename=img_path, filetype="report")
     mask_name = create_bidsname(layout_out, filename=img_path, filetype="mask")
-    output_file = create_bidsname(layout_out, Path(img_path), "no_label")
+    output_file = create_bidsname(layout_out, Path(img_path), "no_label_bold")
 
     if (
         not cfg.force
