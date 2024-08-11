@@ -11,12 +11,12 @@
     },
     "no_label_bold": {
         "desc": "eye",
-        "suffix": "^bold$$",
+        "suffix": "^timeseries$$",
         "extension": "npz"
     },
     "no_label_bold_json": {
         "desc": "eye",
-        "suffix": "^bold$$",
+        "suffix": "^timeseries$$",
         "extension": "json"
     },
     "eyetrack": {

@@ -69,8 +69,6 @@ def collect_group_qc_data(cfg: Config) -> pd.DataFrame | None:
         with open(file.path) as f:
             data = json.loads(f.read())
 
-        print(data)
-
         df = pd.json_normalize(data)
         df["filename"] = Path(file.path).name
         df["subject"] = entities["subject"]

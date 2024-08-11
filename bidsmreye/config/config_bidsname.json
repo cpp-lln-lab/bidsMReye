@@ -1,8 +1,8 @@
 {
     "mask": "sub-{subject}/[ses-{session}]/func/sub-{subject}[_ses-{session}]_task-{task}[_acq-{acquisition}][_ce-{ce}][_rec-{rec}][_dir-{dir}][_run-{run}][_space-{space}][_res-{res}][_den-{den}]_desc-eye_mask.p",
     "report": "sub-{subject}/[ses-{session}]/figures/sub-{subject}[_ses-{session}]_task-{task}[_acq-{acquisition}][_ce-{ce}][_rec-{rec}][_dir-{dir}][_run-{run}][_space-{space}][_res-{res}][_den-{den}]_desc-eye_report.html",
-    "no_label_bold": "sub-{subject}/[ses-{session}]/func/sub-{subject}[_ses-{session}]_task-{task}[_acq-{acquisition}][_ce-{ce}][_rec-{rec}][_dir-{dir}][_run-{run}][_space-{space}][_res-{res}][_den-{den}]_desc-eye_bold.npz",
-    "no_label_json": "sub-{subject}/[ses-{session}]/func/sub-{subject}[_ses-{session}]_task-{task}[_acq-{acquisition}][_ce-{ce}][_rec-{rec}][_dir-{dir}][_run-{run}][_space-{space}][_res-{res}][_den-{den}]_desc-eye_bold.json",
+    "no_label_bold": "sub-{subject}/[ses-{session}]/func/sub-{subject}[_ses-{session}]_task-{task}[_acq-{acquisition}][_ce-{ce}][_rec-{rec}][_dir-{dir}][_run-{run}][_space-{space}][_res-{res}][_den-{den}]_desc-eye_timeseries.npz",
+    "no_label_json": "sub-{subject}/[ses-{session}]/func/sub-{subject}[_ses-{session}]_task-{task}[_acq-{acquisition}][_ce-{ce}][_rec-{rec}][_dir-{dir}][_run-{run}][_space-{space}][_res-{res}][_den-{den}]_desc-eye_timeseries.json",
     "confounds_tsv": "sub-{subject}/[ses-{session}]/func/sub-{subject}[_ses-{session}]_task-{task}[_acq-{acquisition}][_ce-{ce}][_rec-{rec}][_dir-{dir}][_run-{run}][_space-{space}]_desc-{desc}_eyetrack.tsv",
     "confounds_json": "sub-{subject}/[ses-{session}]/func/sub-{subject}[_ses-{session}]_task-{task}[_acq-{acquisition}][_ce-{ce}][_rec-{rec}][_dir-{dir}][_run-{run}][_space-{space}]_desc-{desc}_eyetrack.json",
     "confounds_html": "sub-{subject}/[ses-{session}]/figures/sub-{subject}[_ses-{session}]_task-{task}[_acq-{acquisition}][_ce-{ce}][_rec-{rec}][_dir-{dir}][_run-{run}][_space-{space}]_desc-{desc}_eyetrack.html",
