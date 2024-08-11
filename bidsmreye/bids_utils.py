@@ -175,7 +175,7 @@ def create_sidecar(
         content["Sources"] = [source]  # type: ignore
     sidecar_name = create_bidsname(layout, filename, "no_label_json")
     json.dump(content, open(sidecar_name, "w"), indent=4)
-    log.debug(f"sidecar saved to {sidecar_name}")
+    log.debug(f"Sidecar saved to {sidecar_name}")
 
 
 def save_sampling_frequency_to_json(
@@ -222,7 +222,7 @@ def get_dataset_layout(
     if config is None:
         pybids_config = get_pybids_config()
 
-    log.info(f"indexing {dataset_path}")
+    log.info(f"Indexing {dataset_path}")
 
     if not use_database:
         return BIDSLayout(
@@ -294,7 +294,7 @@ def list_subjects(cfg: Config, layout: BIDSLayout) -> list[str]:
         subjects = [subjects[0]]
         log.debug("Running first subject only.")
 
-    log.info(f"processing subjects: {subjects}")
+    log.info(f"Processing subjects: {subjects}")
 
     return subjects
 

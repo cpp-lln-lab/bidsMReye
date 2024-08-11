@@ -85,8 +85,8 @@ def collect_group_qc_data(cfg: Config) -> pd.DataFrame | None:
         "NbDisplacementOutliers",
         "NbXOutliers",
         "NbYOutliers",
-        "eye1XVar",
-        "eye1YVar",
+        "XVar",
+        "YVar",
     ]
     try:
         qc_data = qc_data[cols]
@@ -183,7 +183,7 @@ def group_report(cfg: Config) -> None:
         qc_data=qc_data,
         row=row,
         col=col,
-        column_names=["eye1XVar", "eye1YVar"],
+        column_names=["XVar", "YVar"],
         trace_names=["x gaze<br>position", "Y gaze<br>position"],
         ticktext=["X", "Y"],
         yaxes_title="variance (degrees<sup>2</sup>)",

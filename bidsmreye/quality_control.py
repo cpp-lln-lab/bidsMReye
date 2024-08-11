@@ -60,13 +60,43 @@ def add_qc_to_sidecar(confounds: pd.DataFrame, sidecar_name: Path) -> None:
         create_dir_for_file(file=sidecar_name)
         content = {}
 
-    content["NbDisplacementOutliers"] = confounds["displacement_outliers"].sum()
-    content["NbXOutliers"] = confounds["x_outliers"].sum()
-    content["NbYOutliers"] = confounds["y_outliers"].sum()
-    content["eye1XVar"] = confounds["x_coordinate"].var()
-    content["eye1YVar"] = confounds["y_coordinate"].var()
+    content["NbDisplacementOutliers"] = int(confounds["displacement_outliers"].sum())
+    content["NbXOutliers"] = int(confounds["x_outliers"].sum())
+    content["NbYOutliers"] = int(confounds["y_outliers"].sum())
+    content["XVar"] = confounds["x_coordinate"].var()
+    content["YVar"] = confounds["y_coordinate"].var()
+    content["Columns"] = confounds.columns.to_list()
 
-    json.dump(content, open(sidecar_name, "w"), indent=4)
+    content["displacement"] = {
+        "Description": (
+            "Framewise eye movement computed from the X and Y eye position "
+            "between 2 consecutives timeframes."
+        ),
+        "Units": "degrees",
+    }
+    content["displacement_outliers"] = {
+        "Description": (
+            "Displacement outliers computed using robust ouliers with Carling's k."
+        ),
+        "Levels": {"0": "not an outlier", "1": "outlier"},
+    }
+    content["x_outliers"] = {
+        "Description": (
+            "X position outliers computed using robust ouliers with Carling's k."
+        ),
+        "Levels": {"0": "not an outlier", "1": "outlier"},
+    }
+    content["y_outliers"] = {
+        "Description": (
+            "Y position outliers computed using robust ouliers with Carling's k."
+        ),
+        "Levels": {"0": "not an outlier", "1": "outlier"},
+    }
+
+    content = {key: content[key] for key in sorted(content)}
+
+    with open(sidecar_name, "w") as f:
+        json.dump(content, f, indent=4)
 
 
 def compute_displacement_and_outliers(confounds: pd.DataFrame) -> pd.DataFrame:
@@ -314,7 +344,7 @@ def compute_robust_outliers(
         # get the outliers in a normal distribution
         # no scaling needed as S estimates already std(data)
 
-        outliers = np.zeros(len(time_series))
+        outliers = np.zeros(len(time_series), dtype=np.int8)
         outliers[non_nan_idx] = (distance / Sn) > k
 
         return outliers.tolist()
@@ -340,7 +370,7 @@ def compute_robust_outliers(
         df = pd.DataFrame({"lt": lt, "gt": gt})
         outliers = df["lt"] | df["gt"]
 
-        return list(map(float, outliers))  # type: ignore
+        return list(map(np.int8, outliers))  # type: ignore
 
     else:
         raise ValueError(f"Unknown outlier_type: {outlier_type}")

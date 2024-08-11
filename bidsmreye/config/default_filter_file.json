@@ -10,12 +10,12 @@
         "extension": "p"
     },
     "no_label_bold": {
-        "desc": "nolabel",
+        "desc": "eye",
         "suffix": "^bold$$",
         "extension": "npz"
     },
     "no_label_bold_json": {
-        "desc": "nolabel",
+        "desc": "eye",
         "suffix": "^bold$$",
         "extension": "json"
     },

@@ -138,6 +138,11 @@ generalize: ## demo: predicts labels of MOAE dataset
 				generalize \
 				--model 1_guided_fixations \
 				-vv
+	bidsmreye 	$$PWD/tests/data/moae_fmriprep \
+				$$PWD/outputs/moae_fmriprep/derivatives \
+				participant \
+				generalize \
+				-vv
 
 # run demo via boutiques
 demo_boutiques: tests/data/moae_fmriprep

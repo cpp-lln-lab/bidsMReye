@@ -2,6 +2,6 @@
     "NbDisplacementOutliers": 3.0,
     "NbXOutliers": 7.0,
     "NbYOutliers": 0.0,
-    "eye1XVar": 0.0004570412431083883,
-    "eye1YVar": 0.0023510466096491
+    "XVar": 0.0004570412431083883,
+    "YVar": 0.0023510466096491
 }
