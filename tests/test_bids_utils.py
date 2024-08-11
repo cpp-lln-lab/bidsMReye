@@ -87,7 +87,7 @@ def test_save_sampling_frequency_to_json(data_dir, pybids_test_dataset):
     )
     source = "foo"
     save_sampling_frequency_to_json(layout_in, bf[0], source)
-    sidecar_name = create_bidsname(layout_in, bf[0].path, "confounds_json")
+    sidecar_name = create_bidsname(layout_in, bf[0].path, "no_label_json")
     with open(sidecar_name) as f:
         content = json.load(f)
     assert content["Sources"][0] == "foo"
