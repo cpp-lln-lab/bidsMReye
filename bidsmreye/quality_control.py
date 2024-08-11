@@ -23,6 +23,7 @@ from bidsmreye.configuration import Config
 from bidsmreye.logger import bidsmreye_log
 from bidsmreye.report import generate_report
 from bidsmreye.utils import (
+    add_timestamps_to_dataframe,
     check_if_file_found,
     create_dir_for_file,
     progress_bar,
@@ -162,15 +163,7 @@ def perform_quality_control(
         )
 
         if sampling_frequency is not None:
-            nb_timepoints = confounds.shape[0]
-            timestamp = np.arange(
-                0, 1 / sampling_frequency * nb_timepoints, 1 / sampling_frequency
-            )
-            confounds["timestamp"] = timestamp
-
-            cols = confounds.columns.tolist()
-            cols.insert(0, cols.pop(cols.index("timestamp")))
-            confounds = confounds[cols]
+            confounds = add_timestamps_to_dataframe(confounds, sampling_frequency)
 
     compute_displacement_and_outliers(confounds)
 
