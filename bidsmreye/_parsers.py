@@ -158,10 +158,13 @@ If your data is not in MNI space, bidsmreye will also register the data to MNI.
     prepare_parser = _add_common_arguments(prepare_parser)
     # TODO make it possible to pass path to a model ?
     prepare_parser.add_argument(
-        "--non_linear_coreg",
+        "--linear_coreg",
         help="""
-Uses a more aggressive (and non-linear) alignment procedure
-to the deepmreye template.""",
+Uses a less aggressive (and linear) alignment procedure
+to the deepmreye template.
+
+May lead to worse results so check your outputs.
+""",
         action="store_true",
     )
 
@@ -190,10 +193,12 @@ using the default pre-trained model of deepmreye.
     all_parser = _add_common_arguments(all_parser)
     # TODO make it possible to pass path to a model ?
     all_parser.add_argument(
-        "--non_linear_coreg",
+        "--linear_coreg",
         help="""
-Uses a more aggressive (and non-linear) alignment procedure
+Uses a less aggressive (and linear) alignment procedure
 to the deepmreye template.
+
+May lead to worse results so check your outputs.
 """,
         action="store_true",
     )

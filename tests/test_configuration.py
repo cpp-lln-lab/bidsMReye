@@ -17,7 +17,7 @@ def test_Config(data_dir, pybids_test_dataset):
         data_dir,
     )
     assert not cfg.debug
-    assert not cfg.non_linear_coreg
+    assert not cfg.linear_coreg
     assert cfg.input_dir == pybids_test_dataset
     assert cfg.output_dir == data_dir / "bidsmreye"
     assert sorted(cfg.subjects) == ["01", "02", "03", "04", "05"]

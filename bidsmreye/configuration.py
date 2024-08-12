@@ -54,7 +54,7 @@ No dataset_description.json found:
 
     debug: str | bool | None = field(kw_only=True, default=None)
     reset_database: bool = field(kw_only=True, default=False)
-    non_linear_coreg: bool = field(kw_only=True, default=False)
+    linear_coreg: bool = field(kw_only=True, default=False)
     force: bool = field(kw_only=True, default=False)
 
     has_GPU: bool = False

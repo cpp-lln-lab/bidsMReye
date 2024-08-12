@@ -11,7 +11,7 @@ cmd = (
     "$PWD/outputs/moae_fmriprep/derivatives "
     "participant "
     "all "
-    "--reset_database --non_linear_coreg --model 1_guided_fixations -vv"
+    "--reset_database --linear_coreg --model 1_guided_fixations -vv"
 )
 cmd = cmd.split(" ")
 

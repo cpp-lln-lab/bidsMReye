@@ -129,7 +129,7 @@ prepare: tests/data/moae_fmriprep ## demo: prepares the data of MOAE dataset
 				prepare \
 				-vv \
 				--reset_database \
-				--non_linear_coreg
+				--linear_coreg
 
 generalize: ## demo: predicts labels of MOAE dataset
 	bidsmreye 	$$PWD/tests/data/moae_fmriprep \

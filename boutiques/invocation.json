@@ -13,6 +13,6 @@
     "debug": false,
     "reset_database": true,
     "force": false,
-    "non_linear_coreg": true,
+    "linear_coreg": true,
     "model": "1_guided_fixations"
 }

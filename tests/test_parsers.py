@@ -14,12 +14,12 @@ def test_parser() -> None:
             "--task",
             "foo",
             "bar",
-            "--non_linear_coreg",
+            "--linear_coreg",
         ]
     )
 
     assert args.task == ["foo", "bar"]
-    assert args.non_linear_coreg
+    assert args.linear_coreg
 
 
 def test_parser_basic() -> None:
@@ -43,7 +43,7 @@ def test_parser_basic() -> None:
     )
 
     assert args.task == ["foo", "bar"]
-    assert args.non_linear_coreg is False
+    assert args.linear_coreg is False
 
 
 def test_download_parser():
