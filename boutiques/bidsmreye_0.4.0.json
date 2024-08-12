@@ -3,7 +3,7 @@
     "description": "bids app using deepMReye to decode eye motion for fMRI time series data",
     "tool-version": "0.4.0",
     "schema-version": "0.5",
-    "command-line": "bidsmreye [VERSION] [BIDS_DIR] [OUTPUT_DIR] [ANALYSIS_LEVEL] [COMMAND] [PARTICIPANT_LABEL] [TASK] [RUN] [SPACE] [LOG_LEVEL] [DEBUG] [RESET_DATABASE] [BIDS_FILTER_FILE] [FORCE] [NON_LINEAR_COREG] [MODEL]",
+    "command-line": "bidsmreye [VERSION] [BIDS_DIR] [OUTPUT_DIR] [ANALYSIS_LEVEL] [COMMAND] [PARTICIPANT_LABEL] [TASK] [RUN] [SPACE] [LOG_LEVEL] [DEBUG] [RESET_DATABASE] [BIDS_FILTER_FILE] [FORCE] [LINEAR_COREG] [MODEL]",
     "inputs": [
         {
             "name": "version",
@@ -132,13 +132,13 @@
             "value-key": "[FORCE]"
         },
         {
-            "name": "non_linear_coreg",
-            "id": "non_linear_coreg",
-            "description": "Uses a more aggressive (and non-linear) alignment procedure to the deepmreye template.",
+            "name": "linear_coreg",
+            "id": "linear_coreg",
+            "description": "Uses a less aggressive (linear) alignment procedure to the deepmreye template.",
             "type": "Flag",
             "optional": true,
-            "command-line-flag": "--non_linear_coreg",
-            "value-key": "[NON_LINEAR_COREG]"
+            "command-line-flag": "--linear_coreg",
+            "value-key": "[LINEAR_COREG]"
         },
         {
             "name": "model",
@@ -187,7 +187,7 @@
                     "reset_database",
                     "debug",
                     "force",
-                    "non_linear_coreg",
+                    "linear_coreg",
                     "log_level",
                     "run",
                     "space",
@@ -199,7 +199,6 @@
                     "reset_database",
                     "debug",
                     "force",
-                    "non_linear_coreg",
                     "log_level",
                     "model",
                     "run",
@@ -212,13 +211,12 @@
                     "reset_database",
                     "debug",
                     "force",
-                    "non_linear_coreg",
+                    "linear_coreg",
                     "log_level",
                     "model",
                     "run",
                     "space",
                     "bids_filter_file",
-                    "participant_label",
                     "task"
                 ]
             }

@@ -48,18 +48,19 @@ clean-test: ## remove test and coverage artifacts
 	rm -fr htmlcov/
 	rm -fr .pytest_cache
 
+
 ## INSTALL
 
 install_dev: clean ## install the package and development dependencies to the active Python's site-packages
 	pip install -e .[dev]
 	make models
 
-release: dist ## package and upload a release
-	twine upload dist/*
-
 dist: clean ## builds source and wheel package
 	python -m build
 	ls -l dist
+
+release: dist ## package and upload a release
+	twine upload dist/*
 
 
 ## PRE-TRAINED MODELS
@@ -82,6 +83,7 @@ models/dataset4_pursuit.h5:
 	bidsmreye_model --model 4_pursuit
 models/dataset5_free_viewing.h5:
 	bidsmreye_model --model 5_free_viewing
+
 
 ## DOC
 .PHONY: docs docs/source/FAQ.md
@@ -129,7 +131,7 @@ prepare: tests/data/moae_fmriprep ## demo: prepares the data of MOAE dataset
 				prepare \
 				-vv \
 				--reset_database \
-				--non_linear_coreg
+				--linear_coreg
 
 generalize: ## demo: predicts labels of MOAE dataset
 	bidsmreye 	$$PWD/tests/data/moae_fmriprep \

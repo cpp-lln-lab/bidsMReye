@@ -54,7 +54,7 @@ def cli(argv: Any = sys.argv) -> None:
         model_weights_file=model_weights_file,
         reset_database=args.reset_database,
         bids_filter_file=args.bids_filter_file,
-        non_linear_coreg=bool(getattr(args, "non_linear_coreg", False)),
+        linear_coreg=bool(getattr(args, "linear_coreg", False)),
         log_level_name=log_level_name,
         force=bool(getattr(args, "force", False)),
     )

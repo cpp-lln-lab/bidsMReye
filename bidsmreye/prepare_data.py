@@ -33,7 +33,7 @@ from bidsmreye.utils import (
 log = bidsmreye_log(name="bidsmreye")
 
 
-def coregister_and_extract_data(img: str, non_linear_coreg: bool = False) -> None:
+def coregister_and_extract_data(img: str, linear_coreg: bool = False) -> None:
     """Coregister image to eye template and extract data from eye mask for one image.
 
     :param img: Image to coregister and extract data from
@@ -49,7 +49,7 @@ def coregister_and_extract_data(img: str, non_linear_coreg: bool = False) -> Non
         z_edges,
     ) = preprocess.get_masks()
 
-    transforms = ["Affine", "Affine", "SyNAggro"] if non_linear_coreg else None
+    transforms = None if linear_coreg else ["Affine", "Affine", "SyNAggro"]
 
     preprocess.run_participant(
         img,
@@ -168,7 +168,7 @@ def prepapre_image(
 
     log.info(f"Processing file: {Path(img_path).name}")
 
-    coregister_and_extract_data(img_path, non_linear_coreg=cfg.non_linear_coreg)
+    coregister_and_extract_data(img_path, linear_coreg=cfg.linear_coreg)
 
     deepmreye_mask_report = get_deepmreye_filename(
         layout_in, img=img_path, filetype="report"
@@ -205,8 +205,8 @@ def prepare_data(cfg: Config) -> None:
     subjects = list_subjects(cfg, layout_in)
 
     text = "PREPARING DATA"
-    if cfg.non_linear_coreg:
-        log.info("Using non-linear coregistration")
+    if cfg.linear_coreg:
+        log.info("Using linear coregistration")
 
     with progress_bar(text=text) as progress:
         subject_loop = progress.add_task(

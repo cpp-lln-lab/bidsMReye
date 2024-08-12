@@ -27,7 +27,7 @@ def bidsmreye(
     model_weights_file: str | None = None,
     reset_database: bool | None = None,
     bids_filter_file: str | None = None,
-    non_linear_coreg: bool = False,
+    linear_coreg: bool = False,
     log_level_name: str | None = None,
     force: bool = False,
 ) -> None:
@@ -50,7 +50,7 @@ def bidsmreye(
         model_weights_file=model_weights_file,
         reset_database=reset_database,
         bids_filter=bids_filter,
-        non_linear_coreg=non_linear_coreg,
+        linear_coreg=linear_coreg,
         force=force,
     )  # type: ignore
 
