@@ -19,9 +19,6 @@ jobs:
             matrix:
                 os: [ubuntu-latest, macOS-latest] # windows-latest: do not work. antspyx is not available for windows
                 python-version: ['3.9', '3.10', '3.11']
-                # exclude:
-                # -   os: macOS-latest # anstpyx install is messed up with macOS and python 3.9
-                #     python-version: '3.9'
             fail-fast: false
 
         steps:
