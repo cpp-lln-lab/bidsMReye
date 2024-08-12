@@ -13,7 +13,7 @@ WORKDIR /home/neuro/bidsMReye
 COPY [".", "/home/neuro/bidsMReye"]
 RUN pip install --upgrade pip && \
     pip3 install -r requirements.txt && \
-    pip3 install .
+    git restore . && pip3 install .
 
 RUN bidsmreye_model
 
