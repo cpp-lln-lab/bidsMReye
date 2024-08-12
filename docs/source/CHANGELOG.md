@@ -23,7 +23,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+* [ENH] Extra metadata have been added to the output of the `generalize` step to better align with BIDS BEP20 @Remi-Gau in https://github.com/cpp-lln-lab/bidsMReye/pull/232
+
 ### Changed
+
+* [ENH] Output filenames of the prepare step has been changed to use the `timeseries` suffix and the output of the `generalize` step now include the name of the Deepmreye model used to compute them @Remi-Gau in https://github.com/cpp-lln-lab/bidsMReye/pull/232
 
 ### Deprecated
 

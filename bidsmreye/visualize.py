@@ -69,8 +69,6 @@ def collect_group_qc_data(cfg: Config) -> pd.DataFrame | None:
         with open(file.path) as f:
             data = json.loads(f.read())
 
-        print(data)
-
         df = pd.json_normalize(data)
         df["filename"] = Path(file.path).name
         df["subject"] = entities["subject"]
@@ -85,8 +83,8 @@ def collect_group_qc_data(cfg: Config) -> pd.DataFrame | None:
         "NbDisplacementOutliers",
         "NbXOutliers",
         "NbYOutliers",
-        "eye1XVar",
-        "eye1YVar",
+        "XVar",
+        "YVar",
     ]
     try:
         qc_data = qc_data[cols]
@@ -183,7 +181,7 @@ def group_report(cfg: Config) -> None:
         qc_data=qc_data,
         row=row,
         col=col,
-        column_names=["eye1XVar", "eye1YVar"],
+        column_names=["XVar", "YVar"],
         trace_names=["x gaze<br>position", "Y gaze<br>position"],
         ticktext=["X", "Y"],
         yaxes_title="variance (degrees<sup>2</sup>)",
@@ -312,12 +310,12 @@ def plot_time_series(
 ) -> None:
     outliers = None
 
-    values_to_plot = eye_gaze_data["eye1_x_coordinate"]
-    outliers = eye_gaze_data["eye1_x_outliers"]
+    values_to_plot = eye_gaze_data["x_coordinate"]
+    outliers = eye_gaze_data["x_outliers"]
     outlier_color = "orange"
     if title_text == "Y":
-        values_to_plot = eye_gaze_data["eye1_y_coordinate"]
-        outliers = eye_gaze_data["eye1_y_outliers"]
+        values_to_plot = eye_gaze_data["y_coordinate"]
+        outliers = eye_gaze_data["y_outliers"]
     elif title_text == "displacement":
         values_to_plot = eye_gaze_data["displacement"]
         outliers = eye_gaze_data["displacement_outliers"]
@@ -328,7 +326,7 @@ def plot_time_series(
 
     fig.add_trace(
         go.Scatter(
-            x=time_range(eye_gaze_data["eye_timestamp"]),
+            x=time_range(eye_gaze_data["timestamp"]),
             y=[0, 0],
             mode="lines",
             line_color="black",
@@ -340,7 +338,7 @@ def plot_time_series(
 
     fig.add_trace(
         go.Scatter(
-            x=eye_gaze_data["eye_timestamp"],
+            x=eye_gaze_data["timestamp"],
             y=values_to_plot,
             mode="lines",
             line_color=line_color,
@@ -353,7 +351,7 @@ def plot_time_series(
     if outliers is not None:
         fig.add_trace(
             go.Scatter(
-                x=eye_gaze_data["eye_timestamp"][outliers == 1],
+                x=eye_gaze_data["timestamp"][outliers == 1],
                 y=values_to_plot[outliers == 1],
                 mode="markers",
                 marker_color=outlier_color,
@@ -364,7 +362,7 @@ def plot_time_series(
         )
 
     fig.update_xaxes(
-        range=time_range(eye_gaze_data["eye_timestamp"]),
+        range=time_range(eye_gaze_data["timestamp"]),
         row=row,
         col=col,
         gridcolor=GRID_COLOR,
@@ -392,8 +390,8 @@ def plot_time_series(
 
 
 def plot_heat_map(fig: Any, eye_gaze_data: pd.DataFrame) -> None:
-    X = eye_gaze_data["eye1_x_coordinate"]
-    Y = eye_gaze_data["eye1_y_coordinate"]
+    X = eye_gaze_data["x_coordinate"]
+    Y = eye_gaze_data["y_coordinate"]
 
     x_range = value_range(X)
     y_range = value_range(Y)
@@ -438,10 +436,10 @@ def plot_heat_map(fig: Any, eye_gaze_data: pd.DataFrame) -> None:
         col=3,
     )
 
-    outliers = eye_gaze_data["eye1_x_outliers"]
+    outliers = eye_gaze_data["x_outliers"]
     outlier_color = "orange"
     add_outliers_to_heatmap(fig, X, Y, outliers, outlier_color)
-    outliers = eye_gaze_data["eye1_y_outliers"]
+    outliers = eye_gaze_data["y_outliers"]
     add_outliers_to_heatmap(fig, X, Y, outliers, outlier_color)
     outliers = eye_gaze_data["displacement_outliers"]
     outlier_color = "red"

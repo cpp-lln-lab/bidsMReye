@@ -45,7 +45,7 @@ def test_group_report_missing_qc(tmp_path, data_dir):
         / "sub-9001"
         / "ses-1"
         / "func"
-        / "sub-9001_ses-1_task-rest_desc-bidsmreye_eyetrack.json"
+        / "sub-9001_ses-1_task-rest_desc-1to6_eyetrack.json"
     )
 
     with open(file_to_modify, "w") as f:

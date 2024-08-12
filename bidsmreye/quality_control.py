@@ -17,11 +17,13 @@ from bidsmreye.bids_utils import (
     get_dataset_layout,
     init_dataset,
     list_subjects,
+    return_desc_entity,
 )
 from bidsmreye.configuration import Config
 from bidsmreye.logger import bidsmreye_log
 from bidsmreye.report import generate_report
 from bidsmreye.utils import (
+    add_timestamps_to_dataframe,
     check_if_file_found,
     create_dir_for_file,
     progress_bar,
@@ -59,33 +61,63 @@ def add_qc_to_sidecar(confounds: pd.DataFrame, sidecar_name: Path) -> None:
         create_dir_for_file(file=sidecar_name)
         content = {}
 
-    content["NbDisplacementOutliers"] = confounds["displacement_outliers"].sum()
-    content["NbXOutliers"] = confounds["eye1_x_outliers"].sum()
-    content["NbYOutliers"] = confounds["eye1_y_outliers"].sum()
-    content["eye1XVar"] = confounds["eye1_x_coordinate"].var()
-    content["eye1YVar"] = confounds["eye1_y_coordinate"].var()
+    content["NbDisplacementOutliers"] = int(confounds["displacement_outliers"].sum())
+    content["NbXOutliers"] = int(confounds["x_outliers"].sum())
+    content["NbYOutliers"] = int(confounds["y_outliers"].sum())
+    content["XVar"] = confounds["x_coordinate"].var()
+    content["YVar"] = confounds["y_coordinate"].var()
+    content["Columns"] = confounds.columns.to_list()
 
-    json.dump(content, open(sidecar_name, "w"), indent=4)
+    content["displacement"] = {
+        "Description": (
+            "Framewise eye movement computed from the X and Y eye position "
+            "between 2 consecutives timeframes."
+        ),
+        "Units": "degrees",
+    }
+    content["displacement_outliers"] = {
+        "Description": (
+            "Displacement outliers computed using robust ouliers with Carling's k."
+        ),
+        "Levels": {"0": "not an outlier", "1": "outlier"},
+    }
+    content["x_outliers"] = {
+        "Description": (
+            "X position outliers computed using robust ouliers with Carling's k."
+        ),
+        "Levels": {"0": "not an outlier", "1": "outlier"},
+    }
+    content["y_outliers"] = {
+        "Description": (
+            "Y position outliers computed using robust ouliers with Carling's k."
+        ),
+        "Levels": {"0": "not an outlier", "1": "outlier"},
+    }
+
+    content = {key: content[key] for key in sorted(content)}
+
+    with open(sidecar_name, "w") as f:
+        json.dump(content, f, indent=4)
 
 
 def compute_displacement_and_outliers(confounds: pd.DataFrame) -> pd.DataFrame:
     confounds["displacement"] = compute_displacement(
-        confounds["eye1_x_coordinate"], confounds["eye1_y_coordinate"]
+        confounds["x_coordinate"], confounds["y_coordinate"]
     )
 
     confounds["displacement_outliers"] = compute_robust_outliers(
         confounds["displacement"], outlier_type="Carling"
     )
 
-    confounds["eye1_x_outliers"] = compute_robust_outliers(
-        confounds["eye1_x_coordinate"], outlier_type="Carling"
+    confounds["x_outliers"] = compute_robust_outliers(
+        confounds["x_coordinate"], outlier_type="Carling"
     )
-    log.debug(f"Found {confounds['eye1_x_outliers'].sum()} x outliers")
+    log.debug(f"Found {confounds['x_outliers'].sum()} x outliers")
 
-    confounds["eye1_y_outliers"] = compute_robust_outliers(
-        confounds["eye1_y_coordinate"], outlier_type="Carling"
+    confounds["y_outliers"] = compute_robust_outliers(
+        confounds["y_coordinate"], outlier_type="Carling"
     )
-    log.debug(f"Found {confounds['eye1_y_outliers'].sum()} y outliers")
+    log.debug(f"Found {confounds['y_outliers'].sum()} y outliers")
 
     return confounds
 
@@ -122,19 +154,16 @@ def perform_quality_control(
 
     confounds = pd.read_csv(confounds_tsv, sep="\t")
 
-    if "eye_timestamp" not in confounds.columns:
-        sampling_frequency = get_sampling_frequency(layout_in, confounds_tsv)
+    if "timestamp" not in confounds.columns:
+        extra_entities = None
+        if cfg.model_weights_file is not None:
+            extra_entities = {"desc": return_desc_entity(Path(cfg.model_weights_file))}
+        sampling_frequency = get_sampling_frequency(
+            layout_in, confounds_tsv, extra_entities=extra_entities
+        )
 
         if sampling_frequency is not None:
-            nb_timepoints = confounds.shape[0]
-            eye_timestamp = np.arange(
-                0, 1 / sampling_frequency * nb_timepoints, 1 / sampling_frequency
-            )
-            confounds["eye_timestamp"] = eye_timestamp
-
-            cols = confounds.columns.tolist()
-            cols.insert(0, cols.pop(cols.index("eye_timestamp")))
-            confounds = confounds[cols]
+            confounds = add_timestamps_to_dataframe(confounds, sampling_frequency)
 
     compute_displacement_and_outliers(confounds)
 
@@ -151,11 +180,15 @@ def perform_quality_control(
     confounds.to_csv(confounds_tsv, sep="\t", index=False)
 
 
-def get_sampling_frequency(layout: BIDSLayout, file: str | Path) -> float | None:
+def get_sampling_frequency(
+    layout: BIDSLayout, file: str | Path, extra_entities: dict[str, str] | None = None
+) -> float | None:
     """Get the sampling frequency from the sidecar JSON file."""
     sampling_frequency = None
 
-    sidecar_name = create_bidsname(layout, file, "confounds_json")
+    sidecar_name = create_bidsname(
+        layout, file, "confounds_json", extra_entities=extra_entities
+    )
 
     # TODO: deal with cases where the sidecar is in the root of the dataset
     if sidecar_name.is_file():
@@ -164,6 +197,11 @@ def get_sampling_frequency(layout: BIDSLayout, file: str | Path) -> float | None
             SamplingFrequency = content.get("SamplingFrequency", None)
             if SamplingFrequency is not None and SamplingFrequency > 0:
                 sampling_frequency = SamplingFrequency
+    else:
+        log.error(
+            "The following sidecar was not found. "
+            f"Cannot infer sampling frequency.\n{sidecar_name}."
+        )
 
     return sampling_frequency
 
@@ -299,7 +337,7 @@ def compute_robust_outliers(
         # get the outliers in a normal distribution
         # no scaling needed as S estimates already std(data)
 
-        outliers = np.zeros(len(time_series))
+        outliers = np.zeros(len(time_series), dtype=np.int8)
         outliers[non_nan_idx] = (distance / Sn) > k
 
         return outliers.tolist()
@@ -325,7 +363,7 @@ def compute_robust_outliers(
         df = pd.DataFrame({"lt": lt, "gt": gt})
         outliers = df["lt"] | df["gt"]
 
-        return list(map(float, outliers))  # type: ignore
+        return list(map(np.int8, outliers))  # type: ignore
 
     else:
         raise ValueError(f"Unknown outlier_type: {outlier_type}")

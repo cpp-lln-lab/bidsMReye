@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import json
 import logging
 import os
+import shutil
 import warnings
 from pathlib import Path
 from typing import Any
@@ -20,12 +22,13 @@ from bidsmreye.bids_utils import (
     create_bidsname,
     get_dataset_layout,
     list_subjects,
+    return_desc_entity,
 )
 from bidsmreye.configuration import Config
 from bidsmreye.logger import bidsmreye_log
 from bidsmreye.quality_control import quality_control_output
 from bidsmreye.utils import (
-    add_sidecar_in_root,
+    add_timestamps_to_dataframe,
     check_if_file_found,
     create_dir_for_file,
     move_file,
@@ -70,7 +73,9 @@ def create_and_save_figure(
     fig.write_image(confound_svg)
 
 
-def convert_confounds(layout_out: BIDSLayout, file: str | Path) -> Path:
+def convert_confounds(
+    layout_out: BIDSLayout, file: str | Path, extra_entities: dict[str, str] | None = None
+) -> Path:
     """Convert numpy output to TSV.
 
     :param layout_out: pybids layout to of the dataset to act on.
@@ -86,7 +91,43 @@ def convert_confounds(layout_out: BIDSLayout, file: str | Path) -> Path:
     but should still be able to unpack the results from a numpy file
     with results from multiple files.
     """
-    confound_numpy = create_bidsname(layout_out, file, "confounds_numpy")
+    COLUMNS = ["timestamp", "x_coordinate", "y_coordinate"]
+
+    bold_json = Path(file).with_suffix(".json")
+    confounds_json = create_bidsname(
+        layout_out, file, "confounds_json", extra_entities=extra_entities
+    )
+    shutil.copyfile(bold_json, confounds_json)
+    with open(confounds_json) as f:
+        metadata = json.load(f)
+    metadata["StartTime"] = 0.0
+    metadata["Columns"] = COLUMNS
+    metadata["PhysioType"] = "eyetrack"
+    metadata["EnvironmentCoordinates"] = "center"
+    metadata["RecordedEye"] = "cyclopean"
+    metadata["timestamp"] = {
+        "Description": (
+            "Timestamp indexing the continuous recordings "
+            "corresponding to the sampled eye."
+        ),
+        "Units": "seconds",
+    }
+    metadata["x_coordinate"] = {
+        "Description": ("Gaze position x-coordinate of the recorded eye."),
+        "Units": "degrees",
+    }
+    metadata["y_coordinate"] = {
+        "Description": ("Gaze position y-coordinate of the recorded eye."),
+        "Units": "degrees",
+    }
+    with open(confounds_json, "w") as f:
+        metadata = {key: metadata[key] for key in sorted(metadata)}
+        json.dump(metadata, f, indent=4)
+    log.debug(f"Sidecar saved to {confounds_json}")
+
+    confound_numpy = create_bidsname(
+        layout_out, file, "confounds_numpy", extra_entities=extra_entities
+    )
 
     content = np.load(
         file=confound_numpy,
@@ -100,14 +141,19 @@ def convert_confounds(layout_out: BIDSLayout, file: str | Path) -> Path:
 
             this_pred = np.nanmedian(item["pred_y"], axis=1)
 
-        confound_name = create_bidsname(layout_out, Path(key + "p"), "confounds_tsv")
+        confound_name = create_bidsname(
+            layout_out, Path(key + "p"), "confounds_tsv", extra_entities=extra_entities
+        )
 
         log.info(f"Saving eye gaze data to {confound_name.relative_to(layout_out.root)}")
 
-        pd.DataFrame(this_pred).to_csv(
+        df = pd.DataFrame(this_pred)
+        df = add_timestamps_to_dataframe(df, metadata["SamplingFrequency"])
+
+        df.to_csv(
             confound_name,
             sep="\t",
-            header=["eye1_x_coordinate", "eye1_y_coordinate"],
+            header=COLUMNS,
             index=None,
         )
 
@@ -117,7 +163,12 @@ def convert_confounds(layout_out: BIDSLayout, file: str | Path) -> Path:
     return confound_name
 
 
-def create_confounds_tsv(layout_out: BIDSLayout, file: str, subject_label: str) -> None:
+def create_confounds_tsv(
+    layout_out: BIDSLayout,
+    file: str,
+    subject_label: str,
+    extra_entities: dict[str, str] | None = None,
+) -> None:
     """Generate a TSV file for the eye motion timeseries.
 
     :param layout_out:
@@ -129,7 +180,9 @@ def create_confounds_tsv(layout_out: BIDSLayout, file: str, subject_label: str) 
     :param subject_label:
     :type subject_label: str
     """
-    confound_numpy = create_bidsname(layout_out, file, "confounds_numpy")
+    confound_numpy = create_bidsname(
+        layout_out, file, "confounds_numpy", extra_entities=extra_entities
+    )
 
     source_file = Path(layout_out.root) / f"sub-{subject_label}" / "results_tmp.npy"
 
@@ -138,7 +191,7 @@ def create_confounds_tsv(layout_out: BIDSLayout, file: str, subject_label: str) 
         confound_numpy,
     )
 
-    convert_confounds(layout_out, file)
+    convert_confounds(layout_out, file, extra_entities=extra_entities)
 
 
 def process_subject(cfg: Config, layout_out: BIDSLayout, subject_label: str) -> None:
@@ -155,7 +208,7 @@ def process_subject(cfg: Config, layout_out: BIDSLayout, subject_label: str) -> 
     """
     log.info(f"Running subject: {subject_label}")
 
-    this_filter = set_this_filter(cfg, subject_label, "no_label")
+    this_filter = set_this_filter(cfg, subject_label, "no_label_bold")
 
     bf = layout_out.get(
         regex_search=True,
@@ -199,7 +252,10 @@ def process_subject(cfg: Config, layout_out: BIDSLayout, subject_label: str) -> 
             percentile_cut=80,
         )
 
-        create_confounds_tsv(layout_out, file.path, subject_label)
+        extra_entities = None
+        if cfg.model_weights_file is not None:
+            extra_entities = {"desc": return_desc_entity(Path(cfg.model_weights_file))}
+        create_confounds_tsv(layout_out, file.path, subject_label, extra_entities)
 
 
 def generalize(cfg: Config) -> None:
@@ -210,8 +266,6 @@ def generalize(cfg: Config) -> None:
     """
     layout_out = get_dataset_layout(cfg.output_dir)
     check_layout(cfg, layout_out)
-
-    add_sidecar_in_root(layout_out)
 
     subjects = list_subjects(cfg, layout_out)
 

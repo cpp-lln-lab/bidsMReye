@@ -20,8 +20,6 @@ def test_combine_data_with_empty_labels(output_dir):
 
     assert no_label_file.exists()
 
-    output_file = create_bidsname(layout_out, file, "no_label")
+    output_file = create_bidsname(layout_out, file, "no_label_bold")
     file_to_move = Path(layout_out.root) / ".." / "bidsmreye" / output_file.name
     assert no_label_file == file_to_move
-
-    no_label_file.unlink()

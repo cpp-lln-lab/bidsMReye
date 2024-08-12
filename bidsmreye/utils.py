@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-import json
 import re
 import shutil
 from pathlib import Path
 from typing import Any
 
+import numpy as np
+import pandas as pd
 from bids import BIDSLayout  # type: ignore
 from bids.layout import BIDSFile
 from rich.progress import (
@@ -53,18 +54,6 @@ def copy_license(output_dir: Path) -> Path:
         shutil.copy(input_file, output_dir)
         move_file(output_dir / "CCO", output_file)
     return output_file
-
-
-def add_sidecar_in_root(layout_out: BIDSLayout) -> None:
-    content = {
-        "StartTime": 0,
-        "SampleCoordinateUnit": "degrees",
-        "EnvironmentCoordinates": "center",
-        "SampleCoordinateSystem": "gaze-on-screen",
-        "RecordedEye": "both",
-    }
-    sidecar_name = Path(layout_out.root) / "desc-bidsmreye_eyetrack.json"
-    json.dump(content, open(sidecar_name, "w"), indent=4)
 
 
 def check_if_file_found(
@@ -216,3 +205,15 @@ def return_deepmreye_output_filename(filename: str, filetype: str | None = None)
         filename = "report_" + re.sub(r"\.nii.*", ".html", filename)
 
     return filename
+
+
+def add_timestamps_to_dataframe(df: pd.DataFrame, sampling_frequency: float):
+    nb_timepoints = df.shape[0]
+    timestamp = np.arange(
+        0, 1 / sampling_frequency * nb_timepoints, 1 / sampling_frequency
+    )
+    df["timestamp"] = timestamp
+
+    cols = df.columns.tolist()
+    cols.insert(0, cols.pop(cols.index("timestamp")))
+    return df[cols]

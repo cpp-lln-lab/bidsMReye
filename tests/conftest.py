@@ -23,7 +23,7 @@ def data_dir():
 
 
 @pytest.fixture
-def output_dir(tmp_path, data_dir):
+def output_dir(tmp_path, data_dir) -> Path:
     src_dir = data_dir / "bidsmreye"
     target_dir = tmp_path / "bidsmreye"
     target_dir.mkdir()
@@ -44,8 +44,8 @@ def bidsmreye_eyetrack_tsv(output_dir):
 @pytest.fixture
 def create_basic_data():
     return {
-        "eye1_x_coordinate": np.random.randn(400),
-        "eye1_y_coordinate": np.random.randn(400),
+        "x_coordinate": np.random.randn(400),
+        "y_coordinate": np.random.randn(400),
     }
 
 
@@ -75,21 +75,21 @@ def generate_confounds_tsv(create_data_with_outliers):
         df = pd.DataFrame(create_data_with_outliers)
 
         df["displacement"] = compute_displacement(
-            df["eye1_x_coordinate"],
-            df["eye1_y_coordinate"],
+            df["x_coordinate"],
+            df["y_coordinate"],
         )
-        df["eye1_x_outliers"] = compute_robust_outliers(
-            df["eye1_x_coordinate"], outlier_type="Carling"
+        df["x_outliers"] = compute_robust_outliers(
+            df["x_coordinate"], outlier_type="Carling"
         )
-        df["eye1_y_outliers"] = compute_robust_outliers(
-            df["eye1_y_coordinate"], outlier_type="Carling"
+        df["y_outliers"] = compute_robust_outliers(
+            df["y_coordinate"], outlier_type="Carling"
         )
         df["displacement_outliers"] = compute_robust_outliers(
             df["displacement"], outlier_type="Carling"
         )
 
         cols = df.columns.tolist()
-        cols.insert(0, cols.pop(cols.index("eye_timestamp")))
+        cols.insert(0, cols.pop(cols.index("timestamp")))
         df = df[cols]
 
         df.to_csv(filename, sep="\t", index=False)
@@ -101,19 +101,15 @@ def generate_confounds_tsv(create_data_with_outliers):
 def create_data_with_outliers(create_basic_data):
     data = create_basic_data
 
-    data["eye_timestamp"] = np.arange(400)
+    data["timestamp"] = np.arange(400)
 
-    eye1_x_coordinate = data["eye1_x_coordinate"]
-    eye1_y_coordinate = data["eye1_y_coordinate"]
+    x_coordinate = data["x_coordinate"]
+    y_coordinate = data["y_coordinate"]
 
-    data["eye1_x_coordinate"][200] = (
-        eye1_x_coordinate.mean() + eye1_x_coordinate.std() * 4
-    )
-    data["eye1_y_coordinate"][200] = (
-        eye1_y_coordinate.mean() - eye1_y_coordinate.std() * 5
-    )
-    data["eye1_x_coordinate"][50] = eye1_x_coordinate.mean() - eye1_x_coordinate.std() * 5
-    data["eye1_y_coordinate"][50] = eye1_y_coordinate.mean() + eye1_y_coordinate.std() * 4
+    data["x_coordinate"][200] = x_coordinate.mean() + x_coordinate.std() * 4
+    data["y_coordinate"][200] = y_coordinate.mean() - y_coordinate.std() * 5
+    data["x_coordinate"][50] = x_coordinate.mean() - x_coordinate.std() * 5
+    data["y_coordinate"][50] = y_coordinate.mean() + y_coordinate.std() * 4
 
     return data
 
