@@ -27,13 +27,13 @@ repos:
         args: [--autofix, --indent, '4']
 
 -   repo: https://github.com/asottile/pyupgrade
-    rev: v3.17.0
+    rev: v3.18.0
     hooks:
     -   id: pyupgrade
         args: [--py38-plus]
 
 -   repo: https://github.com/seddonym/import-linter
-    rev: v2.0
+    rev: v2.1
     hooks:
     -   id: import-linter
 
@@ -44,7 +44,7 @@ repos:
         args: [--settings-path, pyproject.toml]
 
 -   repo: https://github.com/adamchainz/blacken-docs
-    rev: 1.18.0
+    rev: 1.19.0
     hooks:
     -   id: blacken-docs
         additional_dependencies:
