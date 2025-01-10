@@ -13,7 +13,7 @@ from bidsmreye.quality_control import compute_displacement, compute_robust_outli
 
 @pytest.fixture
 def pybids_test_dataset(data_dir) -> Path:
-    return data_dir / "synthetic"
+    return data_dir / "synthetic" / "derivatives" / "fmriprep"
 
 
 @pytest.fixture
