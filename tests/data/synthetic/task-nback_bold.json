@@ -1,0 +1,5 @@
+{
+    "TaskName": "N-Back",
+    "RepetitionTime": 2.5,
+    "EchoTime": 0.03
+}

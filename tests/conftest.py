@@ -7,14 +7,13 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import pytest
-from bids.tests import get_test_data_path
 
 from bidsmreye.quality_control import compute_displacement, compute_robust_outliers
 
 
 @pytest.fixture
-def pybids_test_dataset() -> Path:
-    return Path(get_test_data_path()) / "synthetic" / "derivatives" / "fmriprep"
+def pybids_test_dataset(data_dir) -> Path:
+    return data_dir / "synthetic" / "derivatives" / "fmriprep"
 
 
 @pytest.fixture
