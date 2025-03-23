@@ -33,7 +33,7 @@ repos:
         args: [--py38-plus]
 
 -   repo: https://github.com/seddonym/import-linter
-    rev: v2.2
+    rev: v2.3
     hooks:
     -   id: import-linter
 
