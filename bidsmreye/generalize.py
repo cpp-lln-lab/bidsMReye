@@ -227,7 +227,7 @@ def process_subject(cfg: Config, layout_out: BIDSLayout, subject_label: str) -> 
 
         opts = model_opts.get_opts()
 
-        (_, model_inference) = train.train_model(
+        _, model_inference = train.train_model(
             dataset="example_data",
             generators=generators,
             opts=opts,
@@ -241,7 +241,7 @@ def process_subject(cfg: Config, layout_out: BIDSLayout, subject_label: str) -> 
         elif log.isEnabledFor(logging.INFO):
             verbose = 1
 
-        (_, _) = train.evaluate_model(
+        _, _ = train.evaluate_model(
             dataset="tmp",
             model=model_inference,
             generators=generators,

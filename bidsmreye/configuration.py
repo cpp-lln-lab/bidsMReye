@@ -35,11 +35,9 @@ class Config:
             )
 
         if not (value / "dataset_description.json").is_file():
-            raise ValueError(
-                f"""input_dir does not seem to be a valid BIDS dataset.
+            raise ValueError(f"""input_dir does not seem to be a valid BIDS dataset.
 No dataset_description.json found:
-\t{value.absolute()}."""
-            )
+\t{value.absolute()}.""")
 
     output_dir: Path = field(default=None, converter=Path)
 
