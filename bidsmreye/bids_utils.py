@@ -36,11 +36,8 @@ def check_layout(cfg: Config, layout: BIDSLayout, for_file: str = "bold") -> Non
     :raises RuntimeError: _description_
     """
     desc = layout.get_dataset_description()
-    if (
-        "DatasetType" not in desc
-        and "PipelineDescription" not in desc
-        or "DatasetType" in desc
-        and desc["DatasetType"] != "derivative"
+    if ("DatasetType" not in desc and "PipelineDescription" not in desc) or (
+        "DatasetType" in desc and desc["DatasetType"] != "derivative"
     ):
         raise RuntimeError(
             "DatasetType must be 'derivative' in dataset_description.json\n."
