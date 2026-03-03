@@ -113,22 +113,18 @@ layers = [
 name = "Layered architecture"
 type = "layers"
 
-[tool.isort]
-combine_as_imports = true
-line_length = 90
-profile = "black"
-skip_gitignore = true
-
 [tool.mypy]
 check_untyped_defs = true
 disallow_any_generics = true
 disallow_incomplete_defs = false
 disallow_untyped_defs = false
-# enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"]
+enable_error_code = ["redundant-expr", "truthy-bool"]
+# enable_error_code = ["ignore-without-code", "redundant-expr", "truthy-bool"] # TODO
 exclude = ['tests/']
 no_implicit_optional = true
 plugins = ["numpy.typing.mypy_plugin", "pydantic.mypy"]
 warn_redundant_casts = true
+# warn_unreachable = true # TODO
 warn_unused_ignores = true
 
 [[tool.mypy.overrides]]
@@ -161,8 +157,112 @@ warn_untyped_fields = true
 [tool.pytest.ini_options]
 addopts = "-ra --cov bidsmreye --strict-config --strict-markers --doctest-modules --showlocals -s -vv --durations=0"
 doctest_optionflags = "NORMALIZE_WHITESPACE ELLIPSIS"
+filterwarnings = ["error"]
 junit_family = "xunit2"
 log_cli_level = "INFO"
+log_level = "INFO"
 minversion = "6.0"
 testpaths = ["tests"]
 xfail_strict = true
+
+[tool.ruff]
+extend-exclude = ["bidsmreye/_version.py"]
+include = [
+    "pyproject.toml",
+    "bidsmreye/**/*.py",
+    "tools/**/*.py",
+    "doc/**/*.py"
+]
+indent-width = 4
+line-length = 90
+
+[tool.ruff.format]
+docstring-code-format = true
+docstring-code-line-length = "dynamic"
+indent-style = "space"
+line-ending = "auto"
+quote-style = "double"
+skip-magic-trailing-comma = false
+
+[tool.ruff.lint]
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+fixable = ["ALL"]
+ignore = [
+    "ARG001",
+    "ARG002",
+    "ERA001",
+    "D100",
+    "D103",
+    "D203",
+    "D213",
+    "N802",
+    "N803",
+    "N806",
+    "N816",
+    "N815",
+    "PLR2004",
+    "PD003",
+    "PGH003",
+    "PTH100",
+    "PTH107",
+    "PTH103",
+    "PTH123",
+    "SIM115",
+    "NPY002",
+    # Avoid linter rules conflicting with the formatter
+    # https://docs.astral.sh/ruff/formatter/#conflicting-lint-rules
+    "COM812",
+    "COM819",
+    "E111",
+    "E114",
+    "E117",
+    "Q000",
+    "Q001",
+    "Q002",
+    "Q003",
+    "W191"
+]
+# List of all the ruff rules (includes why the rule matters)
+# https://docs.astral.sh/ruff/rules/
+select = [
+    "ARG",
+    "B",
+    "C4",
+    "C90",
+    "D",
+    "E",
+    "ERA",
+    "F",
+    "FLY",
+    "FURB",
+    "I",
+    "N",
+    "NPY",
+    "PERF",
+    "PIE",
+    "PTH",
+    "PD",
+    "PGH",
+    "PLR",
+    "RUF",
+    "SIM",
+    "UP",
+    "W"
+]
+unfixable = []
+
+[tool.ruff.lint.mccabe]
+max-complexity = 15
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["D104"]
+
+[tool.ruff.lint.pylint]
+# https://docs.astral.sh/ruff/settings/#lint_pylint_max-args
+max-args = 27
+# https://docs.astral.sh/ruff/settings/#lint_pylint_max-branches
+max-branches = 22
+# https://docs.astral.sh/ruff/settings/#lint_pylint_max-returns
+max-returns = 8
+# https://docs.astral.sh/ruff/settings/#lint_pylint_max-statements
+max-statements = 96

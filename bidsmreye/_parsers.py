@@ -10,7 +10,7 @@ from bidsmreye.defaults import available_models, default_model
 def _base_parser(formatter_class: type[HelpFormatter] = HelpFormatter) -> ArgumentParser:
     parser = ArgumentParser(
         description=(
-            "BIDS app using deepMReye to decode " "eye motion for fMRI time series data."
+            "BIDS app using deepMReye to decode eye motion for fMRI time series data."
         ),
         epilog="""
         For a more readable version of this help section,

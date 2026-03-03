@@ -325,7 +325,7 @@ def compute_robust_outliers(
             indices.pop(i)
 
             tmp = time_series[indices]
-            tmp.dropna(inplace=True)
+            tmp = tmp.dropna()
 
             # median of all pair-wise distances
             distance.append(np.median(abs(this_timepoint - tmp)))
