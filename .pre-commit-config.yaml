@@ -3,14 +3,25 @@ repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
     hooks:
-    -   id: end-of-file-fixer
-    -   id: check-added-large-files
+    -   id: check-ast
     -   id: check-case-conflict
     -   id: check-json
     -   id: check-merge-conflict
+    -   id: check-toml
     -   id: check-yaml
-    -   id: debug-statements
+    -   id: end-of-file-fixer
+    -   id: mixed-line-ending
+        args: [--fix=lf]
     -   id: trailing-whitespace
+
+    # Checks for .rst files
+-   repo: https://github.com/pre-commit/pygrep-hooks
+    rev: v1.10.0
+    hooks:
+    -   id: rst-backticks
+    -   id: rst-directive-colons
+    -   id: rst-inline-touching-normal
+
 -   repo: https://github.com/jumanjihouse/pre-commit-hook-yamlfmt
     rev: 0.2.3
     hooks:
@@ -22,6 +33,7 @@ repos:
         -   '4'
         -   --offset
         -   '0'
+
 -   repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
     rev: v2.16.0
     hooks:
@@ -30,35 +42,38 @@ repos:
         -   --autofix
         -   --indent
         -   '4'
+
 -   repo: https://github.com/asottile/pyupgrade
     rev: v3.21.2
     hooks:
     -   id: pyupgrade
         args:
         -   --py38-plus
+
 -   repo: https://github.com/seddonym/import-linter
     rev: v2.11
     hooks:
     -   id: import-linter
--   repo: https://github.com/pycqa/isort
-    rev: 8.0.1
-    hooks:
-    -   id: isort
-        args:
-        -   --settings-path
-        -   pyproject.toml
+        args: [--verbose]
+        language: python
+
 -   repo: https://github.com/adamchainz/blacken-docs
     rev: 1.20.0
     hooks:
     -   id: blacken-docs
         additional_dependencies:
         -   black==24.2.0
--   repo: https://github.com/psf/black-pre-commit-mirror
-    rev: 26.3.0
+
+    # Lint and format Python code
+-   repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.1
     hooks:
-    -   id: black
-        args:
-        -   --config=pyproject.toml
+    -   id: ruff-check
+        # args: [--statistics]
+        args: [--fix, --show-fixes, --unsafe-fixes]
+    -   id: ruff-format
+        # args: [--diff]
+
 -   repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.19.1
     hooks:
@@ -71,28 +86,14 @@ repos:
         args:
         -   --config-file
         -   pyproject.toml
+
 -   repo: https://github.com/codespell-project/codespell
     rev: v2.4.2
     hooks:
     -   id: codespell
-        args:
-        -   --toml=pyproject.toml
-        additional_dependencies:
-        -   tomli
--   repo: https://github.com/pycqa/flake8
-    rev: 7.3.0
-    hooks:
-    -   id: flake8
-        exclude: tests_.*.py|version.*.py|setup.py
-        args:
-        -   --config
-        -   .flake8
-        -   --verbose
-        additional_dependencies:
-        -   flake8-docstrings
-        -   flake8-use-fstring
-        -   flake8-functions
-        -   flake8-bugbear
+        args: [--toml=pyproject.toml]
+        additional_dependencies: [tomli]
+
 ci:
     autoupdate_commit_msg: 'chore: update pre-commit hooks'
     autoupdate_schedule: monthly
