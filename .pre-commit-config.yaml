@@ -1,6 +1,4 @@
 ---
-# See https://pre-commit.com for more information
-# See https://pre-commit.com/hooks.html for more hooks
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
@@ -28,22 +26,32 @@ repos:
     rev: 0.2.3
     hooks:
     -   id: yamlfmt
-        args: [--mapping, '4', --sequence, '4', --offset, '0']
+        args:
+        -   --mapping
+        -   '4'
+        -   --sequence
+        -   '4'
+        -   --offset
+        -   '0'
 
 -   repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
     rev: v2.16.0
     hooks:
     -   id: pretty-format-toml
-        args: [--autofix, --indent, '4']
+        args:
+        -   --autofix
+        -   --indent
+        -   '4'
 
 -   repo: https://github.com/asottile/pyupgrade
     rev: v3.21.2
     hooks:
     -   id: pyupgrade
-        args: [--py38-plus]
+        args:
+        -   --py38-plus
 
 -   repo: https://github.com/seddonym/import-linter
-    rev: v2.10
+    rev: v2.11
     hooks:
     -   id: import-linter
         args: [--verbose]
@@ -55,12 +63,6 @@ repos:
     -   id: blacken-docs
         additional_dependencies:
         -   black==24.2.0
-
--   repo: https://github.com/psf/black-pre-commit-mirror
-    rev: 26.1.0
-    hooks:
-    -   id: black
-        args: [--config=pyproject.toml]
 
     # Lint and format Python code
 -   repo: https://github.com/astral-sh/ruff-pre-commit
@@ -76,12 +78,17 @@ repos:
     rev: v1.19.1
     hooks:
     -   id: mypy
-        additional_dependencies: [pydantic, numpy, types-Jinja2]
+        additional_dependencies:
+        -   pydantic
+        -   numpy
+        -   types-Jinja2
         files: bidsmreye
-        args: [--config-file, pyproject.toml]
+        args:
+        -   --config-file
+        -   pyproject.toml
 
 -   repo: https://github.com/codespell-project/codespell
-    rev: v2.4.1
+    rev: v2.4.2
     hooks:
     -   id: codespell
         args: [--toml=pyproject.toml]
@@ -89,5 +96,5 @@ repos:
 
 ci:
     autoupdate_commit_msg: 'chore: update pre-commit hooks'
-    autofix_commit_msg: 'style: pre-commit fixes'
     autoupdate_schedule: monthly
+    autofix_commit_msg: 'style: pre-commit fixes'
