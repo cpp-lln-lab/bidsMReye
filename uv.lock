@@ -1,6 +1,8 @@
 requires-python = ">=3.10.0, <3.12"
 resolution-markers = [
-    "python_full_version >= '3.11'",
+    "python_full_version >= '3.11' and sys_platform == 'win32'",
+    "python_full_version >= '3.11' and sys_platform == 'emscripten'",
+    "python_full_version >= '3.11' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version < '3.11'"
 ]
 revision = 3
@@ -39,7 +41,8 @@ dependencies = [
     {name = "matplotlib"},
     {name = "nibabel"},
     {name = "numpy"},
-    {name = "pandas"},
+    {name = "pandas", version = "2.3.3", source = {registry = "https://pypi.org/simple"}, marker = "python_full_version < '3.11'"},
+    {name = "pandas", version = "3.0.1", source = {registry = "https://pypi.org/simple"}, marker = "python_full_version >= '3.11'"},
     {name = "pillow"},
     {name = "pyyaml"},
     {name = "scikit-image", version = "0.25.2", source = {registry = "https://pypi.org/simple"}, marker = "python_full_version < '3.11'"},
@@ -190,17 +193,17 @@ test = [
 [package.metadata]
 requires-dist = [
     {name = "antspyx", specifier = "<0.5"},
-    {name = "anywidget"},
-    {name = "attrs"},
+    {name = "anywidget", specifier = ">=0.9.21"},
+    {name = "attrs", specifier = ">=26.1.0"},
     {name = "deepmreye", specifier = ">=0.2.1"},
-    {name = "jinja2"},
-    {name = "kaleido"},
+    {name = "jinja2", specifier = ">=3.1.6"},
+    {name = "kaleido", specifier = ">=1.2.0"},
     {name = "keras", specifier = "<3.0.0"},
     {name = "pooch", specifier = ">=1.6.0"},
-    {name = "pybids"},
+    {name = "pybids", specifier = ">=0.22.0"},
     {name = "rich-argparse"},
     {name = "tomli", marker = "python_full_version < '3.11'"},
-    {name = "tqdm"}
+    {name = "tqdm", specifier = ">=4.67.3"}
 ]
 
 [package.metadata.requires-dev]
@@ -465,7 +468,9 @@ dependencies = [
 ]
 name = "contourpy"
 resolution-markers = [
-    "python_full_version >= '3.11'"
+    "python_full_version >= '3.11' and sys_platform == 'win32'",
+    "python_full_version >= '3.11' and sys_platform == 'emscripten'",
+    "python_full_version >= '3.11' and sys_platform != 'emscripten' and sys_platform != 'win32'"
 ]
 sdist = {url = "https://files.pythonhosted.org/packages/58/01/1253e6698a07380cd31a736d248a3f2a50a7c88779a1813da27503cadc2a/contourpy-1.3.3.tar.gz", hash = "sha256:083e12155b210502d0bca491432bb04d56dc3432f95a979b429f2848c3dbe880", size = 13466174, upload-time = "2025-07-26T12:03:12.549Z"}
 source = {registry = "https://pypi.org/simple"}
@@ -642,7 +647,9 @@ wheels = [
 [[package]]
 name = "docutils"
 resolution-markers = [
-    "python_full_version >= '3.11'"
+    "python_full_version >= '3.11' and sys_platform == 'win32'",
+    "python_full_version >= '3.11' and sys_platform == 'emscripten'",
+    "python_full_version >= '3.11' and sys_platform != 'emscripten' and sys_platform != 'win32'"
 ]
 sdist = {url = "https://files.pythonhosted.org/packages/ae/b6/03bb70946330e88ffec97aefd3ea75ba575cb2e762061e0e62a213befee8/docutils-0.22.4.tar.gz", hash = "sha256:4db53b1fde9abecbb74d91230d32ab626d94f6badfc575d6db9194a49df29968", size = 2291750, upload-time = "2025-12-18T19:00:26.443Z"}
 source = {registry = "https://pypi.org/simple"}
@@ -735,19 +742,21 @@ wheels = [
 [[package]]
 dependencies = [
     {name = "interface-meta"},
+    {name = "narwhals"},
     {name = "numpy"},
-    {name = "pandas"},
+    {name = "pandas", version = "2.3.3", source = {registry = "https://pypi.org/simple"}, marker = "python_full_version < '3.11'"},
+    {name = "pandas", version = "3.0.1", source = {registry = "https://pypi.org/simple"}, marker = "python_full_version >= '3.11'"},
     {name = "scipy", version = "1.15.3", source = {registry = "https://pypi.org/simple"}, marker = "python_full_version < '3.11'"},
     {name = "scipy", version = "1.17.1", source = {registry = "https://pypi.org/simple"}, marker = "python_full_version >= '3.11'"},
     {name = "typing-extensions"},
     {name = "wrapt"}
 ]
 name = "formulaic"
-sdist = {url = "https://files.pythonhosted.org/packages/8d/98/a045ff811d7138b6f28a86055865672a025a7f5fd5a7946916ebde998a03/formulaic-1.0.2.tar.gz", hash = "sha256:6eb65bedd1903c5381d8f2ae7a55b6ba13cb77d57bbaf6e4278f3b2c38e3660e", size = 430653, upload-time = "2024-07-12T18:49:23.673Z"}
+sdist = {url = "https://files.pythonhosted.org/packages/6a/8b/8038d2af289a5cc194fa0a255fe964a1a04e0e6ca4426aed8841a4b571e6/formulaic-1.2.1.tar.gz", hash = "sha256:dc79476baa2d811b35798893eb2f2c1e51edee8d7a9c1429b400e56f4e0beccc", size = 655266, upload-time = "2025-09-21T05:27:31.488Z"}
 source = {registry = "https://pypi.org/simple"}
-version = "1.0.2"
+version = "1.2.1"
 wheels = [
-    {url = "https://files.pythonhosted.org/packages/f7/a3/eeb29e0dbfd6ef0bafd0b3107649e0b8a02b382265f5e9572c7bda22eeff/formulaic-1.0.2-py3-none-any.whl", hash = "sha256:663328b038a0eb7644f59400615da7abf2672b0e11124b3bef3307afc441d97c", size = 94532, upload-time = "2024-07-12T18:49:25.594Z"}
+    {url = "https://files.pythonhosted.org/packages/1a/9d/c2c8b51b32f829a16fe042db30ad1dcef7947bf1dcf77c2cfd7b6f37b83a/formulaic-1.2.1-py3-none-any.whl", hash = "sha256:661d6d2467aa961b9afb3a1e2a187494239793c63eb729e422d1307afa98b43b", size = 117290, upload-time = "2025-09-21T05:27:30.025Z"}
 ]
 
 [[package]]
@@ -1023,7 +1032,9 @@ dependencies = [
 ]
 name = "ipython"
 resolution-markers = [
-    "python_full_version >= '3.11'"
+    "python_full_version >= '3.11' and sys_platform == 'win32'",
+    "python_full_version >= '3.11' and sys_platform == 'emscripten'",
+    "python_full_version >= '3.11' and sys_platform != 'emscripten' and sys_platform != 'win32'"
 ]
 sdist = {url = "https://files.pythonhosted.org/packages/a6/60/2111715ea11f39b1535bed6024b7dec7918b71e5e5d30855a5b503056b50/ipython-9.10.0.tar.gz", hash = "sha256:cd9e656be97618a0676d058134cd44e6dc7012c0e5cb36a9ce96a8c904adaf77", size = 4426526, upload-time = "2026-02-02T10:00:33.594Z"}
 source = {registry = "https://pypi.org/simple"}
@@ -1289,7 +1300,9 @@ dependencies = [
 ]
 name = "markdown-it-py"
 resolution-markers = [
-    "python_full_version >= '3.11'"
+    "python_full_version >= '3.11' and sys_platform == 'win32'",
+    "python_full_version >= '3.11' and sys_platform == 'emscripten'",
+    "python_full_version >= '3.11' and sys_platform != 'emscripten' and sys_platform != 'win32'"
 ]
 sdist = {url = "https://files.pythonhosted.org/packages/5b/f5/4ec618ed16cc4f8fb3b701563655a69816155e79e24a17b651541804721d/markdown_it_py-4.0.0.tar.gz", hash = "sha256:cb0a2b4aa34f932c007117b194e945bd74e0ec24133ceb5bac59009cda1cb9f3", size = 73070, upload-time = "2025-08-11T12:57:52.854Z"}
 source = {registry = "https://pypi.org/simple"}
@@ -1451,7 +1464,9 @@ dependencies = [
 ]
 name = "myst-parser"
 resolution-markers = [
-    "python_full_version >= '3.11'"
+    "python_full_version >= '3.11' and sys_platform == 'win32'",
+    "python_full_version >= '3.11' and sys_platform == 'emscripten'",
+    "python_full_version >= '3.11' and sys_platform != 'emscripten' and sys_platform != 'win32'"
 ]
 sdist = {url = "https://files.pythonhosted.org/packages/33/fa/7b45eef11b7971f0beb29d27b7bfe0d747d063aa29e170d9edd004733c8a/myst_parser-5.0.0.tar.gz", hash = "sha256:f6f231452c56e8baa662cc352c548158f6a16fcbd6e3800fc594978002b94f3a", size = 98535, upload-time = "2026-01-15T09:08:18.036Z"}
 source = {registry = "https://pypi.org/simple"}
@@ -1484,7 +1499,9 @@ wheels = [
 [[package]]
 name = "networkx"
 resolution-markers = [
-    "python_full_version >= '3.11'"
+    "python_full_version >= '3.11' and sys_platform == 'win32'",
+    "python_full_version >= '3.11' and sys_platform == 'emscripten'",
+    "python_full_version >= '3.11' and sys_platform != 'emscripten' and sys_platform != 'win32'"
 ]
 sdist = {url = "https://files.pythonhosted.org/packages/6a/51/63fe664f3908c97be9d2e4f1158eb633317598cfa6e1fc14af5383f17512/networkx-3.6.1.tar.gz", hash = "sha256:26b7c357accc0c8cde558ad486283728b65b6a95d85ee1cd66bafab4c8168509", size = 2517025, upload-time = "2025-12-08T17:02:39.908Z"}
 source = {registry = "https://pypi.org/simple"}
@@ -1618,12 +1635,15 @@ wheels = [
 
 [[package]]
 dependencies = [
-    {name = "numpy"},
-    {name = "python-dateutil"},
-    {name = "pytz"},
-    {name = "tzdata"}
+    {name = "numpy", marker = "python_full_version < '3.11'"},
+    {name = "python-dateutil", marker = "python_full_version < '3.11'"},
+    {name = "pytz", marker = "python_full_version < '3.11'"},
+    {name = "tzdata", marker = "python_full_version < '3.11'"}
 ]
 name = "pandas"
+resolution-markers = [
+    "python_full_version < '3.11'"
+]
 sdist = {url = "https://files.pythonhosted.org/packages/33/01/d40b85317f86cf08d853a4f495195c73815fdf205eef3993821720274518/pandas-2.3.3.tar.gz", hash = "sha256:e05e1af93b977f7eafa636d043f9f94c7ee3ac81af99c13508215942e64c993b", size = 4495223, upload-time = "2025-09-29T23:34:51.853Z"}
 source = {registry = "https://pypi.org/simple"}
 version = "2.3.3"
@@ -1642,6 +1662,32 @@ wheels = [
     {url = "https://files.pythonhosted.org/packages/f2/00/a5ac8c7a0e67fd1a6059e40aa08fa1c52cc00709077d2300e210c3ce0322/pandas-2.3.3-cp311-cp311-musllinux_1_2_aarch64.whl", hash = "sha256:1d37b5848ba49824e5c30bedb9c830ab9b7751fd049bc7914533e01c65f79791", size = 13240453, upload-time = "2025-09-29T23:19:09.247Z"},
     {url = "https://files.pythonhosted.org/packages/27/4d/5c23a5bc7bd209231618dd9e606ce076272c9bc4f12023a70e03a86b4067/pandas-2.3.3-cp311-cp311-musllinux_1_2_x86_64.whl", hash = "sha256:db4301b2d1f926ae677a751eb2bd0e8c5f5319c9cb3f88b0becbbb0b07b34151", size = 13890361, upload-time = "2025-09-29T23:19:25.342Z"},
     {url = "https://files.pythonhosted.org/packages/8e/59/712db1d7040520de7a4965df15b774348980e6df45c129b8c64d0dbe74ef/pandas-2.3.3-cp311-cp311-win_amd64.whl", hash = "sha256:f086f6fe114e19d92014a1966f43a3e62285109afe874f067f5abbdcbb10e59c", size = 11348702, upload-time = "2025-09-29T23:19:38.296Z"}
+]
+
+[[package]]
+dependencies = [
+    {name = "numpy", marker = "python_full_version >= '3.11'"},
+    {name = "python-dateutil", marker = "python_full_version >= '3.11'"},
+    {name = "tzdata", marker = "(python_full_version >= '3.11' and sys_platform == 'emscripten') or (python_full_version >= '3.11' and sys_platform == 'win32')"}
+]
+name = "pandas"
+resolution-markers = [
+    "python_full_version >= '3.11' and sys_platform == 'win32'",
+    "python_full_version >= '3.11' and sys_platform == 'emscripten'",
+    "python_full_version >= '3.11' and sys_platform != 'emscripten' and sys_platform != 'win32'"
+]
+sdist = {url = "https://files.pythonhosted.org/packages/2e/0c/b28ed414f080ee0ad153f848586d61d1878f91689950f037f976ce15f6c8/pandas-3.0.1.tar.gz", hash = "sha256:4186a699674af418f655dbd420ed87f50d56b4cd6603784279d9eef6627823c8", size = 4641901, upload-time = "2026-02-17T22:20:16.434Z"}
+source = {registry = "https://pypi.org/simple"}
+version = "3.0.1"
+wheels = [
+    {url = "https://files.pythonhosted.org/packages/ff/07/c7087e003ceee9b9a82539b40414ec557aa795b584a1a346e89180853d79/pandas-3.0.1-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:de09668c1bf3b925c07e5762291602f0d789eca1b3a781f99c1c78f6cac0e7ea", size = 10323380, upload-time = "2026-02-17T22:18:16.133Z"},
+    {url = "https://files.pythonhosted.org/packages/c1/27/90683c7122febeefe84a56f2cde86a9f05f68d53885cebcc473298dfc33e/pandas-3.0.1-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:24ba315ba3d6e5806063ac6eb717504e499ce30bd8c236d8693a5fd3f084c796", size = 9923455, upload-time = "2026-02-17T22:18:19.13Z"},
+    {url = "https://files.pythonhosted.org/packages/0e/f1/ed17d927f9950643bc7631aa4c99ff0cc83a37864470bc419345b656a41f/pandas-3.0.1-cp311-cp311-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:406ce835c55bac912f2a0dcfaf27c06d73c6b04a5dde45f1fd3169ce31337389", size = 10753464, upload-time = "2026-02-17T22:18:21.134Z"},
+    {url = "https://files.pythonhosted.org/packages/2e/7c/870c7e7daec2a6c7ff2ac9e33b23317230d4e4e954b35112759ea4a924a7/pandas-3.0.1-cp311-cp311-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:830994d7e1f31dd7e790045235605ab61cff6c94defc774547e8b7fdfbff3dc7", size = 11255234, upload-time = "2026-02-17T22:18:24.175Z"},
+    {url = "https://files.pythonhosted.org/packages/5c/39/3653fe59af68606282b989c23d1a543ceba6e8099cbcc5f1d506a7bae2aa/pandas-3.0.1-cp311-cp311-musllinux_1_2_aarch64.whl", hash = "sha256:a64ce8b0f2de1d2efd2ae40b0abe7f8ae6b29fbfb3812098ed5a6f8e235ad9bf", size = 11767299, upload-time = "2026-02-17T22:18:26.824Z"},
+    {url = "https://files.pythonhosted.org/packages/9b/31/1daf3c0c94a849c7a8dab8a69697b36d313b229918002ba3e409265c7888/pandas-3.0.1-cp311-cp311-musllinux_1_2_x86_64.whl", hash = "sha256:9832c2c69da24b602c32e0c7b1b508a03949c18ba08d4d9f1c1033426685b447", size = 12333292, upload-time = "2026-02-17T22:18:28.996Z"},
+    {url = "https://files.pythonhosted.org/packages/1f/67/af63f83cd6ca603a00fe8530c10a60f0879265b8be00b5930e8e78c5b30b/pandas-3.0.1-cp311-cp311-win_amd64.whl", hash = "sha256:84f0904a69e7365f79a0c77d3cdfccbfb05bf87847e3a51a41e1426b0edb9c79", size = 9892176, upload-time = "2026-02-17T22:18:31.79Z"},
+    {url = "https://files.pythonhosted.org/packages/79/ab/9c776b14ac4b7b4140788eca18468ea39894bc7340a408f1d1e379856a6b/pandas-3.0.1-cp311-cp311-win_arm64.whl", hash = "sha256:4a68773d5a778afb31d12e34f7dd4612ab90de8c6fb1d8ffe5d4a03b955082a1", size = 9151328, upload-time = "2026-02-17T22:18:35.721Z"}
 ]
 
 [[package]]
@@ -1676,7 +1722,7 @@ wheels = [
 
 [[package]]
 dependencies = [
-    {name = "ptyprocess"}
+    {name = "ptyprocess", marker = "(python_full_version < '3.11' and sys_platform == 'emscripten') or (python_full_version < '3.11' and sys_platform == 'win32') or (sys_platform != 'emscripten' and sys_platform != 'win32')"}
 ]
 name = "pexpect"
 sdist = {url = "https://files.pythonhosted.org/packages/42/92/cc564bf6381ff43ce1f4d06852fc19a2f11d180f23dc32d9588bee2f149d/pexpect-4.9.0.tar.gz", hash = "sha256:ee7d41123f3c9911050ea2c2dac107568dc43b2d3b0c7557a33212c398ead30f", size = 166450, upload-time = "2023-11-25T09:07:26.339Z"}
@@ -1878,7 +1924,8 @@ dependencies = [
     {name = "nibabel"},
     {name = "num2words"},
     {name = "numpy"},
-    {name = "pandas"},
+    {name = "pandas", version = "2.3.3", source = {registry = "https://pypi.org/simple"}, marker = "python_full_version < '3.11'"},
+    {name = "pandas", version = "3.0.1", source = {registry = "https://pypi.org/simple"}, marker = "python_full_version >= '3.11'"},
     {name = "scipy", version = "1.15.3", source = {registry = "https://pypi.org/simple"}, marker = "python_full_version < '3.11'"},
     {name = "scipy", version = "1.17.1", source = {registry = "https://pypi.org/simple"}, marker = "python_full_version >= '3.11'"},
     {name = "sqlalchemy"},
@@ -2272,7 +2319,9 @@ dependencies = [
 ]
 name = "scikit-image"
 resolution-markers = [
-    "python_full_version >= '3.11'"
+    "python_full_version >= '3.11' and sys_platform == 'win32'",
+    "python_full_version >= '3.11' and sys_platform == 'emscripten'",
+    "python_full_version >= '3.11' and sys_platform != 'emscripten' and sys_platform != 'win32'"
 ]
 sdist = {url = "https://files.pythonhosted.org/packages/a1/b4/2528bb43c67d48053a7a649a9666432dc307d66ba02e3a6d5c40f46655df/scikit_image-0.26.0.tar.gz", hash = "sha256:f5f970ab04efad85c24714321fcc91613fcb64ef2a892a13167df2f3e59199fa", size = 22729739, upload-time = "2025-12-20T17:12:21.824Z"}
 source = {registry = "https://pypi.org/simple"}
@@ -2324,7 +2373,9 @@ dependencies = [
 ]
 name = "scikit-learn"
 resolution-markers = [
-    "python_full_version >= '3.11'"
+    "python_full_version >= '3.11' and sys_platform == 'win32'",
+    "python_full_version >= '3.11' and sys_platform == 'emscripten'",
+    "python_full_version >= '3.11' and sys_platform != 'emscripten' and sys_platform != 'win32'"
 ]
 sdist = {url = "https://files.pythonhosted.org/packages/0e/d4/40988bf3b8e34feec1d0e6a051446b1f66225f8529b9309becaeef62b6c4/scikit_learn-1.8.0.tar.gz", hash = "sha256:9bccbb3b40e3de10351f8f5068e105d0f4083b1a65fa07b6634fbc401a6287fd", size = 7335585, upload-time = "2025-12-10T07:08:53.618Z"}
 source = {registry = "https://pypi.org/simple"}
@@ -2376,7 +2427,9 @@ dependencies = [
 ]
 name = "scipy"
 resolution-markers = [
-    "python_full_version >= '3.11'"
+    "python_full_version >= '3.11' and sys_platform == 'win32'",
+    "python_full_version >= '3.11' and sys_platform == 'emscripten'",
+    "python_full_version >= '3.11' and sys_platform != 'emscripten' and sys_platform != 'win32'"
 ]
 sdist = {url = "https://files.pythonhosted.org/packages/7a/97/5a3609c4f8d58b039179648e62dd220f89864f56f7357f5d4f45c29eb2cc/scipy-1.17.1.tar.gz", hash = "sha256:95d8e012d8cb8816c226aef832200b1d45109ed4464303e997c5b13122b297c0", size = 30573822, upload-time = "2026-02-23T00:26:24.851Z"}
 source = {registry = "https://pypi.org/simple"}
@@ -2509,7 +2562,9 @@ dependencies = [
 ]
 name = "sphinx"
 resolution-markers = [
-    "python_full_version >= '3.11'"
+    "python_full_version >= '3.11' and sys_platform == 'win32'",
+    "python_full_version >= '3.11' and sys_platform == 'emscripten'",
+    "python_full_version >= '3.11' and sys_platform != 'emscripten' and sys_platform != 'win32'"
 ]
 sdist = {url = "https://files.pythonhosted.org/packages/42/50/a8c6ccc36d5eacdfd7913ddccd15a9cee03ecafc5ee2bc40e1f168d85022/sphinx-9.0.4.tar.gz", hash = "sha256:594ef59d042972abbc581d8baa577404abe4e6c3b04ef61bd7fc2acbd51f3fa3", size = 8710502, upload-time = "2025-12-04T07:45:27.343Z"}
 source = {registry = "https://pypi.org/simple"}
@@ -2691,7 +2746,8 @@ wheels = [
 dependencies = [
     {name = "numpy"},
     {name = "packaging"},
-    {name = "pandas"},
+    {name = "pandas", version = "2.3.3", source = {registry = "https://pypi.org/simple"}, marker = "python_full_version < '3.11'"},
+    {name = "pandas", version = "3.0.1", source = {registry = "https://pypi.org/simple"}, marker = "python_full_version >= '3.11'"},
     {name = "patsy"},
     {name = "scipy", version = "1.15.3", source = {registry = "https://pypi.org/simple"}, marker = "python_full_version < '3.11'"},
     {name = "scipy", version = "1.17.1", source = {registry = "https://pypi.org/simple"}, marker = "python_full_version >= '3.11'"}
@@ -2864,7 +2920,9 @@ dependencies = [
 ]
 name = "tifffile"
 resolution-markers = [
-    "python_full_version >= '3.11'"
+    "python_full_version >= '3.11' and sys_platform == 'win32'",
+    "python_full_version >= '3.11' and sys_platform == 'emscripten'",
+    "python_full_version >= '3.11' and sys_platform != 'emscripten' and sys_platform != 'win32'"
 ]
 sdist = {url = "https://files.pythonhosted.org/packages/c5/cb/2f6d79c7576e22c116352a801f4c3c8ace5957e9aced862012430b62e14f/tifffile-2026.3.3.tar.gz", hash = "sha256:d9a1266bed6f2ee1dd0abde2018a38b4f8b2935cb843df381d70ac4eac5458b7", size = 388745, upload-time = "2026-03-03T19:14:38.134Z"}
 source = {registry = "https://pypi.org/simple"}
