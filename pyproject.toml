@@ -2,6 +2,26 @@
 build-backend = "hatchling.build"
 requires = ["hatchling", "hatch-vcs"]
 
+[dependency-groups]
+dev = [
+    {include-group = "test"},
+    {include-group = "doc"},
+    "tox>=4",
+    "tox-uv",
+    "pre-commit"
+]
+doc = [
+    "faqtory",
+    "myst-parser",
+    "rstcheck",
+    "sphinx",
+    "sphinx-argparse",
+    "sphinx-copybutton",
+    "sphinx-rtd-theme",
+    "sphinxcontrib-bibtex"
+]
+test = ["pytest>=6.0.0", "pytest-cov"]
+
 [project]
 authors = [{name = "Remi Gau", email = "remi.gau@gmail.com"}]
 classifiers = [
@@ -44,26 +64,7 @@ keywords = [
 license = {file = "LICENSE"}
 name = "bidsmreye"
 readme = "README.md"
-requires-python = ">=3.9.0"
-
-[project.optional-dependencies]
-dev = ["bidsmreye[doc,test,style]"]
-# also stored in docs/requirements.txt
-# to speed up readthedocs build
-doc = [
-    "faqtory",
-    "myst-parser",
-    "rstcheck",
-    "sphinx",
-    "sphinx-argparse",
-    "sphinx-copybutton",
-    "sphinx-rtd-theme",
-    "sphinxcontrib-bibtex"
-]
-docs = ["bidsmreye[doc]"]
-style = ["pre-commit", "sourcery"]
-test = ["pytest", "pytest-cov"]
-tests = ["bidsmreye[test]"]
+requires-python = ">=3.10.0,<3.12"
 
 [project.scripts]
 bidsmreye = "bidsmreye._cli:cli"
@@ -72,9 +73,6 @@ bidsmreye_model = "bidsmreye._cli:cli_download"
 [project.urls]
 "Bug Tracker" = "https://github.com/cpp-lln-lab/bidsMReye/issues"
 Homepage = "https://github.com/cpp-lln-lab/bidsMReye"
-
-[tool.black]
-line-length = 90
 
 [tool.codespell]
 builtin = "clear,rare"
