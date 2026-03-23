@@ -192,17 +192,17 @@ test = [
 
 [package.metadata]
 requires-dist = [
-    {name = "antspyx", specifier = "<0.5"},
+    {name = "antspyx", specifier = ">=0.4.2,<0.5"},
     {name = "anywidget", specifier = ">=0.9.21"},
     {name = "attrs", specifier = ">=26.1.0"},
     {name = "deepmreye", specifier = ">=0.2.1"},
     {name = "jinja2", specifier = ">=3.1.6"},
     {name = "kaleido", specifier = ">=1.2.0"},
-    {name = "keras", specifier = "<3.0.0"},
+    {name = "keras", specifier = ">=2.15.0,<3.0.0"},
     {name = "pooch", specifier = ">=1.6.0"},
     {name = "pybids", specifier = ">=0.22.0"},
-    {name = "rich-argparse"},
-    {name = "tomli", marker = "python_full_version < '3.11'"},
+    {name = "rich-argparse", specifier = ">=1.7.2"},
+    {name = "tomli", marker = "python_full_version < '3.11'", specifier = ">=2.4.0"},
     {name = "tqdm", specifier = ">=4.67.3"}
 ]
 

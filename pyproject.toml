@@ -37,18 +37,18 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Image Processing"
 ]
 dependencies = [
-    "antspyx<0.5",
+    "antspyx>=0.4.2,<0.5",
     "anywidget>=0.9.21",
     "attrs>=26.1.0",
     "deepmreye>=0.2.1",
     "jinja2>=3.1.6",
     "kaleido>=1.2.0",
-    "keras<3.0.0",
+    "keras>=2.15.0,<3.0.0",
     "pooch>=1.6.0",
     "pybids>=0.22.0",
     "tqdm>=4.67.3",
-    "tomli; python_version < '3.11'",
-    "rich_argparse"
+    "tomli>=2.4.0; python_version < '3.11'",
+    "rich_argparse>=1.7.2"
 ]
 description = "bids app using deepMReye to decode eye motion for fMRI time series data"
 dynamic = ["version"]
