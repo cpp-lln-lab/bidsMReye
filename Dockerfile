@@ -4,7 +4,7 @@ ARG DEBIAN_FRONTEND="noninteractive"
 
 RUN apt-get update -qq && \
     apt-get install -y -qq --no-install-recommends \
-        git curl ca-certificates && \
+        git && \
     rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /home/neuro/bidsMReye/models
