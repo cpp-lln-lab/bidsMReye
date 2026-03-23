@@ -17,14 +17,14 @@ from bidsmreye.logger import bidsmreye_log
 from bidsmreye.utils import check_if_file_found, set_this_filter
 
 LINE_WIDTH = 3
-FONT_SIZE = dict(size=14)
+FONT_SIZE = {"size": 14}
 GRID_COLOR = "grey"
 LINE_COLOR = "rgb(0, 150, 175)"
 BG_COLOR = "rgb(255,255,255)"
 HEAT_MAP_COLOR = "gnbu"
 MARKER_SIZE = 10
 
-TICK_FONT = dict(family="arial", color="black", size=14)
+TICK_FONT = {"family": "arial", "color": "black", "size": 14}
 
 X_POSITION_1 = 1
 X_POSITION_2 = 1.5
@@ -113,7 +113,7 @@ def plot_group_boxplot(
             go.Box(
                 x=np.ones(nb_data_points) * X_POSITION[i],
                 y=qc_data[this_column],
-                marker=dict(size=MARKER_SIZE, color=COLORS[i]),
+                marker={"size": MARKER_SIZE, "color": COLORS[i]},
                 name=trace_names[i],
             ),
             row=row,
@@ -128,7 +128,7 @@ def plot_group_boxplot(
     fig.update_yaxes(
         row=row,
         col=col,
-        title=dict(text=yaxes_title, font=FONT_SIZE),
+        title={"text": yaxes_title, "font": FONT_SIZE},
     )
 
 
@@ -186,7 +186,7 @@ def group_report(cfg: Config) -> None:
     )
 
     fig.update_yaxes(
-        title=dict(standoff=0, font=FONT_SIZE),
+        title={"standoff": 0, "font": FONT_SIZE},
         showline=True,
         linewidth=LINE_WIDTH - 1,
         linecolor="black",
@@ -215,9 +215,9 @@ def group_report(cfg: Config) -> None:
         boxmean=True,
         width=0.2,
         hovertext=qc_data["filename"],
-        marker=dict(size=MARKER_SIZE),
+        marker={"size": MARKER_SIZE},
         fillcolor="rgb(200, 200, 200)",
-        line=dict(color="black"),
+        line={"color": "black"},
     )
 
     fig.update_layout(
@@ -226,17 +226,17 @@ def group_report(cfg: Config) -> None:
         paper_bgcolor=BG_COLOR,
         height=800,
         width=800,
-        title=dict(
-            text=f"""<b>bidsmreye: group report</b><br>
+        title={
+            "text": f"""<b>bidsmreye: group report</b><br>
     <b>Summary</b><br>
     - Date and time: {datetime.now():%Y-%m-%d, %H:%M}<br>
     - bidsmreye version: {__version__}<br>
             """,
-            x=0.05,
-            y=0.95,
-            font=dict(size=19, color="black"),
-        ),
-        margin=dict(t=150, b=10, l=100, r=10, pad=0),
+            "x": 0.05,
+            "y": 0.95,
+            "font": {"size": 19, "color": "black"},
+        },
+        margin={"t": 150, "b": 10, "l": 100, "r": 10, "pad": 0},
     )
 
     fig.show()
@@ -288,7 +288,7 @@ def visualize_eye_gaze_data(
     fig.update_xaxes(
         row=3,
         col=1,
-        title=dict(text="Time (s)", standoff=16, font=FONT_SIZE),
+        title={"text": "Time (s)", "standoff": 16, "font": FONT_SIZE},
         tickfont=TICK_FONT,
     )
 
@@ -376,7 +376,7 @@ def plot_time_series(
         griddash="dot",
         gridwidth=0.5,
         ticksuffix="°",
-        title=dict(text=title_text, standoff=0, font=FONT_SIZE),
+        title={"text": title_text, "standoff": 0, "font": FONT_SIZE},
         tickfont=FONT_SIZE,
     )
 
@@ -428,7 +428,7 @@ def plot_heat_map(fig: Any, eye_gaze_data: pd.DataFrame) -> None:
             x=X,
             y=Y,
             opacity=0.4,
-            line=dict(color="black", width=1, dash="dash"),
+            line={"color": "black", "width": 1, "dash": "dash"},
         ),
         row=1,
         col=3,
@@ -448,7 +448,7 @@ def plot_heat_map(fig: Any, eye_gaze_data: pd.DataFrame) -> None:
         col=3,
         range=value_range(X),
         ticksuffix="°",
-        title=dict(text="X", standoff=16, font=FONT_SIZE),
+        title={"text": "X", "standoff": 16, "font": FONT_SIZE},
         tickfont=TICK_FONT,
     )
     fig.update_yaxes(
@@ -456,7 +456,7 @@ def plot_heat_map(fig: Any, eye_gaze_data: pd.DataFrame) -> None:
         col=3,
         range=value_range(Y),
         ticksuffix="°",
-        title=dict(text="Y", standoff=16, font=FONT_SIZE),
+        title={"text": "Y", "standoff": 16, "font": FONT_SIZE},
         tickfont=TICK_FONT,
     )
 

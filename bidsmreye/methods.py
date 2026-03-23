@@ -29,7 +29,7 @@ def methods(
     :rtype: Path
     """
     if output_dir is None:
-        output_dir = Path(".")
+        output_dir = Path()
     if isinstance(output_dir, str):
         output_dir = Path(output_dir)
     output_dir = output_dir / "logs"

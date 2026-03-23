@@ -66,7 +66,6 @@ def generate_report(output_dir: Path, subject_label: str, action: str) -> None:
 
 
 if __name__ == "__main__":
-
     cwd = Path("/home/remi/github/cpp-lln-lab/bidsMReye")
 
     output_dir = cwd / "outputs" / "moae_fmriprep" / "derivatives" / "bidsmreye"

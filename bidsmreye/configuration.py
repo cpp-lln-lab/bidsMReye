@@ -74,7 +74,7 @@ No dataset_description.json found:
             self.bids_filter = get_bids_filter_config()
 
         self.output_dir = self.output_dir / "bidsmreye"
-        if not self.output_dir:
+        if not self.output_dir.exists():
             self.output_dir.mkdir(parents=True, exist_ok=True)
 
         database_path = self.input_dir / "pybids_db"
@@ -136,7 +136,7 @@ No dataset_description.json found:
         self.listify(attribute)
 
         # convert all run values to integers
-        if attribute in {"run"}:
+        if attribute == "run":
             for i, j in enumerate(value):
                 value[i] = int(j)
             tmp = [int(j) for j in getattr(self, attribute)]
@@ -155,7 +155,7 @@ No dataset_description.json found:
         # run and space can be empty if their entity are not used
         # we will figure out the values for run
         # in subject / task wise manner later on
-        if attribute not in ["run"]:
+        if attribute != "run":
             setattr(self, attribute, value)
 
         if attribute not in ["run", "space"] and not getattr(self, attribute):
@@ -236,7 +236,7 @@ def get_config(config_file: Path | None = None, default: str = "") -> dict[str, 
         my_path = Path(__file__).absolute().parent / "config"
         config_file = my_path / default
 
-    if config_file is None or not Path(config_file).exists():
+    if not Path(config_file).exists():
         raise FileNotFoundError(f"Config file {config_file} not found")
 
     with open(config_file) as ff:
