@@ -1,0 +1,6 @@
+{
+    "SamplingFrequency": 0.4,
+    "Sources": [
+        "foo"
+    ]
+}
