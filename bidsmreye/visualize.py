@@ -144,7 +144,7 @@ def group_report(cfg: Config) -> None:
         log.warning("No data found.")
         return
 
-    fig = go.FigureWidget(
+    fig = go.Figure(
         make_subplots(
             rows=2,
             cols=3,
@@ -258,7 +258,7 @@ def time_range(time_stamps: pd.Series) -> list[float]:
 def visualize_eye_gaze_data(
     eye_gaze_data: pd.DataFrame,
 ) -> Any:
-    fig = go.FigureWidget(
+    fig = go.Figure(
         make_subplots(
             rows=3,
             cols=4,
