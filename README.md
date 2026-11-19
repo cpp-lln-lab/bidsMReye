@@ -86,7 +86,7 @@ pip install bidsmreye
 To encapsulate bidsMReye in a virtual environment install with the following commands:
 
 ```bash
-conda create --name bidsmreye python=3.10
+conda create --name bidsmreye python=3.11
 conda activate bidsmreye
 conda install pip
 pip install bidsmreye

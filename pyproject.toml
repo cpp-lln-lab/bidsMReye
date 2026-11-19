@@ -20,7 +20,7 @@ doc = [
     "sphinx-rtd-theme",
     "sphinxcontrib-bibtex"
 ]
-test = ["pytest>=6.0.0", "pytest-cov"]
+test = ["pytest>=9.0.0", "pytest-cov"]
 
 [project]
 authors = [{ name = "Remi Gau", email = "remi.gau@gmail.com" }]
@@ -30,25 +30,26 @@ classifiers = [
     "License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)",
     "Operating System :: Unix",
     "Programming Language :: Python",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
     "Topic :: Scientific/Engineering :: Image Processing"
 ]
 dependencies = [
-    "antspyx>=0.4.2,<0.5",
-    "anywidget>=0.9.21",
     "attrs>=26.1.0",
-    "deepmreye>=0.2.1",
+    "deepmreye>=0.5.0",
     "jinja2>=3.1.6",
     "kaleido>=1.2.0",
-    "keras>=2.15.0,<3.0.0",
+    "numpy>=1.23.5",
+    "pandas>=1.5.0",
+    "plotly>=5.0.0",
     "pooch>=1.6.0",
     "pybids>=0.22.0",
-    "tqdm>=4.67.3",
-    "tomli>=2.4.0; python_version < '3.11'",
-    "rich_argparse>=1.7.2"
+    "rich>=12.6.0",
+    "rich_argparse>=1.7.2",
+    "scipy>=1.9.2",
+    "tqdm>=4.67.3"
 ]
 description = "bids app using deepMReye to decode eye motion for fMRI time series data"
 dynamic = ["version"]
@@ -64,7 +65,7 @@ keywords = [
 license = { file = "LICENSE" }
 name = "bidsmreye"
 readme = "README.md"
-requires-python = ">=3.10.0,<3.12"
+requires-python = ">=3.11.0,<3.14"
 
 [project.scripts]
 bidsmreye = "bidsmreye._cli:cli"
