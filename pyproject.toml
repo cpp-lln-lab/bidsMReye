@@ -106,6 +106,7 @@ layers = [
     "report",
     "utils",
     "configuration",
+    "database",
     "logger",
     "defaults"
 ]

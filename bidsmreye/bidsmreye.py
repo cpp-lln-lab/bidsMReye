@@ -15,11 +15,12 @@ from bidsmreye.logger import bidsmreye_log
 log = bidsmreye_log(name="bidsmreye")
 
 
-def bidsmreye(
+def bidsmreye(  # noqa: PLR0913 (passes all the CLI arguments through)
     bids_dir: str,
     output_dir: str,
     analysis_level: str,
     action: str,
+    *,
     participant_label: list[str] | None = None,
     space: list[str] | None = None,
     task: list[str] | None = None,
@@ -27,6 +28,7 @@ def bidsmreye(
     debug: bool | None = None,
     model_weights_file: str | None = None,
     reset_database: bool | None = None,
+    work_dir: str | Path | None = None,
     bids_filter_file: str | None = None,
     linear_coreg: bool = False,
     log_level_name: str | None = None,
@@ -50,6 +52,7 @@ def bidsmreye(
         debug=debug,
         model_weights_file=model_weights_file,
         reset_database=reset_database,
+        work_dir=work_dir,
         bids_filter=bids_filter,
         linear_coreg=linear_coreg,
         force=force,

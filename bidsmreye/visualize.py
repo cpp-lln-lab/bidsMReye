@@ -47,7 +47,7 @@ def collect_group_qc_data(cfg: Config) -> pd.DataFrame | None:
     :return:
     :rtype: pd.DataFrame
     """
-    layout = get_dataset_layout(cfg.output_dir, use_database=False)
+    layout = get_dataset_layout(cfg.output_dir)
 
     subjects = list_subjects(cfg, layout)
 
