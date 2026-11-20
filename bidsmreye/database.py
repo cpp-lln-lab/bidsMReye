@@ -5,8 +5,6 @@ so it can be shared by several bidsmreye processes running in parallel
 (for example one process per participant on a cluster).
 """
 
-from __future__ import annotations
-
 import hashlib
 import shutil
 import uuid

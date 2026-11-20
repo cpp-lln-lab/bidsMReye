@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import multiprocessing
 import shutil
 from pathlib import Path
@@ -98,7 +96,10 @@ def test_get_layout_with_database_parallel(tmp_path, pybids_test_dataset):
 
 def test_config_work_dir_default(tmp_path, pybids_test_dataset):
     dataset = tmp_path / "fmriprep"
-    shutil.copytree(pybids_test_dataset, dataset)
+    # ignore databases that older versions saved in the input dataset
+    shutil.copytree(
+        pybids_test_dataset, dataset, ignore=shutil.ignore_patterns("pybids_db")
+    )
 
     cfg = Config(dataset, tmp_path / "output")
 
