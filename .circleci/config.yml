@@ -85,6 +85,9 @@ jobs:
                     docker run -ti --rm \
                       -v /tmp/workspace/data/ds002799/derivatives/fmriprep:/bids_dataset \
                         ${user_name}/${repo_name} --version
+        # use linear coregistration:
+        # non-linear (SyNAggro) gets OOM-killed (exit 137)
+        # on the largest resource class available (large, 15GB)
         -   run:
                 name: run all
                 command: |
@@ -101,6 +104,7 @@ jobs:
                           --participant_label 302 307 \
                           --space MNI152NLin2009cAsym \
                           --reset_database \
+                          --linear_coreg \
                           --model 1to5 \
                           -vv
         -   run:
@@ -119,6 +123,7 @@ jobs:
                           --participant_label 302 307 \
                           --space MNI152NLin2009cAsym \
                           --reset_database \
+                          --linear_coreg \
                           -vv
         -   run:
                 name: run group level QC
