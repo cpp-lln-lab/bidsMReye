@@ -37,10 +37,11 @@ jobs:
         -   run:
                 name: Install dependencies
                 command: |
-                    sudo apt-get update
-                    sudo apt-get install -y python3 git-annex
                     python3 -m pip install --upgrade pip setuptools
-                    pip3 install datalad
+                    # apt on ubuntu 22.04 only has git-annex 8.x,
+                    # datalad needs >= 10.20230126
+                    python3 -m pip install git-annex datalad
+                    git annex version
                     datalad wtf
         -   restore_cache:
                 keys:
