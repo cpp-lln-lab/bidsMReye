@@ -71,6 +71,8 @@ jobs:
     test:
         machine:
             image: ubuntu-2404:2026.11.1
+        # non-linear coregistration (SyNAggro) gets OOM-killed on large (15GB)
+        resource_class: xlarge
         steps:
         -   attach_workspace:
                 at: /tmp/workspace
