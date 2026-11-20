@@ -2,7 +2,7 @@ cff-version: 1.2.0
 
 title: "bidsMReye"
 
-version: 0.3.0
+version: 0.6.0
 
 abstract:
   "BIDS app using deepMReye to decode eye motion for fMRI time series data."

@@ -21,21 +21,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 -->
 
-## [Unreleased]
+## [0.6.0] - 2026-11-20
 
 ### Added
 
+* [MAINT] the Docker image is pushed to Docker Hub with the version tag and as `latest` on each release by @Remi-Gau in https://github.com/cpp-lln-lab/bidsMReye/pull/274
+
 ### Changed
 
-### Deprecated
+* [MAINT] require python >=3.11,<3.14 and deepmreye >=0.5.0 (keras 3) by @Remi-Gau in https://github.com/cpp-lln-lab/bidsMReye/pull/262
+
+* [MAINT] the `unstable` Docker image is only pushed from the `main` branch by @Remi-Gau in https://github.com/cpp-lln-lab/bidsMReye/pull/274
+
+* [MAINT] use uv and tox to manage dependencies and run tests by @Remi-Gau in https://github.com/cpp-lln-lab/bidsMReye/pull/262
+
+* [MAINT] switch to ruff for linting and formatting by @Remi-Gau in https://github.com/cpp-lln-lab/bidsMReye/pull/261
+
+* [MAINT] fix markdown link check and CircleCI tests by @Remi-Gau in https://github.com/cpp-lln-lab/bidsMReye/pull/272 and https://github.com/cpp-lln-lab/bidsMReye/pull/273
 
 ### Removed
 
+* [MAINT] drop support for python 3.9 and 3.10 by @Remi-Gau in https://github.com/cpp-lln-lab/bidsMReye/pull/262
+
 ### Fixed
 
-### Security
+* [FIX] make sure that the Docker image reports the proper version by @Remi-Gau in https://github.com/cpp-lln-lab/bidsMReye/commit/fbd5f0e
 
-## [0.5.0] - 2023-08-12
+* [FIX] reports no longer need anywidget: use plotly `Figure` instead of `FigureWidget` by @Remi-Gau in https://github.com/cpp-lln-lab/bidsMReye/pull/248 and https://github.com/cpp-lln-lab/bidsMReye/pull/262
+
+## [0.5.0] - 2024-08-12
 
 ### Added
 
@@ -55,7 +69,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * [FIX] do not apply `run` found for one task to all tasks by @Remi-Gau in https://github.com/cpp-lln-lab/bidsMReye/pull/228
 
-## [0.4.0] - 20234-08-05
+## [0.4.0] - 2024-08-05
 
 * [FIX] update file naming when run indices are padded by @Remi-Gau in https://github.com/cpp-lln-lab/bidsMReye/pull/146
 * [MAINT] move most of the config to pyproject.toml by @Remi-Gau in https://github.com/cpp-lln-lab/bidsMReye/pull/147
