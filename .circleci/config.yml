@@ -38,8 +38,9 @@ jobs:
                 name: Install dependencies
                 command: |
                     python3 -m pip install --upgrade pip setuptools
-                    # apt on ubuntu 22.04 only has git-annex 8.x,
-                    # datalad needs >= 10.20230126
+                    # install git-annex from PyPI rather than apt:
+                    # it is more recent than the ubuntu 24.04 package
+                    # (datalad needs git-annex >= 10.20230126)
                     python3 -m pip install git-annex datalad
                     git annex version
                     datalad wtf
