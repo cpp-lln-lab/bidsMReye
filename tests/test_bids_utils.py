@@ -13,7 +13,7 @@ from bidsmreye.bids_utils import (
     init_dataset,
     list_subjects,
 )
-from bidsmreye.configuration import Config
+from bidsmreye.configuration import Config, get_input_layout
 from bidsmreye.prepare_data import save_sampling_frequency_to_json
 from bidsmreye.utils import set_this_filter
 
@@ -99,12 +99,7 @@ def test_check_layout_prepare_data(data_dir, pybids_test_dataset):
         data_dir,
     )
 
-    layout_in = get_dataset_layout(
-        cfg.input_dir,
-        use_database=True,
-        config=["bids", "derivatives"],
-        reset_database=True,
-    )
+    layout_in = get_input_layout(cfg)
     check_layout(cfg, layout_in)
 
 
@@ -120,12 +115,7 @@ def test_check_layout_error_no_space_entity(tmp_path, pybids_test_dataset):
 
     print(cfg.input_dir)
 
-    layout_in = get_dataset_layout(
-        cfg.input_dir,
-        use_database=False,
-        config=["bids", "derivatives"],
-        reset_database=True,
-    )
+    layout_in = get_dataset_layout(cfg.input_dir, config=["bids", "derivatives"])
 
     with pytest.raises(
         RuntimeError, match="does not have any data to process for filter"

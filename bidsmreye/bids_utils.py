@@ -192,19 +192,18 @@ def save_sampling_frequency_to_json(
 def get_dataset_layout(
     dataset_path: str | Path,
     config: str | list[str] | dict[str, str] | None = None,
-    use_database: bool = False,
-    reset_database: bool = False,
 ) -> BIDSLayout:
     """Return a BIDSLayout object for the dataset at the given path.
+
+    The index is not saved to a database.
+    To get the layout of the input dataset use
+    :func:`bidsmreye.configuration.get_input_layout`.
 
     :param dataset_path: Path to the dataset.
     :type dataset_path: Union[str, Path]
 
     :param config: Pybids config to use. Defaults to None.
     :type config: Optional[dict], optional
-
-    :param use_database: Defaults to False
-    :type use_database: bool, optional
 
     :return: _description_
     :rtype: BIDSLayout
@@ -221,19 +220,8 @@ def get_dataset_layout(
 
     log.info(f"Indexing {dataset_path}")
 
-    if not use_database:
-        return BIDSLayout(
-            dataset_path, validate=False, derivatives=False, config=pybids_config
-        )
-
-    database_path = dataset_path / "pybids_db"
     return BIDSLayout(
-        dataset_path,
-        validate=False,
-        derivatives=False,
-        config=pybids_config,
-        database_path=database_path,
-        reset_database=reset_database,
+        dataset_path, validate=False, derivatives=False, config=pybids_config
     )
 
 
@@ -285,7 +273,10 @@ def list_subjects(cfg: Config, layout: BIDSLayout) -> list[str]:
     subjects = layout.get(return_type="id", target="subject", subject=cfg.subjects)
 
     if subjects == [] or subjects is None:
-        raise RuntimeError(f"No subject found in layout:\n\t{layout.root}")
+        msg = f"No subject found in layout:\n\t{layout.root}"
+        if cfg.subjects:
+            msg += f"\nfor participant_label: {cfg.subjects}"
+        raise RuntimeError(msg)
 
     if cfg.debug:
         subjects = [subjects[0]]

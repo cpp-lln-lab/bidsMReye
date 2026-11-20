@@ -9,6 +9,7 @@ from typing import Any
 from attrs import asdict, converters, define, field
 from bids import BIDSLayout  # type: ignore
 
+from bidsmreye.database import get_database_path, get_layout_with_database
 from bidsmreye.logger import bidsmreye_log
 
 log = bidsmreye_log(name="bidsmreye")
@@ -40,6 +41,10 @@ No dataset_description.json found:
 \t{value.absolute()}.""")
 
     output_dir: Path = field(default=None, converter=Path)
+
+    work_dir: Path | None = field(
+        kw_only=True, default=None, converter=converters.optional(Path)
+    )
 
     subjects: Any | None = field(kw_only=True, default=None)
 
@@ -73,19 +78,15 @@ No dataset_description.json found:
         if not self.bids_filter:
             self.bids_filter = get_bids_filter_config()
 
+        if self.work_dir is None:
+            self.work_dir = self.output_dir / "work"
+        self.work_dir = self.work_dir.absolute()
+
         self.output_dir = self.output_dir / "bidsmreye"
         if not self.output_dir.exists():
             self.output_dir.mkdir(parents=True, exist_ok=True)
 
-        database_path = self.input_dir / "pybids_db"
-
-        layout_in = BIDSLayout(
-            self.input_dir,
-            validate=False,
-            derivatives=False,
-            database_path=database_path,
-            reset_database=self.reset_database,
-        )
+        layout_in = get_input_layout(self, reset_database=self.reset_database)
         log.debug(f"Layout in:\n{layout_in.root}")
 
         value = layout_in.get(return_type="id", target="subject", datatype="func")
@@ -97,9 +98,6 @@ No dataset_description.json found:
                 "Check the FAQ for more information: "
                 "https://bidsmreye.readthedocs.io/en/latest/FAQ.html"
             )
-
-        if not database_path.is_dir():
-            layout_in.save(database_path)
 
         self.check_argument(attribute="subjects", layout_in=layout_in)
         self.check_argument(attribute="task", layout_in=layout_in)
@@ -169,6 +167,28 @@ No dataset_description.json found:
             setattr(self, attribute, [getattr(self, attribute)])
 
         return self
+
+
+def get_input_layout(cfg: Config, reset_database: bool = False) -> BIDSLayout:
+    """Return the layout of the input dataset.
+
+    Its index is stored in a pybids database in the working directory
+    that can be shared by several bidsmreye processes running in parallel.
+
+    :param cfg: Configuration object
+    :type cfg: Config
+
+    :param reset_database: Reindex the input dataset.
+    :type reset_database: bool, optional
+
+    :return: Layout of the input dataset.
+    :rtype: BIDSLayout
+    """
+    return get_layout_with_database(
+        cfg.input_dir,
+        database_path=get_database_path(cfg.work_dir, cfg.input_dir),  # type: ignore[arg-type]
+        reset_database=reset_database,
+    )
 
 
 def config_to_dict(cfg: Config) -> dict[str, Any]:
