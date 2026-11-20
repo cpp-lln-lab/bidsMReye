@@ -1,7 +1,5 @@
 """Run coregistration and extract data from eye masks in MNI space."""
 
-from __future__ import annotations
-
 import pickle
 from pathlib import Path
 from typing import Any

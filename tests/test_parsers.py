@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from bidsmreye._parsers import common_parser, download_parser
 
 

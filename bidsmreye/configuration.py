@@ -1,10 +1,8 @@
-from __future__ import annotations
-
 import json
 import os
 import warnings
 from pathlib import Path
-from typing import Any
+from typing import Any, Self
 
 from attrs import asdict, converters, define, field
 from bids import BIDSLayout  # type: ignore
@@ -106,7 +104,7 @@ No dataset_description.json found:
         self.check_argument(attribute="space", layout_in=layout_in)
         self.check_argument(attribute="run", layout_in=layout_in)
 
-    def check_argument(self, attribute: str, layout_in: BIDSLayout) -> Config:
+    def check_argument(self, attribute: str, layout_in: BIDSLayout) -> Self:
         """Check an attribute value compared to the input dataset content.
 
         :param attribute:
@@ -163,7 +161,7 @@ No dataset_description.json found:
 
         return self
 
-    def listify(self, attribute: str) -> Config:
+    def listify(self, attribute: str) -> Self:
         """Convert attribute to list if not already."""
         if getattr(self, attribute) and not isinstance(getattr(self, attribute), list):
             setattr(self, attribute, [getattr(self, attribute)])
