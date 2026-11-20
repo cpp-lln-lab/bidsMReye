@@ -156,45 +156,53 @@ jobs:
                 name: push to dockerhub
                 command: |
                     set -ex -o pipefail
-                    if [[ -n "${DOCKER_TOKEN}" ]]; then
-                        # make sure we have a lowercase repo
-                        user_name=cpplab
-                        repo_name=$(echo "${CIRCLE_PROJECT_REPONAME}" | tr '[:upper:]' '[:lower:]')
-                        if [[ -n "${DOCKER_TOKEN}" ]]; then
-                            echo "${DOCKER_TOKEN}" | docker login -u remigau --password-stdin
-                            : "Pushing to DockerHub ${user_name}/${repo_name}:unstable"
-                            docker tag "${user_name}/${repo_name}" "${user_name}/${repo_name}:unstable"
-                            docker push "${user_name}/${repo_name}:unstable"
-                            if [[ -n "${CIRCLE_TAG}" ]]; then
-                                : "Pushing to DockerHub ${user_name}/${repo_name}:${CIRCLE_TAG}"
-                                docker tag "${user_name}/${repo_name}" "${user_name}/${repo_name}:latest"
-                                docker push "${user_name}/${repo_name}:latest"
-                                docker tag "${user_name}/${repo_name}" "${user_name}/${repo_name}:${CIRCLE_TAG}"
-                                docker push "${user_name}/${repo_name}:${CIRCLE_TAG}"
-                            fi
-                        fi
-                    else
+                    if [[ -z "${DOCKER_TOKEN}" ]]; then
                         : "No DOCKER_TOKEN, skipping push to DockerHub"
                         exit 1
+                    fi
+                    # make sure we have a lowercase repo
+                    user_name=cpplab
+                    repo_name=$(echo "${CIRCLE_PROJECT_REPONAME}" | tr '[:upper:]' '[:lower:]')
+                    echo "${DOCKER_TOKEN}" | docker login -u remigau --password-stdin
+                    if [[ -n "${CIRCLE_TAG}" ]]; then
+                        # tag (or GitHub release): push version and latest
+                        : "Pushing to DockerHub ${user_name}/${repo_name}:${CIRCLE_TAG} and latest"
+                        docker tag "${user_name}/${repo_name}" "${user_name}/${repo_name}:${CIRCLE_TAG}"
+                        docker push "${user_name}/${repo_name}:${CIRCLE_TAG}"
+                        docker tag "${user_name}/${repo_name}" "${user_name}/${repo_name}:latest"
+                        docker push "${user_name}/${repo_name}:latest"
+                    else
+                        # push to main: push unstable
+                        : "Pushing to DockerHub ${user_name}/${repo_name}:unstable"
+                        docker tag "${user_name}/${repo_name}" "${user_name}/${repo_name}:unstable"
+                        docker push "${user_name}/${repo_name}:unstable"
                     fi
 
 workflows:
     build-test-deploy:
         jobs:
-        -   build
-        -   get_data
+        # CircleCI only runs a job on a tag push
+        # if it and all the jobs it requires have a tags filter.
+        # Release tags look like 0.5.0 (an optional leading v is allowed).
+        -   build:
+                filters: &release_tags
+                    tags:
+                        only: /^v?[0-9]+\.[0-9]+\.[0-9]+$/
+        -   get_data:
+                filters: *release_tags
         -   test:
                 requires:
                 -   build
                 -   get_data
+                filters: *release_tags
         -   deploy:
                 context:
                 -   DOCKER_HUB
                 requires:
                 -   test
+                # unstable on main, version + latest on release tags
                 filters:
                     tags:
-                        only: /.*/
-
-
-# VS Code Extension Version: 1.5.1
+                        only: /^v?[0-9]+\.[0-9]+\.[0-9]+$/
+                    branches:
+                        only: main
