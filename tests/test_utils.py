@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from pathlib import Path
 
 from bidsmreye.bids_utils import get_dataset_layout

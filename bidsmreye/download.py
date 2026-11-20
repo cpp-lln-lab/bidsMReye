@@ -1,7 +1,5 @@
 """Download the models from OSF."""
 
-from __future__ import annotations
-
 import warnings
 from importlib import resources
 from pathlib import Path

@@ -16,8 +16,6 @@
 # relative to the documentation root, use os.path.abspath to make it
 # absolute, like shown here.
 #
-from __future__ import annotations
-
 import os
 import sys
 

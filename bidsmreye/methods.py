@@ -1,7 +1,5 @@
 """Write method section."""
 
-from __future__ import annotations
-
 import shutil
 import warnings
 from pathlib import Path

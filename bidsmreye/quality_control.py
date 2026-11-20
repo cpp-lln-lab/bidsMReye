@@ -1,7 +1,5 @@
 """Tools to compute and plot quality controls at the file or group level."""
 
-from __future__ import annotations
-
 import json
 import math
 from pathlib import Path

@@ -1,7 +1,5 @@
 """Store defaults."""
 
-from __future__ import annotations
-
 
 def default_log_level() -> str:
     """Return default log level."""
