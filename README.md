@@ -162,6 +162,17 @@ This will also generate a quality control report of the decoded eye movements.
 ```bash
 bidsmreye bids_dir output_dir participant generalize
 ```
+
+To use another model, pass either the name of one of the pre-trained models of deepmreye
+or the path to a file containing model weights to `--model`:
+
+```bash
+bidsmreye bids_dir output_dir participant generalize --model 1_guided_fixations
+bidsmreye bids_dir output_dir participant generalize --model /path/to/my_model.h5
+```
+
+The name of the model is included in the name of the output files
+(for a model file: its file name in CamelCase, for example `desc-MyModel`).
 ## Doing it all at once
 
 `all` does "prepare" then "generalize".

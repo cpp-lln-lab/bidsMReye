@@ -77,8 +77,8 @@ def bidsmreye(  # noqa: PLR0913 (passes all the CLI arguments through)
     if action in {"all", "generalize"} and isinstance(cfg.model_weights_file, str):
         from bidsmreye.download import download
 
+        # only created if a pre-trained model needs to be downloaded
         model_output_dir = cfg.output_dir / "models"
-        model_output_dir.mkdir(exist_ok=True, parents=True)
 
         cfg.model_weights_file = download(
             cfg.model_weights_file, output_dir=model_output_dir

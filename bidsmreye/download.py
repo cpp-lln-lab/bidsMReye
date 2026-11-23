@@ -29,8 +29,16 @@ def download(
     """
     if not model:
         model = default_model()
+    # the CLI passes the path to a model file as a string
+    if (
+        isinstance(model, str)
+        and model not in available_models()
+        and Path(model).is_file()
+    ):
+        model = Path(model)
     if isinstance(model, Path):
-        assert model.is_file()
+        if not model.is_file():
+            raise FileNotFoundError(f"Model file not found:\n\t{model.absolute()}")
         return model.absolute()
     if model not in available_models():
         warnings.warn(f"{model} is not a valid model name.", stacklevel=3)
