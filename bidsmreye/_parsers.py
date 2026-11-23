@@ -115,8 +115,27 @@ The label corresponds to space-<space_label> from the BIDS spec
         "--reset_database",
         help="""
 Resets the database of the input dataset.
+
+When running several bidsmreye processes in parallel,
+do not use this option:
+it would make each process reindex the input dataset.
         """,
         action="store_true",
+    )
+    parser.add_argument(
+        "-w",
+        "--work_dir",
+        help="""
+Path where intermediate results should be stored.
+
+The index of the input dataset (pybids database) is stored there
+so it can be reused by later runs
+and shared by several bidsmreye processes running in parallel
+(for example one per participant).
+
+Defaults to ``<output_dir>/work``.
+        """,
+        type=Path,
     )
     parser.add_argument(
         "--bids_filter_file",

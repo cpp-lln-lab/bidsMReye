@@ -25,13 +25,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+* [ENH] add a `--work_dir` option to set where intermediate results are stored (defaults to `<output_dir>/work`) by @Remi-Gau
+
 ### Changed
+
+* [ENH] the pybids database of the input dataset is stored in the working directory instead of in the input dataset by @Remi-Gau
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+
+* [FIX] processes started in parallel (for example one per participant) could fail with "No subject found" while another process was indexing the input dataset by @Remi-Gau
 
 ### Security
 

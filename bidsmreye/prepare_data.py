@@ -12,12 +12,11 @@ from deepmreye import preprocess
 from bidsmreye.bids_utils import (
     check_layout,
     create_bidsname,
-    get_dataset_layout,
     init_dataset,
     list_subjects,
     save_sampling_frequency_to_json,
 )
-from bidsmreye.configuration import Config
+from bidsmreye.configuration import Config, get_input_layout
 from bidsmreye.logger import bidsmreye_log
 from bidsmreye.report import generate_report
 from bidsmreye.utils import (
@@ -190,12 +189,8 @@ def prepare_data(cfg: Config) -> None:
     :param cfg: Configuration object
     :type cfg: Config
     """
-    layout_in = get_dataset_layout(
-        cfg.input_dir,
-        use_database=True,
-        config=["bids", "derivatives"],
-        reset_database=cfg.reset_database,
-    )
+    # the database was already created (or reset) when creating the config
+    layout_in = get_input_layout(cfg)
     check_layout(cfg, layout_in)
 
     layout_out = init_dataset(cfg)

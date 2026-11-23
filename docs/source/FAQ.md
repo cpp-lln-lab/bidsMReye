@@ -1,6 +1,7 @@
 
 # Frequently Asked Questions
 - [bidsmreye can not find subject / task](#bidsmreye-can-not-find-subject--task)
+- [How can I run bidsmreye in parallel?](#how-can-i-run-bidsmreye-in-parallel)
 - [How I should structure my input data?](#how-i-should-structure-my-input-data)
 - [Is the "prepare" only suitable for the datasets that have eye-tracking info?](#is-the-prepare-only-suitable-for-the-datasets-that-have-eye-tracking-info)
 - [Should I use the automatically generated methods section?](#should-i-use-the-automatically-generated-methods-section)
@@ -19,7 +20,37 @@ Check the following things:
 
   See [How I should structure my input data?](./faq.md#how-i-should-structure-my-input-data)
 
-- Try to rerun your command with the `--reset-database` option for force bidsmreye to reindex your input dataset.
+- Try to rerun your command with the `--reset_database` option to force bidsmreye to reindex your input dataset.
+
+- If you are running several bidsmreye processes in parallel (for example one per participant on a cluster),
+  make sure you are using a version of bidsmreye more recent than 0.6.0:
+  older versions could fail to find subjects when started at the same time.
+  See [How can I run bidsmreye in parallel?](./faq.md#how-can-i-run-bidsmreye-in-parallel)
+
+<a name="how-can-i-run-bidsmreye-in-parallel"></a>
+## How can I run bidsmreye in parallel?
+
+You can run one bidsmreye process per participant
+(for example one job per participant on a cluster)
+by passing a single label to `--participant_label` in each job.
+
+bidsmreye indexes the input dataset with pybids
+and saves this index in a database in its working directory,
+so later runs do not need to reindex the dataset.
+
+Use the same output directory (or the same `--work_dir`) for all jobs
+so they all share the same database.
+By default the working directory is `<output_dir>/work`.
+
+The database is saved in a way that is safe for processes started at the same time:
+if several jobs start before the database exists,
+each of them indexes the dataset
+and only one copy of the database is kept.
+
+Do not use `--reset_database` in jobs that run in parallel
+as it would make each job reindex the input dataset.
+If you need to reindex the input dataset,
+run bidsmreye once with `--reset_database` before starting the parallel jobs.
 
 <a name="how-i-should-structure-my-input-data"></a>
 ## How I should structure my input data?
