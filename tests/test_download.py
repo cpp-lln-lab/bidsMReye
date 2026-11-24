@@ -1,4 +1,5 @@
 import shutil
+import warnings
 from pathlib import Path
 
 import pytest
@@ -28,3 +29,32 @@ def test_download_basic():
 def test_download_unknown_model():
     with pytest.warns(UserWarning):
         download(model="foo")
+
+
+@pytest.mark.parametrize("as_str", [True, False])
+def test_download_model_path(tmp_path, as_str):
+    """A path to an existing model file is returned as is, nothing is downloaded.
+
+    The CLI passes the model as a string.
+
+    https://github.com/cpp-lln-lab/bidsMReye/issues/91
+    """
+    model_file = tmp_path / "my_model.h5"
+    model_file.write_bytes(b"")
+    output_dir = tmp_path / "models"
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        output_file = download(
+            model=str(model_file) if as_str else model_file, output_dir=output_dir
+        )
+
+    assert output_file == model_file.absolute()
+    assert not output_dir.exists()
+
+
+@pytest.mark.parametrize("as_str", [True, False])
+def test_download_model_path_missing(tmp_path, as_str):
+    model_file = tmp_path / "missing.h5"
+    with pytest.raises(FileNotFoundError, match=r"missing\.h5"):
+        download(model=str(model_file) if as_str else model_file)

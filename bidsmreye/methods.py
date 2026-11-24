@@ -10,9 +10,22 @@ from bidsmreye.report import TEMPLATES_DIR, return_jinja_env
 from bidsmreye.utils import create_dir_for_file
 
 
+def _model_name(model: str | Path) -> str:
+    """Return the name of a pre-trained model from the path to its weights.
+
+    Other model files are returned by their file name.
+    """
+    if isinstance(model, str) and model in available_models():
+        return model
+    stem = Path(model).stem
+    if stem.startswith("dataset_") and stem[len("dataset_") :] in available_models():
+        return stem[len("dataset_") :]
+    return Path(model).name
+
+
 def methods(
     output_dir: str | Path | None = None,
-    model: str | None = None,
+    model: str | Path | None = None,
     qc_only: bool = False,
 ) -> Path:
     """Write method section.
@@ -20,8 +33,9 @@ def methods(
     :param output_dir: Defaults to Path(".")
     :type  output_dir: Union[str, Path], optional
 
-    :param model: Defaults to None.
-    :type  model: str, optional
+    :param model: Name of a pre-trained model or path to a model file.
+                  Defaults to None.
+    :type  model: str | Path, optional
 
     :return: Output file name.
     :rtype: Path
@@ -40,6 +54,8 @@ def methods(
 
     if not model:
         model = default_model()
+    is_model_file = isinstance(model, Path) or bool(Path(model).suffix)
+    model = _model_name(model)
 
     is_known_model = False
     is_default_model = False
@@ -48,7 +64,7 @@ def methods(
         if model == default_model():
             is_default_model = True
 
-    if not is_known_model:
+    if not is_known_model and not is_model_file:
         warnings.warn(f"{model} is not a known model name.", stacklevel=3)
 
     env = return_jinja_env(searchpath=TEMPLATES_DIR)

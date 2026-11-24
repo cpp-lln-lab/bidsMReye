@@ -1,8 +1,40 @@
-from argparse import ArgumentParser, HelpFormatter
+from argparse import ArgumentParser, ArgumentTypeError, HelpFormatter
 from pathlib import Path
 
 from bidsmreye._version import __version__
 from bidsmreye.defaults import available_models, default_model
+
+
+def _model_name_or_path(value: str) -> str:
+    """Check that the model is one of the available models or an existing file.
+
+    https://github.com/cpp-lln-lab/bidsMReye/issues/91
+    """
+    if value in available_models():
+        return value
+    if Path(value).is_file():
+        return str(Path(value).absolute())
+    raise ArgumentTypeError(
+        f"'{value}' is neither one of the available models "
+        f"({', '.join(available_models())}) "
+        "nor an existing file."
+    )
+
+
+def _add_model_argument(parser: ArgumentParser) -> ArgumentParser:
+    parser.add_argument(
+        "--model",
+        help=f"""
+Model to use: either the name of one of the pre-trained models of deepmreye
+({", ".join(available_models())})
+or the path to a file containing model weights.
+
+Default model: {default_model()}.
+""",
+        type=_model_name_or_path,
+        default=default_model(),
+    )
+    return parser
 
 
 def _base_parser(formatter_class: type[HelpFormatter] = HelpFormatter) -> ArgumentParser:
@@ -173,7 +205,6 @@ If your data is not in MNI space, bidsmreye will also register the data to MNI.
         formatter_class=parser.formatter_class,
     )
     prepare_parser = _add_common_arguments(prepare_parser)
-    # TODO make it possible to pass path to a model ?
     prepare_parser.add_argument(
         "--linear_coreg",
         help="""
@@ -194,13 +225,7 @@ using the default pre-trained model of deepmreye.
         formatter_class=parser.formatter_class,
     )
     generalize_parser = _add_common_arguments(generalize_parser)
-    # TODO make it possible to pass path to a model ?
-    generalize_parser.add_argument(
-        "--model",
-        help=f"Model to use. Default model: {default_model()}.",
-        choices=available_models(),
-        default=default_model(),
-    )
+    generalize_parser = _add_model_argument(generalize_parser)
 
     all_parser = subparsers.add_parser(
         "all",
@@ -208,7 +233,6 @@ using the default pre-trained model of deepmreye.
         formatter_class=parser.formatter_class,
     )
     all_parser = _add_common_arguments(all_parser)
-    # TODO make it possible to pass path to a model ?
     all_parser.add_argument(
         "--linear_coreg",
         help="""
@@ -219,13 +243,7 @@ May lead to worse results so check your outputs.
 """,
         action="store_true",
     )
-    # TODO make it possible to pass path to a model ?
-    all_parser.add_argument(
-        "--model",
-        help=f"Model to use. Default model: {default_model()}.",
-        choices=available_models(),
-        default=default_model(),
-    )
+    all_parser = _add_model_argument(all_parser)
 
     qc_parser = subparsers.add_parser(
         "qc",

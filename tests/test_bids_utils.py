@@ -10,6 +10,7 @@ from bidsmreye.bids_utils import (
     get_dataset_layout,
     init_dataset,
     list_subjects,
+    return_desc_entity,
 )
 from bidsmreye.configuration import Config, get_input_layout
 from bidsmreye.prepare_data import save_sampling_frequency_to_json
@@ -119,3 +120,22 @@ def test_check_layout_error_no_space_entity(tmp_path, pybids_test_dataset):
         RuntimeError, match="does not have any data to process for filter"
     ):
         check_layout(cfg, layout_in)
+
+
+@pytest.mark.parametrize(
+    "model_file, expected",
+    [
+        ("dataset_1to6.h5", "1to6"),
+        ("dataset_1_guided_fixations.h5", "GuidedFixations"),
+        ("dataset_3_openclosed.h5", "OpenClosed"),
+        ("dataset_2_pursuit.h5", "Pursuit2"),
+        # custom model: sanitized file name
+        ("my_custom-model.h5", "MyCustomModel"),
+        ("/some/path/my_model_v2.h5", "MyModelV2"),
+        # 'dataset' is only dropped for pre-trained models
+        ("dataset_custom.h5", "DatasetCustom"),
+        ("my_dataset_model.h5", "MyDatasetModel"),
+    ],
+)
+def test_return_desc_entity(model_file, expected):
+    assert return_desc_entity(Path(model_file)) == expected

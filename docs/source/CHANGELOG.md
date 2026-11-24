@@ -27,6 +27,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * [ENH] add a `--work_dir` option to set where intermediate results are stored (defaults to `<output_dir>/work`) by @Remi-Gau
 
+* [ENH] `--model` accepts the path to a file containing model weights, not only the name of a pre-trained model by @Remi-Gau
+
 ### Changed
 
 * [ENH] the pybids database of the input dataset is stored in the working directory instead of in the input dataset by @Remi-Gau
