@@ -53,6 +53,8 @@ def test_download_model_path(tmp_path, as_str):
     assert not output_dir.exists()
 
 
-def test_download_model_path_missing(tmp_path):
+@pytest.mark.parametrize("as_str", [True, False])
+def test_download_model_path_missing(tmp_path, as_str):
+    model_file = tmp_path / "missing.h5"
     with pytest.raises(FileNotFoundError, match=r"missing\.h5"):
-        download(model=tmp_path / "missing.h5")
+        download(model=str(model_file) if as_str else model_file)

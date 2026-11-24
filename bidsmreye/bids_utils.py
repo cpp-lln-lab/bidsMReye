@@ -14,6 +14,7 @@ from bidsmreye.configuration import (
     get_bidsname_config,
     get_pybids_config,
 )
+from bidsmreye.defaults import available_models
 from bidsmreye.logger import bidsmreye_log
 from bidsmreye.methods import methods
 from bidsmreye.utils import copy_license, create_dir_if_absent, return_regex
@@ -128,18 +129,23 @@ def create_bidsname(
     return output_file.absolute()
 
 
-def return_desc_entity(model_filename: Path):
-    model_name = sanitize_filename(model_filename).replace("Dataset", "")
-    if model_name in ["1GuidedFixations", "5FreeViewing"]:
-        return model_name[1:]
-    elif model_name == "3Openclosed":
-        return "OpenClosed"
-    elif model_name in ["4Pursuit", "2Pursuit", "3Pursuit"]:
-        return model_name[1:] + model_name[0]
-    elif model_name in ["1to5", "1to6"]:
+def return_desc_entity(model_filename: Path) -> str:
+    """Return the label of the desc entity for the outputs of a model.
+
+    For pre-trained deepmreye models, a short version of the model name.
+    For other model files: the file name in CamelCase.
+    """
+    stem = model_filename.stem
+    if stem.startswith("dataset_") and stem[len("dataset_") :] in available_models():
+        model_name = sanitize_filename(Path(stem[len("dataset_") :]))
+        if model_name in ["1GuidedFixations", "5FreeViewing"]:
+            return model_name[1:]
+        if model_name == "3Openclosed":
+            return "OpenClosed"
+        if model_name in ["4Pursuit", "2Pursuit", "3Pursuit"]:
+            return model_name[1:] + model_name[0]
         return model_name
-    else:
-        return sanitize_filename(model_filename)
+    return sanitize_filename(model_filename)
 
 
 def sanitize_filename(filename: Path):
@@ -226,7 +232,7 @@ def get_dataset_layout(
 def init_dataset(cfg: Config, qc_only: bool = False) -> BIDSLayout:
     layout_out = init_derivatives_layout(cfg)
 
-    citation_file = methods(cfg.output_dir, qc_only=qc_only)
+    citation_file = methods(cfg.output_dir, model=cfg.model_weights_file, qc_only=qc_only)
     log.info(f"Method section generated: {citation_file}")
 
     license_file = copy_license(cfg.output_dir)

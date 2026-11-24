@@ -173,6 +173,8 @@ bidsmreye bids_dir output_dir participant generalize --model /path/to/my_model.h
 
 The name of the model is included in the name of the output files
 (for a model file: its file name in CamelCase, for example `desc-MyModel`).
+So give different model files different names
+if you use them on the same dataset and output folder.
 ## Doing it all at once
 
 `all` does "prepare" then "generalize".

@@ -13,19 +13,32 @@ from bidsmreye.logger import bidsmreye_log
 log = bidsmreye_log(name="bidsmreye")
 
 
+def _looks_like_a_path(model: str) -> bool:
+    return bool(Path(model).suffix) or "/" in model or "\\" in model
+
+
 def download(
     model: str | Path | None = None, output_dir: Path | str | None = None
 ) -> Path | None:
-    """Download the models from OSF.
+    """Return the path to the weights of a model.
 
-    :param model: Model to download. defaults to None
-    :type model: str, optional
+    Pre-trained deepmreye models are downloaded from OSF
+    (unless they are already in ``output_dir``).
+    For a path to a model file, the absolute path of that file is returned
+    and nothing is downloaded.
 
-    :param output_dir: Path where to save the model. Defaults to None.
+    :param model: Name of a pre-trained model or path to a model file.
+                  Defaults to the default pre-trained model.
+    :type model: str | Path, optional
+
+    :param output_dir: Path where to save downloaded models. Defaults to None.
     :type output_dir: Path, optional
 
-    :return: Path to the downloaded model.
-    :rtype: Path
+    :return: Path to the model file.
+             None if ``model`` is neither a known model name nor a path.
+    :rtype: Path | None
+
+    :raises FileNotFoundError: if ``model`` is a path to a file that does not exist.
     """
     if not model:
         model = default_model()
@@ -33,7 +46,7 @@ def download(
     if (
         isinstance(model, str)
         and model not in available_models()
-        and Path(model).is_file()
+        and _looks_like_a_path(model)
     ):
         model = Path(model)
     if isinstance(model, Path):

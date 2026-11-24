@@ -132,6 +132,9 @@ def test_check_layout_error_no_space_entity(tmp_path, pybids_test_dataset):
         # custom model: sanitized file name
         ("my_custom-model.h5", "MyCustomModel"),
         ("/some/path/my_model_v2.h5", "MyModelV2"),
+        # 'dataset' is only dropped for pre-trained models
+        ("dataset_custom.h5", "DatasetCustom"),
+        ("my_dataset_model.h5", "MyDatasetModel"),
     ],
 )
 def test_return_desc_entity(model_file, expected):
